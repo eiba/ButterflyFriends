@@ -1,12 +1,42 @@
 ﻿body {
     padding-top: 50px;
-    padding-bottom: 20px;
+    background-color: transparent;
+}
+
+
+#tag {
+    background: url('../wallpaper.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+
+}
+.mainDiv {
+    padding: 20px;
+    margin-top: 50px;
+    background-color: white;
+    margin-left: 12px;
+    box-shadow: 8px 8px 20px #000000;
+}
+.bottom {
+    padding: 20px;
+    margin-top: 50px;
+    background-color: white;
+    box-shadow: 5px 5px 20px #000000;
+
+}
+
+.side {
+    margin-top: 50px;
+    background-color: white;
+    padding: 20px;
+    margin-left: 80px;
+    box-shadow: 5px 5px 20px #000000;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html id="tag">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
-<body background="~/wallpaper.jpg">
+<body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -29,13 +29,27 @@
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
+<div class="container body-content">
+    <div class="row">
+        <div class="mainDiv col-md-8">
+            @RenderBody()
+
+        </div>
+        <div class="col-md-1"></div>
+        <div class="side col-md-3">
+            <p>hi</p>
+
+        </div>
+    </div>
+    <div class="bottom">
+        <p>Social media and contact and stuff</p>
         <hr />
         <footer>
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>
+</div>
+
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
