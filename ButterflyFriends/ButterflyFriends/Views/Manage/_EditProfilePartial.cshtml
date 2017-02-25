@@ -1,0 +1,165 @@
+﻿@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity.EntityFramework
+@model ButterflyFriends.Models.changeProfileModel
+@{
+
+    var formId = "profileForm";
+}
+
+<div id="Box">
+
+    <modal :show.sync="showModal">
+        <h3 slot="header">Edit user</h3>
+        <h5 slot="body">
+            @using (Ajax.BeginForm("EditUser", "Manage", new AjaxOptions
+            {
+
+                UpdateTargetId = "ProfileUpdate",
+                InsertionMode = InsertionMode.Replace,
+                HttpMethod = "POST",
+
+            }, new { @class = "form-horizontal", role = "form", id = formId }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true)
+                    @Html.HiddenFor(model => model.Id)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Fname, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="Fname" value="@Model.Fname" class="form-control" id="model" required>
+                            @Html.ValidationMessageFor(model => model.Fname)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Lname, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="Lname" value="@Model.Lname" class="form-control" required>
+                            @Html.ValidationMessageFor(model => model.Lname)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.StreetAdress, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="StreetAdress" value="@Model.StreetAdress" class="form-control" required>
+                            @Html.ValidationMessageFor(model => model.StreetAdress)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PostCode, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="PostCode" value="@Model.PostCode" class="form-control" required>
+                            @Html.ValidationMessageFor(model => model.PostCode)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.City, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="City" value="@Model.City" class="form-control" required>
+                            @Html.ValidationMessageFor(model => model.City)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.State, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="State" value="@Model.State" class="form-control" required>
+                            @Html.ValidationMessageFor(model => model.State)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Phone, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="Phone" value="@Model.Phone" class="form-control" required pattern="[0-9]{8,12}">
+                            @Html.ValidationMessageFor(model => model.Phone)
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </h5>
+    </modal>
+</div>
+
+<script type="x/template" id="Modal">
+    <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
+        <div class="modal-wrapper">
+            <div class="modal-container" style="width:650px;" v-on:click.stop>
+
+                <div class="modal-header">
+                    <slot name="header">
+                    </slot>
+                </div>
+
+                <div class="modal-body">
+                    <slot name="body">
+
+                    </slot>
+
+                </div>
+
+                <div class="modal-footer">
+                    <slot name="footer">
+                        <button class="btn btn-primary btn-primary" id="knapp" v-on:click="closeButton">Lagre <span class="glyphicon glyphicon-floppy-save"></span></button>
+
+                    </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+
+    Vue.component('modal', {
+        template: '#Modal',
+        props: {
+            show: {
+                type: Boolean,
+                required: true,
+                twoWay: true
+
+            }
+        },
+        methods: {
+            close: function() {
+                this.show = false;
+            },
+            closeButton: function() {
+                    $("form#@formId").submit();
+                    this.show = false;
+
+            }
+        },
+        ready: function() {
+            this.show = true;
+            document.addEventListener("keydown", (e) => {
+                if (this.show && e.keyCode == 27) {
+                    this.close();
+                } else if (this.show && e.keyCode == 13) {
+                    this.closeButton();
+                }
+            });
+        }
+    });
+
+        new Vue({
+            el: '#Box',
+            data: {
+                showModal: false,
+            },
+            methods: {
+                showModalf: function() {
+                    this.showModal = true;
+                }
+
+            }
+
+        });
+
+
+
+</script>
+

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -7,12 +8,15 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using ButterflyFriends.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin.Security.DataProtection;
 
 namespace ButterflyFriends.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
+        ApplicationDbContext _context = new ApplicationDbContext();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -64,13 +68,30 @@ namespace ButterflyFriends.Controllers
                 : "";
 
             var userId = User.Identity.GetUserId();
-            var model = new IndexViewModel
+            var indexModel = new IndexViewModel
             {
                 HasPassword = HasPassword(),
                 PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
                 Logins = await UserManager.GetLoginsAsync(userId),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+            };
+            var user =_context.Users.Find(userId);
+            var profileModel = new changeProfileModel 
+            {
+                Fname = user.Fname,
+                Lname = user.Lname,
+                City = user.Adress.City,
+                StreetAdress = user.Adress.StreetAdress,
+                PostCode = user.Adress.PostCode,
+                State = user.Adress.County,
+                Phone = user.Phone,
+                Id = user.Id
+            };
+            var model = new ProfileViewModel
+            {
+                Index = indexModel,
+                Profile = profileModel
             };
             return View(model);
         }
@@ -333,7 +354,161 @@ namespace ButterflyFriends.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        public ActionResult ShowUserEdit(string id)
+        {
+
+            if (id == null)                                             //Id is null, return bad request
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ApplicationUser user = _context.Users.Find(id);              //get the requested user
+
+            if (user == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            }
+            var changeProfileModel = new changeProfileModel
+            {
+                Fname = user.Fname,
+                Lname = user.Lname,
+                City = user.Adress.City,
+                StreetAdress = user.Adress.StreetAdress,
+                PostCode = user.Adress.PostCode,
+                State = user.Adress.County,
+                Phone = user.Phone,
+                Id = user.Id
+            };
+
+            return PartialView("_EditProfilePartial", changeProfileModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditUser(changeProfileModel model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var userId = User.Identity.GetUserId();
+                if (userId == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+                }
+
+                var store = new UserStore<ApplicationUser>(_context);
+                var manager = new UserManager<ApplicationUser>(store);
+                ApplicationUser user = manager.FindById(userId); //the current user
+
+
+
+                //so far so good, change the details of the user
+                user.Fname = model.Fname;
+                user.Lname = model.Lname;
+                user.Phone = model.Phone;
+
+                var newAdress = new DbTables.Adresses
+                {
+                    City = model.City,
+                    StreetAdress = model.StreetAdress,
+                    County = model.State,
+                    PostCode = model.PostCode
+                };
+                var adress = AdressExist(newAdress);
+
+                if (adress == null)
+                {
+                    user.Adress = newAdress;
+                    adress = newAdress;
+                    _context.Adresses.Add(newAdress);
+                    _context.SaveChanges();
+                    
+                }else if (user.Adress == adress)
+                {
+                    //do nothing
+                }
+                else
+                {
+                    user.Adress = adress;
+                }
+
+                IdentityResult result = await manager.UpdateAsync(user); //update the user in the databse
+                store.Context.SaveChanges();
+
+                if (result.Succeeded) //if update succeeds
+                {
+
+                    if (Request.IsAjaxRequest()) //it succeeds, show success status message
+                    {
+                        ViewBag.Success = "Profilinformasjon oppdatert.";
+                        var ProfileModel = new changeProfileModel
+                        {
+                            Id = user.Id,
+                            Fname = user.Fname,
+                            Lname = user.Lname,
+                            Phone = user.Phone,
+                            City = adress.City,
+                            State = adress.County,
+                            StreetAdress = adress.StreetAdress,
+                            PostCode = adress.PostCode
+                        };
+                        return PartialView("_UserInfoPartial", ProfileModel);
+                    }
+                }
+                else
+                { 
+                    var ProfileModel = new changeProfileModel
+                    {
+                        Id = user.Id,
+                        Fname = user.Fname,
+                        Lname = user.Lname,
+                        Phone = user.Phone,
+                        City = adress.City,
+                        State = adress.County,
+                        StreetAdress = adress.StreetAdress,
+                        PostCode = adress.PostCode
+                    };
+                    ViewBag.Error = "Noe gikk galt.";
+                    return PartialView("_UserInfoPartial", ProfileModel);
+                }
+            }
+            else
+            {
+                ApplicationUser user = _context.Users.Find(User.Identity.GetUserId());
+                var adress = _context.Adresses.Find(user.AdressId);
+                var ProfileModel = new changeProfileModel
+                {
+                    Id = user.Id,
+                    Fname = user.Fname,
+                    Lname = user.Lname,
+                    Phone = user.Phone,
+                    City = adress.City,
+                    State = adress.County,
+                    StreetAdress = adress.StreetAdress,
+                    PostCode = adress.PostCode
+                };
+                ViewBag.Error = "Noe gikk galt.";
+                return PartialView("_UserInfoPartial", ProfileModel);
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
+
+        public DbTables.Adresses AdressExist(DbTables.Adresses adress)
+        {
+            var adresses = _context.Set<DbTables.Adresses>();
+            foreach (var Adress in adresses)
+            {
+                if (adress.StreetAdress == Adress.StreetAdress && adress.PostCode == Adress.PostCode)
+                {
+                    return Adress;
+                }
+            }
+            return null;
+        }
+
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 

@@ -86,7 +86,111 @@ textarea {
     margin-top: 15px;
     color: #e6e6e6;
 }
+.b:hover {
+    color: white;
+}
+/*
 a,
 a:hover{
     color: white;
+}*/
+
+/*Modal css*/
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: table;
+  transition: opacity .3s ease;
 }
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.modal-container {
+  width: 550px;
+  margin: 0px auto;
+  padding: 20px 20px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+  transition: all .3s ease;
+  font-family: Helvetica, Arial, sans-serif;
+  
+}
+
+
+.modal-header h3 {
+  margin-top: 0;
+  color: #426bf4;
+}
+
+.modal-body {
+  margin: 20px 0;
+
+  max-height: calc(100vh - 210px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  
+    
+}
+
+.modal-default-button {
+  float: right;
+}
+
+.modal-enter, .modal-leave {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+/*---------------------*/
+
+/*ajax loader*/
+.loader
+{
+    background: black;
+    position: fixed; /* or absolute */
+    top: 50%;
+    left: 50%;
+    width: 50px;
+	height: 50px;
+	border: 8px solid #fff;
+	border-right-color: transparent;
+	border-radius: 50%;
+	box-shadow: 0 0 25px 2px #eee;
+    z-index: 999;
+}
+.loader
+{
+  animation: spin 1s linear infinite;
+}
+@keyframes spin
+{
+  from { transform: rotate(0deg);   opacity: 0.2; }
+  50%  { transform: rotate(180deg); opacity: 1.0; }
+  to   { transform: rotate(360deg); opacity: 0.2; }
+}
+.loader-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: table;
+  transition: opacity .1s ease;
+}
+/*--------------------------*/
