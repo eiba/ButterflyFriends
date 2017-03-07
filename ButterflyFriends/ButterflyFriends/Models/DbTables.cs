@@ -80,6 +80,7 @@ namespace ButterflyFriends.Models
         [Table("Picture")]
         public class File
         {
+            [Key]
             public int FileId { get; set; }
             [StringLength(255)]
             public string FileName { get; set; }

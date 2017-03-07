@@ -1,0 +1,15 @@
+﻿@model IList<ButterflyFriends.Models.DbTables.File>
+@{
+    ViewBag.Title = "Images";
+}
+
+<h2>Images</h2>
+@if (Model.Count == 0)
+{
+    return;
+}
+
+@foreach (var item in Model)
+{
+ <img src="~/File?id=@item.FileId"/>   
+}

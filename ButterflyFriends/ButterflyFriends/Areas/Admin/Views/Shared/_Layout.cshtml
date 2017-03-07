@@ -6,6 +6,10 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/vue.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.facedetection.min.js"></script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -33,7 +37,6 @@
         </footer>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>

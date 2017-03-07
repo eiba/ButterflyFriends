@@ -194,3 +194,57 @@ a:hover{
   transition: opacity .1s ease;
 }
 /*--------------------------*/
+
+.imageShow {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    border: 1px solid #000;
+    margin: 10px 5px 0 0;
+   }
+
+.select {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #000;
+    width: 50px;
+    height: 50px;
+
+}
+.imageDiv {
+    position: relative;
+}
+.imageDiv img {
+    width: 100%;
+}
+/*tagging box*/
+.box{
+            
+                position: absolute;
+                margin: 0 auto;
+                display: inline-block;
+                border-width: 4px;
+                border-color: grey;
+                border-style: solid;
+                z-index: 999;
+            }
+
+            .box input
+            {
+                /*visibility: hidden;*/
+                max-width: 100%; 
+                position: relative;
+            }
+
+            .box:hover
+            {
+                border-width: 4px;
+                border-color: grey;
+                border-style: solid;
+            }
+
+            .box:hover input
+            {
+                visibility: visible;
+            }

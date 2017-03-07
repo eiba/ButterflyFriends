@@ -198,9 +198,17 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Admin\fileUploader.ashx.cs">
+      <DependentUpon>fileUploader.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\Admin\Models\ImagesModel.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="fileUploader.ashx.cs">
+      <DependentUpon>fileUploader.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -219,12 +227,18 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="det.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="kids.jpg" />
+    <Content Include="Areas\Admin\fileUploader.ashx" />
+    <Content Include="fileUploader.ashx" />
+    <Content Include="Areas\Admin\Views\Home\Images.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery.facedetection.js" />
+    <Content Include="Scripts\jquery.facedetection.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="wallpaper.jpg" />
     <Content Include="Global.asax" />
@@ -254,6 +268,7 @@
     <Content Include="Scripts\jquery-3.1.1.min.js" />
     <Content Include="Scripts\jquery-3.1.1.slim.js" />
     <Content Include="Scripts\jquery-3.1.1.slim.min.js" />
+    <Content Include="Scripts\jquery.facedetection.min.js.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
@@ -266,7 +281,6 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\vue.min.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
@@ -308,7 +322,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Views\File\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
