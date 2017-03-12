@@ -32,6 +32,8 @@ namespace ButterflyFriends.Models
         public virtual IList<DbTables.Child> Children { get; set; }
         public virtual DbTables.Employees Employee { get; set; }
         public virtual IList<DbTables.File> Pictures { get; set; }
+        //public virtual IList<DbTables.TagBox> TagBoxs { get; set; }
+
         /// <summary>
         /// Method for asynchronously generating unique and complex ids for the user accounts.
         /// </summary>
@@ -60,6 +62,7 @@ namespace ButterflyFriends.Models
         public DbSet<DbTables.Child> Children { get; set; }
         public DbSet<DbTables.File> Files { get; set; }
 
+        public DbSet<DbTables.TagBox> TagBoxs { get; set; }
         /// <summary>
         /// Creates the database
         /// </summary>

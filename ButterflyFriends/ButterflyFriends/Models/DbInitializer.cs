@@ -59,6 +59,76 @@ namespace ButterflyFriends.Models
             userManager.Create(owner, "Password1.");
             userManager.AddToRole(owner.Id, "Owner");
 
+            var user1 = new ApplicationUser
+            {
+                UserName = "some@butterflyfriends.no",
+                Email = "some@butterflyfriends.no",
+                Fname = "Frank",
+                Lname = "Åsnes",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user1, "Password1.");
+            userManager.AddToRole(user1.Id, "Sponsor");
+
+            var user2 = new ApplicationUser
+            {
+                UserName = "some2@butterflyfriends.no",
+                Email = "some2@butterflyfriends.no",
+                Fname = "Janne",
+                Lname = "Fiskeman",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user2, "Password1.");
+            userManager.AddToRole(user2.Id, "Sponsor");
+
+            var user3 = new ApplicationUser
+            {
+                UserName = "some3@butterflyfriends.no",
+                Email = "some3@butterflyfriends.no",
+                Fname = "Ole",
+                Lname = "Ingeredsen",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user3, "Password1.");
+            userManager.AddToRole(user3.Id, "Sponsor");
+
+            var user4 = new ApplicationUser
+            {
+                UserName = "some4@butterflyfriends.no",
+                Email = "some4@butterflyfriends.no",
+                Fname = "Mari",
+                Lname = "Flatland",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user4, "Password1.");
+            userManager.AddToRole(user4.Id, "Sponsor");
+
+            var user5 = new ApplicationUser
+            {
+                UserName = "some5@butterflyfriends.no",
+                Email = "some5@butterflyfriends.no",
+                Fname = "Inge",
+                Lname = "Olemann",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user5, "Password1.");
+            userManager.AddToRole(user5.Id, "Sponsor");
+
             db.SaveChanges();
 
             //This method is for when you want to make a database diagram, of the database.

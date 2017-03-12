@@ -16,6 +16,12 @@
 .body-content {
 
 }
+.statustxt {
+    text-align: center
+}
+.rightImageDiv {
+    padding-top: 30px;
+}
 .mainDiv {
     padding: 20px;
     margin-top: 50px;
@@ -55,7 +61,7 @@
 input,
 select,
 textarea {
-    max-width: 280px;
+    max-width: 100%;
 }
 
 .navbar-inverse .navbar-brand {
@@ -197,9 +203,8 @@ a:hover{
 
 .imageShow {
     position: relative;
-    width: 100%;
-    max-width: 100%;
-    min-width: 100%;
+    width: 750px;
+    min-width: 750px;
     border: 1px solid #000;
     margin: 10px 5px 0 0;
    }
@@ -215,36 +220,84 @@ a:hover{
 .imageDiv {
     position: relative;
 }
-.imageDiv img {
-    width: 100%;
+
+.imgSpan {
+    position: relative;
+    min-width: 100%;
+    
 }
+
 /*tagging box*/
 .box{
             
-                position: absolute;
+                position: absolute !important;
                 margin: 0 auto;
                 display: inline-block;
-                border-width: 4px;
+                z-index: 500;
+                border-width: 3px;
                 border-color: grey;
-                border-style: solid;
-                z-index: 999;
+                border-style:solid;
+                border-radius: 10px;
+                opacity: 0.5;
+                -webkit-transition: opacity 0.5s ease-in-out;
+                -moz-transition: opacity 0.5s ease-in-out;
+                -ms-transition: opacity 0.5s ease-in-out;
+                -o-transition: opacity 0.5s ease-in-out;
+                
             }
 
             .box input
             {
                 /*visibility: hidden;*/
-                max-width: 100%; 
-                position: relative;
+                width: 100%; 
+                position: absolute;
+                bottom: 0;
+                border-radius: 5px;
+ 
+            }
+            .box span {
+                color: black;
+                position: absolute;
+                font-size: 20px;
+                float: right;
+                margin-right: 2px;
+                
             }
 
             .box:hover
             {
-                border-width: 4px;
-                border-color: grey;
-                border-style: solid;
-            }
 
+                z-index: 999;
+                opacity: 1;
+                border-width: 4px;
+            }
+            /*
             .box:hover input
             {
                 visibility: visible;
-            }
+                z-index: 999;
+                opacity: 1;
+            }*/
+
+.suggestionBox {
+    display:none;
+    background-color:white;
+    color: #3b3835;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-top: 0;
+    float: left;
+    left: 0;
+    list-style: none;
+    margin: 20px;
+    padding: 8px;
+    position: absolute;
+    top: 31px;
+    width: 180px;
+    z-index: 1000;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);  
+}

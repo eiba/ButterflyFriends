@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using ButterflyFriends.Areas.Admin.Controllers;
 
 namespace ButterflyFriends.Models
 {
@@ -88,10 +89,25 @@ namespace ButterflyFriends.Models
             public string ContentType { get; set; }
             public byte[] Content { get; set; }
             public FileType FileType { get; set; }
+
+            public virtual IList<TagBox> Tags { get; set; }
+
             public virtual IList<Child> Children { get; set; }
             public virtual IList<ApplicationUser> User { get; set; }
         }
+        public class TagBox
+        {
+            [Key]
+            public int TagId { get; set; }
 
+            public string Id { get; set; }
+            public int x { get; set; }
+            public int y { get; set; }
+            public int width { get; set; }
+            public int height { get; set; }
+            public string Name { get; set; }
+            //public virtual File picture {get; set; }
+        }
         public enum FileType
         {
             Picture = 1

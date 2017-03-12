@@ -1,6 +1,10 @@
 ﻿@model IList<ButterflyFriends.Models.DbTables.File>
 @{
     ViewBag.Title = "Images";
+    var k = 0;
+
+    var imgId = 0;
+    var divId = 0 + "d";
 }
 
 <h2>Images</h2>
@@ -8,8 +12,64 @@
 {
     return;
 }
-
+<p>Images: @Model.Count</p>
+<hr/>
 @foreach (var item in Model)
-{
- <img src="~/File?id=@item.FileId"/>   
+{ 
+    <div id="@divId" style="position: relative;">
+        <img src="~/File?id=@item.FileId" onload="imgFunc(this)" id="@imgId" style="position: relative; width: 750px;" />
+        
+        @foreach (var tagBox in item.Tags)
+        {
+            var width = @tagBox.width+"px";
+            var height = @tagBox.height + "px";
+            var x = @tagBox.x + "px";
+            var y = @tagBox.y + "px";
+            var id = "test" + k;
+            <div class="box" style="width: @width; height: @height; left: @x; top: @y"></div>
+        }
+        @{
+            imgId += 1;
+            divId = imgId +"d";
+
+        }
+    </div>
+
+    
 }
+
+<script>
+    function imgFunc(img) {
+        //alert("loaded");
+        //console.log(img);
+        //var img = this;
+        var originalHeight = $(img).get(0).naturalHeight;
+        var originalWidth = $(img).get(0).naturalWidth;
+        var displayedWidth = parseInt($(img).css("width"), 10);
+        var displayedHeight = parseInt($(img).css("height"), 10);
+        var scaleY = displayedHeight / originalHeight;
+        var scaleX = displayedWidth / originalWidth;
+        var id = $(img).id;
+        $('#' + id + 'd').children('div').each(function () {
+            var width = $(this).css("width");
+            var height = $(this).css("height");
+            var width = $(this).css("width");
+            var width = $(this).css("width");
+        });
+    }
+    $(document).ready(function () {
+      /* 
+        console.log(something);
+        
+        var parentOffset = $("#testDiv").parent().offset();
+        var current = parseInt($("#test0").css("left"));
+        var currentY = parseInt($("#test0").css("top"));
+        var left = current + parentOffset.left;
+        var top = currentY + parentOffset.top;
+
+        console.log(left);
+        $("#test0").css("left", left);
+        $("#test0").css("top", top);*/
+    });
+
+</script>
