@@ -73,8 +73,6 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     HttpFileCollectionBase files = Request.Files;
                     for (int i = 0; i < files.Count; i++)
                     {
-                        //string path = AppDomain.CurrentDomain.BaseDirectory + "Uploads/";  
-                        //string filename = Path.GetFileName(Request.Files[i].FileName);  
 
                         HttpPostedFileBase file = files[i];
     
@@ -103,23 +101,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
                         _context.Files.Add(picture);
                         _context.SaveChanges();
-                        /*
-                        string fname;
 
-                        // Checking for Internet Explorer  
-                        if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
-                        {
-                            string[] testfiles = file.FileName.Split(new char[] { '\\' });
-                            fname = testfiles[testfiles.Length - 1];
-                        }
-                        else
-                        {
-                            fname = file.FileName;
-                        }
-
-                        // Get the complete folder path and store the file inside it.  
-                        fname = Path.Combine(Server.MapPath("~/Uploads/"), fname);
-                        file.SaveAs(fname);*/
                     }
                     // Returns message that successfully uploaded  
                     return Json("Filopplastning var en suksess!");

@@ -77,6 +77,7 @@ namespace ButterflyFriends.Controllers
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
             var user =_context.Users.Find(userId);
+            var images = user.Pictures;
             var profileModel = new changeProfileModel 
             {
                 Fname = user.Fname,

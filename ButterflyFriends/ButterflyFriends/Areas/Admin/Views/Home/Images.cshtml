@@ -26,7 +26,9 @@
             var x = @tagBox.x + "px";
             var y = @tagBox.y + "px";
             var id = "test" + k;
-            <div class="box" style="width: @width; height: @height; left: @x; top: @y"></div>
+            <div class="showBox" style="width: @width; height: @height; left: @x; top: @y">
+                <input value="@tagBox.Name" disabled/>
+            </div>
         }
         @{
             imgId += 1;
@@ -40,7 +42,7 @@
 
 <script>
     function imgFunc(img) {
-        //alert("loaded");
+        
         //console.log(img);
         //var img = this;
         var originalHeight = $(img).get(0).naturalHeight;
@@ -49,12 +51,21 @@
         var displayedHeight = parseInt($(img).css("height"), 10);
         var scaleY = displayedHeight / originalHeight;
         var scaleX = displayedWidth / originalWidth;
-        var id = $(img).id;
-        $('#' + id + 'd').children('div').each(function () {
-            var width = $(this).css("width");
-            var height = $(this).css("height");
-            var width = $(this).css("width");
-            var width = $(this).css("width");
+        var id = img.id;
+        $('#' + id + 'd').children('div').each(function () {           
+            var width = parseInt($(this).css("width"));
+            var height = parseInt($(this).css("height"));
+            var x = parseInt($(this).css("left"));
+            var y = parseInt($(this).css("top"));
+
+            var newWidth = width * scaleX;
+            var newHeight = height * scaleY;
+            var newX = x * scaleX;
+            var newY = (y * scaleY)-10;
+            $(this).css("width", newWidth);
+            $(this).css("height", newHeight);
+            $(this).css("top", newY);
+            $(this).css("left", newX);
         });
     }
     $(document).ready(function () {

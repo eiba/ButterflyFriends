@@ -253,6 +253,7 @@ a:hover{
                 position: absolute;
                 bottom: 0;
                 border-radius: 5px;
+                background-color: white;
  
             }
             .box span {
@@ -278,6 +279,49 @@ a:hover{
                 z-index: 999;
                 opacity: 1;
             }*/
+         .showBox{
+            
+                position: absolute !important;
+                margin: 0 auto;
+                display: inline-block;
+                z-index: 500;
+                border-width: 3px;
+                border-color: grey;
+                border-style:solid;
+                border-radius: 10px;
+                opacity: 0;
+                -webkit-transition: opacity 0.1s ease-in-out;
+                -moz-transition: opacity 0.1s ease-in-out;
+                -ms-transition: opacity 0.1s ease-in-out;
+                -o-transition: opacity 0.1s ease-in-out;
+                
+            }
+
+            .showBox input
+            {
+                /*visibility: hidden;*/
+                width: 100%; 
+                position: absolute;
+                bottom: 0;
+                border-radius: 5px;
+ 
+            }
+            .showBox span {
+                color: black;
+                position: absolute;
+                font-size: 20px;
+                float: right;
+                margin-right: 2px;
+                
+            }
+
+            .showBox:hover
+            {
+
+                z-index: 999;
+                opacity: 1;
+                border-width: 4px;
+            }
 
 .suggestionBox {
     display:none;
