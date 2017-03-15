@@ -15,7 +15,7 @@ namespace ButterflyFriends.Models
     /// The database initializer. Here we seed the database with test data when we run the project.
     /// The database is current DropCreateDatabaseIfModelChanges, so it drops and reseeds the database if any of the models/database tables change
     /// </summary>
-    public class DbInitializer: DropCreateDatabaseIfModelChanges<ApplicationDbContext>
+    public class DbInitializer: DropCreateDatabaseAlways<ApplicationDbContext>
     {
 
         /// <summary>

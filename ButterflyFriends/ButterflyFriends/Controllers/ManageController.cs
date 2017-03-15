@@ -501,7 +501,7 @@ namespace ButterflyFriends.Controllers
             var adresses = _context.Set<DbTables.Adresses>();
             foreach (var Adress in adresses)
             {
-                if (adress.StreetAdress == Adress.StreetAdress && adress.PostCode == Adress.PostCode)
+                if (adress.StreetAdress == Adress.StreetAdress && adress.PostCode == Adress.PostCode & adress.City == Adress.City && adress.County == Adress.County)
                 {
                     return Adress;
                 }

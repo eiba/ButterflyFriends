@@ -85,6 +85,14 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -140,6 +148,10 @@
     </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="X.PagedList, Version=5.3.0.21888, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\X.PagedList.5.3.0.5300\lib\portable-net45+wp8+win8\X.PagedList.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -199,7 +211,9 @@
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\HRManagementController.cs" />
-    <Compile Include="Areas\Admin\Models\ImagesModel.cs" />
+    <Compile Include="Areas\Admin\Models\HRmanagementModels\changeUserInfo.cs" />
+    <Compile Include="Areas\Admin\Models\HRManagamentModel.cs" />
+    <Compile Include="Areas\Admin\Models\HRmanagementModels\EmployeeModel.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -223,6 +237,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -296,6 +311,12 @@
     <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Admin\Views\Home\Index.cshtml" />
     <Content Include="Areas\Admin\Views\HRManagement\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\ListPartials\_EmployeePartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\ListPartials\_SponsorPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\ListPartials\_ChildrenPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\DetailPartials\_EmployeeDetailsPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\EditPartials\_EmployeeEditPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\CreatePartials\_EmployeeCreatePartial.cshtml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

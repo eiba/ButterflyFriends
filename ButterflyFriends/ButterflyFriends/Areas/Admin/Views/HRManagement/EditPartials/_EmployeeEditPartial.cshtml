@@ -1,9 +1,8 @@
-﻿@using Microsoft.AspNet.Identity
-@using Microsoft.AspNet.Identity.EntityFramework
-@model ButterflyFriends.Models.changeProfileModel
+﻿@model ButterflyFriends.Areas.Admin.Models.changeUserInfo
 @{
 
     var formId = "profileForm";
+    var ModalId = Model.Id + "d";
 }
 
 <div id="Box">
@@ -11,10 +10,10 @@
     <modal :show.sync="showModal">
         <h3 slot="header">Edit user</h3>
         <h5 slot="body">
-            @using (Ajax.BeginForm("EditUser", "Manage", new AjaxOptions
+            @using (Ajax.BeginForm("EditEmployee", "HRManagement", new AjaxOptions
             {
 
-                UpdateTargetId = "ProfileUpdate",
+                UpdateTargetId = "updateEmployees",
                 InsertionMode = InsertionMode.Replace,
                 HttpMethod = "POST",
 
@@ -25,7 +24,14 @@
                 <div class="form-horizontal">
                     @Html.ValidationSummary(true)
                     @Html.HiddenFor(model => model.Id)
-
+                    
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="Email" value="@Model.Email" class="form-control" id="model" required>
+                            @Html.ValidationMessageFor(model => model.Email)
+                        </div>
+                    </div>
                     <div class="form-group">
                         @Html.LabelFor(model => model.Fname, new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
@@ -77,13 +83,27 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        <input name="Password" value="" class="form-control" type="password">
+                        @Html.ValidationMessageFor(model => model.Password)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        <input name="ConfirmPassword" value="" class="form-control" type="password">
+                        @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                    </div>
+                </div>
 
             }
         </h5>
     </modal>
 </div>
 
-<script type="x/template" id="Modal">
+<script type="x/template" id="@ModalId">
     <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
         <div class="modal-wrapper">
             <div class="modal-container" v-on:click.stop>
@@ -114,7 +134,7 @@
 <script>
 
     Vue.component('modal', {
-        template: '#Modal',
+        template: '#@ModalId',
         props: {
             show: {
                 type: Boolean,
@@ -126,10 +146,12 @@
         methods: {
             close: function() {
                 this.show = false;
+                $(".loader-mask").hide();
             },
             closeButton: function() {
-                    $("form#@formId").submit();
-                    this.show = false;
+                $("form#@formId").submit();
+                this.show = false;
+                $(".loader-mask").hide();
 
             }
         },
@@ -162,4 +184,3 @@
 
 
 </script>
-

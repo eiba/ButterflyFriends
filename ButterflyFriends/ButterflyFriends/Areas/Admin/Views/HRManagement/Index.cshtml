@@ -1,2 +1,49 @@
-﻿
+﻿@model ButterflyFriends.Areas.Admin.Models.HRManagamentModel
+@{
+
+}
+<div class="loader"></div>
+<div class="loader-mask"></div>
+<script src="https://use.fontawesome.com/8ab56c817f.js"></script>
 <h3>Brukeradministrasjon</h3>
+
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#Employees" class="Employees"><b>Ansatte</b></a></li>
+    <li><a data-toggle="tab" href="#Sponsors" class="Sponsors"><b>Faddere</b></a></li>
+    <li><a data-toggle="tab" href="#Children" class="Children"><b>Fadderbarn</b></a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="Employees" class="tab-pane fade in active">
+        <div id="updateEmployees">
+            @Html.Partial("ListPartials/_EmployeePartial",Model.EmployeeModel,new ViewDataDictionary { { "","" }})
+        </div>
+    </div>
+    <div id="Sponsors" class="tab-pane fade">
+
+        <div id="updateSponsors">
+            @Html.Partial("ListPartials/_SponsorPartial")
+        </div>
+    </div>
+    <div id="Children" class="tab-pane fade">
+        <div id="updateChildren">
+            @Html.Partial("ListPartials/_ChildrenPartial")
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".loader").hide();
+        $(".loader-mask").hide();
+        $(document).ajaxStart(function () {
+            $(".loader").show();
+            $(".loader-mask").show();
+        }).ajaxStop(function () {
+            $(".loader").hide();
+            //$(".loader-mask").hide();
+        });
+    });
+
+
+</script>

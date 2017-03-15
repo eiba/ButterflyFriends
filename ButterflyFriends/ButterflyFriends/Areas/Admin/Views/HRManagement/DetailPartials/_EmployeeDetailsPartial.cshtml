@@ -1,0 +1,134 @@
+﻿@model ApplicationUser
+
+
+@{
+
+    var fullname = Model.Fname + " " + Model.Lname;
+    var mailto = "mailto:" + Model.Email;
+    var ModalId = Model.Id + "e";
+}
+
+<script type="x/template" id="@ModalId">
+    <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
+        <div class="modal-wrapper">
+            <div class="modal-container" v-on:click.stop>
+
+                <div class="modal-header">
+                    <slot name="header">
+                    </slot>
+                </div>
+
+                <div class="modal-body">
+                    <slot name="body">
+                    </slot>
+                </div>
+
+                <div class="modal-footer">
+                    <slot name="footer">
+                        <button class="modal-default-button btn-primary btn"
+                                v-on:click="close">
+                             OK <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<div id="Box">
+
+    <modal :show.sync="showModal">
+        <h3 slot="header">@fullname</h3>
+        <h5 slot="body">
+            <dl class="dl-horizontal">
+                <dt>
+                    Email:
+                </dt>
+                <dd>
+                    <a href="@mailto">@Html.DisplayFor(modelItem => Model.Email)</a>
+                </dd>
+            
+                <dt>
+                    Gateadresse:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(modelItem => Model.Adress.StreetAdress)
+                </dd>
+                <dt>
+                    Poststed:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(modelItem => Model.Adress.City)
+                </dd>
+                <dt>
+                    Postnummer:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(modelItem => Model.Adress.PostCode)
+                </dd>
+                <dt>
+                    Fylke:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(modelItem => Model.Adress.County)
+                </dd>
+                <dt>
+                    Tlf:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(modelItem => Model.Phone)
+                </dd>
+                <dt>
+                    Brukerolle:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(modelItem => Model.AccessLvL)
+                </dd>
+            
+            </dl>
+            
+        </h5>
+    </modal>
+</div>
+
+<script>
+                            Vue.component('modal', {
+                                template: '#@ModalId',
+                                props: {
+                                    show: {
+                                        type: Boolean,
+                                        required: true,
+                                        twoWay: true
+
+                                    }
+                                },
+                                methods: {
+                                    close: function() {
+                                        this.show = false;
+                                        $(".loader-mask").hide();
+                                    }
+                                },
+                                ready: function () {
+                                    this.show = true;
+                                    document.addEventListener("keydown", (e) => {
+                                        if (this.show && e.keyCode == 27) {
+                                            
+                                            this.close();
+                                        }
+                                        else if (this.show && e.keyCode == 13) {
+                                            e.preventDefault();
+                                            this.close();
+                                        }
+
+
+                                    });
+                                }
+                            });
+                            new Vue({
+                                el: '#Box',
+                                data: {
+                                    showModal: false
+                                }
+                            });
+</script>

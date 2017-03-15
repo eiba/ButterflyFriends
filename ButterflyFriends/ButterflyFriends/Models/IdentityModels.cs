@@ -27,6 +27,7 @@ namespace ButterflyFriends.Models
         public string Phone { get; set; }
         public string AccessLvL { get; set; }
         public bool IsEnabeled { get; set; }
+        public int RoleNr { get; set; }
 
         public virtual DbTables.Adresses Adress { get; set; }
         public virtual IList<DbTables.Child> Children { get; set; }
