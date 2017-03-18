@@ -9,5 +9,6 @@ namespace ButterflyFriends.Areas.Admin.Models
     public class HRManagamentModel
     {
         public EmployeeModel EmployeeModel { get; set; }
+        public ChildrenModel ChildrenModel { get; set; }
     }
 }

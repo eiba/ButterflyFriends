@@ -1,4 +1,4 @@
-﻿
+﻿@model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.ChildrenModel
 <div class="row">
 
     <div class="col-md-12">
@@ -19,20 +19,24 @@
                         <tr>
                             <th><em class="fa fa-cog"></em></th>
                             <th class="hidden-xs">ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
+                            <th>Navn</th>
+                            <th>Fødselsdag</th>
                         </tr>
                     </thead>
                     <tbody>
+                    @foreach(var child in Model.Children)
+                    {
+                        var fullName = child.Fname+" "+child.Lname;
                         <tr>
                             <td align="center">
                                 <a class="btn btn-default"><em class="fa fa-pencil"></em></a>
                                 <a class="btn btn-danger"><em class="fa fa-trash"></em></a>
                             </td>
-                            <td class="hidden-xs">1</td>
-                            <td>John Doe</td>
-                            <td>johndoe@example.com</td>
+                            <td class="hidden-xs">@child.Id</td>
+                            <td>@fullName</td>
+                            <td>@child.DoB</td>
                         </tr>
+                    }
                     </tbody>
                 </table>
 

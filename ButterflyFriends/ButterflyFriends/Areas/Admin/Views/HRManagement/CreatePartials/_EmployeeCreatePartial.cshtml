@@ -20,7 +20,7 @@
 
 
 
-            @using (Ajax.BeginForm("CreateEmployee", "HRManagement", new AjaxOptions
+            @using (Ajax.BeginForm("CreateEmployee", "HRManagement",new {page = ViewBag.page}, new AjaxOptions
             {
                 UpdateTargetId = "updateEmployees",
                 InsertionMode = InsertionMode.Replace,

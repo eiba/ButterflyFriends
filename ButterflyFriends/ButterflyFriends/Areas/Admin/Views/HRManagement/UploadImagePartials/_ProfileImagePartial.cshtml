@@ -1,0 +1,12 @@
+﻿@model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.FileModel
+    
+@if (Model.FileId != null)
+            {
+    <p>Nåværende profilbilde:</p>
+    <img class="profileImageShow" src="~/File/ProfilePicture?id=@Model.FileId" />
+}
+else
+{
+    <p>Ingen profilbilde er valgt</p>
+
+}

@@ -155,10 +155,13 @@
                 .on('click',
                     function (e) {
                         e.stopPropagation();
+                        e.preventDefault();
                     });
 
             $("#" + id + "" + n+"p").on('input', function () {
-
+                if (!($(this).val())) {
+                    return;
+                }
                 var text = $("#" + id + "" + n+"p").val();
                 $.ajax({
                     url: '/Admin/Home/GetUsers',
@@ -183,7 +186,7 @@
                     success: function (result) {
                         var tags = [];
                         for (var i = 0; i < result.length; i++) {
-                            var obj = { label: result[i].Name, id: result[i].Id}
+                            var obj = { label: result[i].Name, id: result[i].Id, imgid:result[i].imgId}
                             tags.push(obj);
                             
                             
@@ -197,12 +200,53 @@
                                 $("#" + id + "" + n).attr("nameid", ui.item.id);
                             }
                         });
+                        $("#" + id + "" + n + "p").data("ui-autocomplete")._renderItem = function (ul, item) {
+
+                            if (item.imgid === 0) {
+
+                                var $li = $('<li>'),
+                                $i = $('<i class="fa fa-question-circle" aria-hidden="true"></i>');
+
+
+                                $i.css({
+                                    "width": 40,
+                                    "margin-right": 3,
+                                    "padding-left": 13
+                                });
+
+                                $li.attr('data-value', item.label);
+                                $li.append('<a href="#">');
+                                $li.find('a').append($i).append(item.label);
+
+                                return $li.appendTo(ul);
+                            }
+                            var $li = $('<li>'),
+                                $img = $('<img>');
+
+
+                            $img.attr({
+                                src: '../FileAdmin?id=' + item.imgid
+                               
+                            });
+                            $img.css({
+                                "width":40,
+                                "margin-right":3
+                            });
+
+                            $li.attr('data-value', item.label);
+                            $li.append('<a href="#">');
+                            $li.find('a').append($img).append(item.label);
+
+                            return $li.appendTo(ul);
+                        
+                        };
                         $("#" + id + "" + n+"p").autocomplete("search", text);
 
 
                     },
                     error: function (err) {
-                        alert(err.statusText);
+                        console.log(err.statusText);
+                        console.log(err);
                     }
                 });
             });

@@ -2,9 +2,7 @@
 @{
 
 }
-<div class="loader"></div>
-<div class="loader-mask"></div>
-<script src="https://use.fontawesome.com/8ab56c817f.js"></script>
+
 <h3>Brukeradministrasjon</h3>
 
 <ul class="nav nav-tabs">
@@ -27,7 +25,7 @@
     </div>
     <div id="Children" class="tab-pane fade">
         <div id="updateChildren">
-            @Html.Partial("ListPartials/_ChildrenPartial")
+            @Html.Partial("ListPartials/_ChildrenPartial",Model.ChildrenModel)
         </div>
     </div>
 </div>
@@ -42,6 +40,18 @@
         }).ajaxStop(function () {
             $(".loader").hide();
             //$(".loader-mask").hide();
+        });
+        
+        $(document).on("click", "#contentPager a[href]", function () {
+            $.ajax({
+                url: $(this).attr("href"),
+                type: 'GET',
+                cache: false,
+                success: function (result) {
+                    $('#updateEmployees').html(result);
+                }
+            });
+            return false;
         });
     });
 

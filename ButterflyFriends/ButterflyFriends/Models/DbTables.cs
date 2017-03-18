@@ -73,6 +73,7 @@ namespace ButterflyFriends.Models
             public string Lname { get; set; }
             [Display(Name = "Fødselsdato")]
             public string DoB { get; set; }
+            public bool isActive { get; set; }
 
             public virtual ApplicationUser User { get; set; }
             public virtual IList<File> Pictures { get; set; }
@@ -94,7 +95,26 @@ namespace ButterflyFriends.Models
 
             public virtual IList<Child> Children { get; set; }
             public virtual IList<ApplicationUser> User { get; set; }
+            public virtual ThumbNail ThumbNail { get; set; }
         }
+
+        [Table("Thumbnail")]
+        public class ThumbNail
+        {
+            [Key]
+            public int ThumbNailId { get; set; }
+            [StringLength(255)]
+            public string ThumbNailName { get; set; }
+            [StringLength(100)]
+            public string ContentType { get; set; }
+            public byte[] Content { get; set; }
+            public FileType FileType { get; set; }
+
+            [Required]
+            public virtual File File { get; set; }
+
+        }
+
         public class TagBox
         {
             [Key]
@@ -110,7 +130,7 @@ namespace ButterflyFriends.Models
         }
         public enum FileType
         {
-            Picture = 1
+            Picture = 1,Profile,Thumbnail
         }
     }
 }

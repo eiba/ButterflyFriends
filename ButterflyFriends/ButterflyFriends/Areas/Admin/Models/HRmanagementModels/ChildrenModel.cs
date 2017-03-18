@@ -5,11 +5,10 @@ using System.Web;
 using ButterflyFriends.Models;
 using PagedList;
 
-
 namespace ButterflyFriends.Areas.Admin.Models.HRmanagementModels
 {
-    public class EmployeeModel
+    public class ChildrenModel
     {
-        public IPagedList<ApplicationUser> Employees { get; set; }
+        public IPagedList<DbTables.Child> Children { get; set; }
     }
 }

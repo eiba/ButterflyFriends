@@ -15,7 +15,7 @@ namespace ButterflyFriends.Models
     /// The database initializer. Here we seed the database with test data when we run the project.
     /// The database is current DropCreateDatabaseIfModelChanges, so it drops and reseeds the database if any of the models/database tables change
     /// </summary>
-    public class DbInitializer: DropCreateDatabaseAlways<ApplicationDbContext>
+    public class DbInitializer: DropCreateDatabaseIfModelChanges<ApplicationDbContext>
     {
 
         /// <summary>
@@ -115,21 +115,141 @@ namespace ButterflyFriends.Models
             userManager.Create(user4, "Password1.");
             userManager.AddToRole(user4.Id, "Sponsor");
 
-            var user5 = new ApplicationUser
+            var user6 = new ApplicationUser
             {
-                UserName = "some5@butterflyfriends.no",
-                Email = "some5@butterflyfriends.no",
-                Fname = "Inge",
-                Lname = "Olemann",
+                UserName = "som6@butterflyfriends.no",
+                Email = "some6@butterflyfriends.no",
+                Fname = "Jan",
+                Lname = "Johansen",
                 AdressId = ownerAdress.AdressId,
                 AccessLvL = "Sponsor",
                 IsEnabeled = true,
                 Phone = "96347584"
             };
-            userManager.Create(user5, "Password1.");
-            userManager.AddToRole(user5.Id, "Sponsor");
+            userManager.Create(user6, "Password1.");
+            userManager.AddToRole(user6.Id, "Sponsor");
+
+            var user7 = new ApplicationUser
+            {
+                UserName = "some7@butterflyfriends.no",
+                Email = "some7@butterflyfriends.no",
+                Fname = "Lisa",
+                Lname = "Buadhl",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user7, "Password1.");
+            userManager.AddToRole(user7.Id, "Sponsor");
+
+            var user8 = new ApplicationUser
+            {
+                UserName = "some8@butterflyfriends.no",
+                Email = "some8@butterflyfriends.no",
+                Fname = "Tor",
+                Lname = "Hammer",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user8, "Password1.");
+            userManager.AddToRole(user8.Id, "Sponsor");
+
+            var user9 = new ApplicationUser
+            {
+                UserName = "some9@butterflyfriends.no",
+                Email = "some9@butterflyfriends.no",
+                Fname = "Karoline",
+                Lname = "Sørsvann",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user9, "Password1.");
+            userManager.AddToRole(user9.Id, "Sponsor");
+
+            var user10 = new ApplicationUser
+            {
+                UserName = "some10@butterflyfriends.no",
+                Email = "some10@butterflyfriends.no",
+                Fname = "Lars",
+                Lname = "Møllestad",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user10, "Password1.");
+            userManager.AddToRole(user10.Id, "Sponsor");
+
+            var user11 = new ApplicationUser
+            {
+                UserName = "some11@butterflyfriends.no",
+                Email = "some11@butterflyfriends.no",
+                Fname = "Camilla",
+                Lname = "Bam",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user11, "Password1.");
+            userManager.AddToRole(user11.Id, "Sponsor");
+
+            var user12 = new ApplicationUser
+            {
+                UserName = "some12@butterflyfriends.no",
+                Email = "some12@butterflyfriends.no",
+                Fname = "Asgeir",
+                Lname = "Millen",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Sponsor",
+                IsEnabeled = true,
+                Phone = "96347584"
+            };
+            userManager.Create(user12, "Password1.");
+            userManager.AddToRole(user12.Id, "Sponsor");
+
+            db.Children.Add(new DbTables.Child
+            {
+                Fname = "Mohammed",
+                Lname = "Bali",
+                DoB = "19.06.2005",
+                isActive = true,
+            });
+            db.Children.Add(new DbTables.Child
+            {
+                Fname = "Sasha",
+                Lname = "Dababa",
+                DoB = "19.06.2005",
+                isActive = true,
+            });
+            db.Children.Add(new DbTables.Child
+            {
+                Fname = "Moduba",
+                Lname = "Badabi",
+                DoB = "19.06.2005",
+                isActive = true,
+            }); db.Children.Add(new DbTables.Child
+            {
+                Fname = "Shika",
+                Lname = "Shinshi",
+                DoB = "19.06.2005",
+                isActive = true,
+            }); db.Children.Add(new DbTables.Child
+            {
+                Fname = "Abdu",
+                Lname = "Bali",
+                DoB = "19.06.2005",
+                isActive = true,
+            });
 
             db.SaveChanges();
+
+
 
             //This method is for when you want to make a database diagram, of the database.
             //Uncomment and change DropCreateDatabaseIfModelChanges to DropCreateDatabaseAlways

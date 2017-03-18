@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using ButterflyFriends.Models;
@@ -44,16 +45,22 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             var users = new List<object>();
 
-            var results = from s in _context.Users
+            var results = (from s in _context.Users
                           where
                           s.Fname.StartsWith(json) ||
                           s.Lname.StartsWith(json)
                           orderby s.Lname
-                          select s;
+                          select s).ToList();
 
+            
             foreach (var user in results)
             {
-                users.Add(new {Name = user.Fname +" "+ user.Lname, Id=user.Id});
+                var imgId = 0;
+                if (user.Thumbnail != null)
+                {
+                    imgId = user.Thumbnail.ThumbNailId;
+                }
+                users.Add(new {Name = user.Fname +" "+ user.Lname, Id=user.Id,imgId = imgId});
             }
             return Json(users);
         }
@@ -75,7 +82,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     {
 
                         HttpPostedFileBase file = files[i];
-    
+                        
                         var picture = new DbTables.File
                         {
                             FileName = Path.GetFileName(file.FileName),
@@ -96,6 +103,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         
                         using (var reader = new BinaryReader(file.InputStream))
                         {
+
                             picture.Content = reader.ReadBytes(file.ContentLength);
                         }
 

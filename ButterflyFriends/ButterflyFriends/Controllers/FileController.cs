@@ -11,7 +11,15 @@ namespace ButterflyFriends.Controllers
     {
         ApplicationDbContext _context = new ApplicationDbContext();
         // GET: File
+        
         public ActionResult Index(int id)
+        {
+            var fileToRetrieve = _context.Files.Find(id);
+            return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
+        }
+
+        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
+        public ActionResult ProfilePicture(int id)
         {
             var fileToRetrieve = _context.Files.Find(id);
             return File(fileToRetrieve.Content, fileToRetrieve.ContentType);

@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using ButterflyFriends.Models;
-using PagedList;
-
 
 namespace ButterflyFriends.Areas.Admin.Models.HRmanagementModels
 {
-    public class EmployeeModel
+    public class FileModel
     {
-        public IPagedList<ApplicationUser> Employees { get; set; }
+        public int? FileId { get; set; }
+        public string userId { get; set; }
     }
 }

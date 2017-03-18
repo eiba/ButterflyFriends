@@ -1,4 +1,5 @@
 ﻿@using ButterflyFriends.Areas.Admin.Models.HRmanagementModels
+@using PagedList.Mvc
 @model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.EmployeeModel
 <div id="employeeModal"></div>
     <div class="row">
@@ -12,17 +13,17 @@
                         </div>
                         <div class="col col-xs-6 text-right">
                             
-                            @using (Ajax.BeginForm("showEmployeeCreate", "HRManagement", new AjaxOptions
-                            {
-                                UpdateTargetId = "employeeModal",
-                                InsertionMode = InsertionMode.Replace,
-                                HttpMethod = "GET"
+    @using (Ajax.BeginForm("showEmployeeCreate", "HRManagement",new {page = ViewBag.page}, new AjaxOptions
+    {
+        UpdateTargetId = "employeeModal",
+        InsertionMode = InsertionMode.Replace,
+        HttpMethod = "GET"
 
 
-                            }, new { @class = "form-horizontal" }))
-                            {
-                                <button class="btn btn-sm btn-primary btn-create">Lag ny</button>
-                            }
+    }, new { @class = "form-horizontal" }))
+    {
+        <button class="btn btn-sm btn-primary btn-create">Lag ny</button>
+    }
                             
 
                         </div>
@@ -31,7 +32,10 @@
                     </div>
                 </div>
                 <div class="panel-body">
+                    <div class="loader"></div>
+                    @*<div class="loader-mask"></div>*@
                     <table class="table table-striped table-bordered table-list table-hover">
+                        
                         <thead>
                         <tr>
                             <th><em class="fa fa-cog"></em></th>
@@ -40,14 +44,16 @@
                             <th>Email</th>
                         </tr>
                         </thead>
+
                         <tbody>
+
 
                         @foreach (var employee in Model.Employees)
                         {
 
                             var fullname = employee.Fname + " " + employee.Lname;
                             var rowClass = "";
-                            if (ViewBag.Success !=null && employee.Id == ViewBag.Id)
+                            if (ViewBag.Success != null && employee.Id == ViewBag.Id)
                             {
                                 rowClass = "success";
                             }
@@ -56,11 +62,26 @@
                                 rowClass = "danger";
                             }
                             <tr class="@rowClass">
+
                                 <td align="center">
                                     <div class="row">
                                         <div class="col-md-offset-2">
-                                            <div class="col-md-3">
-                                                @using (Ajax.BeginForm("showEmployeeDetails", "HRManagement", new {id = @employee.Id}, new AjaxOptions
+                                            <div class="col-md-2">
+                                                @using (Ajax.BeginForm("ShowProfilePictureUpload", "HRManagement", new { id = @employee.Id, page = ViewBag.page }, new AjaxOptions
+                                                {
+                                                    UpdateTargetId = "employeeModal",
+                                                    InsertionMode = InsertionMode.Replace,
+                                                    HttpMethod = "GET",
+
+
+                                                }, new { @class = "form-horizontal" }))
+                                                {
+
+                                                    <button class="btn btn-warning"><em class="fa fa-picture-o"></em></button>
+                                                }
+                                            </div>
+                                            <div class="col-md-2">
+                                                @using (Ajax.BeginForm("showEmployeeDetails", "HRManagement", new {id = @employee.Id, page = ViewBag.page}, new AjaxOptions
                                                 {
                                                     UpdateTargetId = "employeeModal",
                                                     InsertionMode = InsertionMode.Replace,
@@ -73,8 +94,8 @@
                                                     <button class="btn btn-primary"><em class="fa fa-user-circle-o"></em></button>
                                                 }
                                             </div>
-                                            <div class="col-md-3">
-                                                @using (Ajax.BeginForm("showEmployeeEdit", "HRManagement", new {id = @employee.Id}, new AjaxOptions
+                                            <div class="col-md-2">
+                                                @using (Ajax.BeginForm("showEmployeeEdit", "HRManagement", new {id = @employee.Id, page = ViewBag.page}, new AjaxOptions
                                                 {
                                                     UpdateTargetId = "employeeModal",
                                                     InsertionMode = InsertionMode.Replace,
@@ -86,10 +107,10 @@
                                                     <button class="btn btn-default"><em class="fa fa-pencil"></em></button>
                                                 }
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 @if (employee.IsEnabeled)
                                                 {
-                                                    using (Ajax.BeginForm("employeeDeactivate", "HRManagement", new {id = @employee.Id}, new AjaxOptions
+                                                    using (Ajax.BeginForm("employeeDeactivate", "HRManagement", new {id = @employee.Id, page = ViewBag.page}, new AjaxOptions
                                                     {
                                                         UpdateTargetId = "updateEmployees",
                                                         InsertionMode = InsertionMode.Replace,
@@ -104,7 +125,7 @@
                                                 }
                                                 else
                                                 {
-                                                    using (Ajax.BeginForm("employeeActivate", "HRManagement", new {id = @employee.Id}, new AjaxOptions
+                                                    using (Ajax.BeginForm("employeeActivate", "HRManagement", new {id = @employee.Id, page = ViewBag.page}, new AjaxOptions
                                                     {
                                                         UpdateTargetId = "updateEmployees",
                                                         InsertionMode = InsertionMode.Replace,
@@ -133,21 +154,17 @@
                 <div class="panel-footer">
                     <div class="row">
                         <div class="col col-xs-4">
-                            Side 1 of 5
+                            Side @Model.Employees.PageNumber av @Model.Employees.PageCount
                         </div>
                         <div class="col col-xs-8">
-                            <ul class="pagination hidden-xs pull-right">
-                                <li><a href="#">1</a></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                                <li><a href="#">4</a></li>
-                                <li><a href="#">5</a></li>
-                            </ul>
-                            <ul class="pagination visible-xs pull-right">
-                                <li><a href="#">«</a></li>
-                                <li><a href="#">»</a></li>
-                            </ul>
-                        </div>
+                           
+                            <div id="contentPager">
+                                <ul class="pagination hidden-xs pull-right">
+                                    @Html.PagedListPager(Model.Employees, page => Url.Action("EmployeeList", "HRManagement", new { page }))
+                                </ul>
+</div>
+                                
+</div>
                     </div>
                 </div>
             </div>

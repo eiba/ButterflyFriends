@@ -8,9 +8,9 @@
 <div id="Box">
 
     <modal :show.sync="showModal">
-        <h3 slot="header">Edit user</h3>
+        <h3 slot="header">Rediger ansatt</h3>
         <h5 slot="body">
-            @using (Ajax.BeginForm("EditEmployee", "HRManagement", new AjaxOptions
+            @using (Ajax.BeginForm("EditEmployee", "HRManagement",new {page =@ViewBag.page}, new AjaxOptions
             {
 
                 UpdateTargetId = "updateEmployees",
