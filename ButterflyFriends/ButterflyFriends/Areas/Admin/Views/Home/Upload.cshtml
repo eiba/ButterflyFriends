@@ -186,7 +186,7 @@
                     success: function (result) {
                         var tags = [];
                         for (var i = 0; i < result.length; i++) {
-                            var obj = { label: result[i].Name, id: result[i].Id, imgid:result[i].imgId}
+                            var obj = { label: result[i].Name, id: result[i].Id, imgid: result[i].imgId, type: result[i].type }
                             tags.push(obj);
                             
                             
@@ -194,10 +194,16 @@
                         //console.log(tags);
                         $("#" + id + "" + n+"p").autocomplete({
                             source: tags,
-                            select:function(event, ui) {
-                                //console.log(ui);
+                            select: function (event, ui) {
+                                console.log(ui);
                                 $("#" + id + "" + n).attr("name", ui.item.label);
                                 $("#" + id + "" + n).attr("nameid", ui.item.id);
+                                $("#" + id + "" + n).attr("type", ui.item.type);
+                                event.preventDefault();
+
+                            }, focus: function (event, ui) {
+                                $("#" + id + "" + n + "p").val(ui.item.label);
+                                return false;
                             }
                         });
                         $("#" + id + "" + n + "p").data("ui-autocomplete")._renderItem = function (ul, item) {
@@ -210,7 +216,7 @@
 
                                 $i.css({
                                     "width": 40,
-                                    "margin-right": 3,
+                                    "margin-right": 4,
                                     "padding-left": 13
                                 });
 
@@ -221,7 +227,7 @@
                                 return $li.appendTo(ul);
                             }
                             var $li = $('<li>'),
-                                $img = $('<img>');
+                                $img = $('<img class="thumbnailShow">');
 
 
                             $img.attr({
@@ -230,7 +236,7 @@
                             });
                             $img.css({
                                 "width":40,
-                                "margin-right":3
+                                "margin-right":4
                             });
 
                             $li.attr('data-value', item.label);
@@ -245,7 +251,7 @@
 
                     },
                     error: function (err) {
-                        console.log(err.statusText);
+                        alert(err.statusText);
                         console.log(err);
                     }
                 });
@@ -285,7 +291,8 @@
                         var div = $('#' + boxId);
                         var obj = {
                             "id": this.getAttribute("nameid"),
-                            "name":this.getAttribute("name"),
+                            "name": this.getAttribute("name"),
+                            "type": this.getAttribute("type"),
                             "x": parseInt(parseFloat(div.css("left")) / scaleX),
                             "y": parseInt(parseFloat(div.css("top")) / scaleY),
                             "height": parseInt(parseFloat(div.css("height")) / scaleY),

@@ -1,7 +1,6 @@
 ﻿@using ButterflyFriends.Areas.Admin.Models.HRmanagementModels
 @using PagedList.Mvc
 @model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.EmployeeModel
-<div id="employeeModal"></div>
     <div class="row">
 
         <div class="col-md-12">
@@ -13,9 +12,9 @@
                         </div>
                         <div class="col col-xs-6 text-right">
                             
-    @using (Ajax.BeginForm("showEmployeeCreate", "HRManagement",new {page = ViewBag.page}, new AjaxOptions
+    @using (Ajax.BeginForm("showEmployeeCreate", "HRManagement",new { employeePage = ViewBag.employeePage }, new AjaxOptions
     {
-        UpdateTargetId = "employeeModal",
+        UpdateTargetId = "Modal",
         InsertionMode = InsertionMode.Replace,
         HttpMethod = "GET"
 
@@ -66,24 +65,10 @@
                                 <td align="center">
                                     <div class="row">
                                         <div class="col-md-offset-2">
-                                            <div class="col-md-2">
-                                                @using (Ajax.BeginForm("ShowProfilePictureUpload", "HRManagement", new { id = @employee.Id, page = ViewBag.page }, new AjaxOptions
+                                            <div class="col-md-3">
+                                                @using (Ajax.BeginForm("showEmployeeDetails", "HRManagement", new {id = @employee.Id }, new AjaxOptions
                                                 {
-                                                    UpdateTargetId = "employeeModal",
-                                                    InsertionMode = InsertionMode.Replace,
-                                                    HttpMethod = "GET",
-
-
-                                                }, new { @class = "form-horizontal" }))
-                                                {
-
-                                                    <button class="btn btn-warning"><em class="fa fa-picture-o"></em></button>
-                                                }
-                                            </div>
-                                            <div class="col-md-2">
-                                                @using (Ajax.BeginForm("showEmployeeDetails", "HRManagement", new {id = @employee.Id, page = ViewBag.page}, new AjaxOptions
-                                                {
-                                                    UpdateTargetId = "employeeModal",
+                                                    UpdateTargetId = "Modal",
                                                     InsertionMode = InsertionMode.Replace,
                                                     HttpMethod = "GET",
 
@@ -94,10 +79,10 @@
                                                     <button class="btn btn-primary"><em class="fa fa-user-circle-o"></em></button>
                                                 }
                                             </div>
-                                            <div class="col-md-2">
-                                                @using (Ajax.BeginForm("showEmployeeEdit", "HRManagement", new {id = @employee.Id, page = ViewBag.page}, new AjaxOptions
+                                            <div class="col-md-3">
+                                                @using (Ajax.BeginForm("showEmployeeEdit", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage }, new AjaxOptions
                                                 {
-                                                    UpdateTargetId = "employeeModal",
+                                                    UpdateTargetId = "Modal",
                                                     InsertionMode = InsertionMode.Replace,
                                                     HttpMethod = "GET",
 
@@ -107,10 +92,10 @@
                                                     <button class="btn btn-default"><em class="fa fa-pencil"></em></button>
                                                 }
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-3">
                                                 @if (employee.IsEnabeled)
                                                 {
-                                                    using (Ajax.BeginForm("employeeDeactivate", "HRManagement", new {id = @employee.Id, page = ViewBag.page}, new AjaxOptions
+                                                    using (Ajax.BeginForm("employeeDeactivate", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage }, new AjaxOptions
                                                     {
                                                         UpdateTargetId = "updateEmployees",
                                                         InsertionMode = InsertionMode.Replace,
@@ -125,7 +110,7 @@
                                                 }
                                                 else
                                                 {
-                                                    using (Ajax.BeginForm("employeeActivate", "HRManagement", new {id = @employee.Id, page = ViewBag.page}, new AjaxOptions
+                                                    using (Ajax.BeginForm("employeeActivate", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage }, new AjaxOptions
                                                     {
                                                         UpdateTargetId = "updateEmployees",
                                                         InsertionMode = InsertionMode.Replace,
@@ -158,9 +143,9 @@
                         </div>
                         <div class="col col-xs-8">
                            
-                            <div id="contentPager">
+                            <div id="employeePager">
                                 <ul class="pagination hidden-xs pull-right">
-                                    @Html.PagedListPager(Model.Employees, page => Url.Action("EmployeeList", "HRManagement", new { page }))
+                                    @Html.PagedListPager(Model.Employees, employeePage => Url.Action("EmployeeList", "HRManagement", new { employeePage }))
                                 </ul>
 </div>
                                 

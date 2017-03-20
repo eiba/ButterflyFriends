@@ -15,12 +15,11 @@
 
     <modal :show.sync="showModal">
         <h3 slot="header">Register bruker</h3>
-        <h3 slot="header">@ViewBag.Message</h3>
         <h5 slot="body">
 
 
 
-            @using (Ajax.BeginForm("CreateEmployee", "HRManagement",new {page = ViewBag.page}, new AjaxOptions
+            @using (Ajax.BeginForm("CreateEmployee", "HRManagement",new { employeePage = ViewBag.employeePage }, new AjaxOptions
             {
                 UpdateTargetId = "updateEmployees",
                 InsertionMode = InsertionMode.Replace,
@@ -162,17 +161,13 @@
         methods: {
             close: function() {
                 this.show = false;
-                //this.clearFields();
-                $(".loader-mask").hide();
+
             },
             closeButton: function () {
-                 //if ($("form#formId").valid()) {
                      $("form#formId").submit();
                      $(".loader-mask").hide();
                     this.show = false;
-                    //this.clearFields();
-                    //this.checkBox();
-                 //}
+
             },
             showMethod: function() {
                 this.showModal = true;
@@ -187,13 +182,6 @@
                 $("#Phone").val("");
                 $("#Password").val("");
                 $("#ConfirmPassword").val("");
-
-            },
-            checkBox: function () {
-
-
-            $('#checkbox1').prop('checked', true);
-
 
             }
         },
@@ -216,7 +204,7 @@
         el: '#app',
         data: {
             showModal: false,
-            showForm: false
+
         }
     });
 </script>

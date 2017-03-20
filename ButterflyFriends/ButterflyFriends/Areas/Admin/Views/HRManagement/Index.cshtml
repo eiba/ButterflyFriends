@@ -2,6 +2,7 @@
 @{
 
 }
+<div id="Modal"></div>
 
 <h3>Brukeradministrasjon</h3>
 
@@ -42,13 +43,25 @@
             //$(".loader-mask").hide();
         });
         
-        $(document).on("click", "#contentPager a[href]", function () {
+        $(document).on("click", "#employeePager a[href]", function () {
             $.ajax({
                 url: $(this).attr("href"),
                 type: 'GET',
                 cache: false,
                 success: function (result) {
                     $('#updateEmployees').html(result);
+                }
+            });
+            return false;
+        });
+
+        $(document).on("click", "#childrenPager a[href]", function () {
+            $.ajax({
+                url: $(this).attr("href"),
+                type: 'GET',
+                cache: false,
+                success: function (result) {
+                    $('#updateChildren').html(result);
                 }
             });
             return false;

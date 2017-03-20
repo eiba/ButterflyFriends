@@ -223,7 +223,10 @@
     <Compile Include="Areas\Admin\Controllers\HRManagementController.cs" />
     <Compile Include="Areas\Admin\Models\HRmanagementModels\changeUserInfo.cs" />
     <Compile Include="Areas\Admin\Models\HRManagamentModel.cs" />
+    <Compile Include="Areas\Admin\Models\HRmanagementModels\ChildCreateModel.cs" />
+    <Compile Include="Areas\Admin\Models\HRmanagementModels\ChildDetailsModel.cs" />
     <Compile Include="Areas\Admin\Models\HRmanagementModels\ChildrenModel.cs" />
+    <Compile Include="Areas\Admin\Models\HRmanagementModels\EmployeeDetailsModel.cs" />
     <Compile Include="Areas\Admin\Models\HRmanagementModels\EmployeeModel.cs" />
     <Compile Include="Areas\Admin\Models\HRmanagementModels\FileModel.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -340,6 +343,9 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="Areas\Admin\Views\HRManagement\UploadImagePartials\_EmployeeUploadImage.cshtml" />
     <Content Include="Areas\Admin\Views\HRManagement\UploadImagePartials\_ProfileImagePartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\DetailPartials\_ChildDetailsPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\CreatePartials\_ChildCreatePartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\EditPartials\_ChildEditPartial.cshtml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

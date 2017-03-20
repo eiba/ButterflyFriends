@@ -23,6 +23,8 @@ namespace ButterflyFriends.Models
         public string Lname { get; set; }
         [ForeignKey("Adress")]
         public int AdressId { get; set; }
+        [ForeignKey("Employee")]
+        public int EmployeeId { get; set; }
         [Display(Name = "Tlf")]
         public string Phone { get; set; }
         public string AccessLvL { get; set; }

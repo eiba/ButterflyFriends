@@ -43,26 +43,41 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var json = reader.ReadToEnd();
 
 
-            var users = new List<object>();
+            var enteties = new List<object>();
 
-            var results = (from s in _context.Users
+            var users = (from s in _context.Users
                           where
                           s.Fname.StartsWith(json) ||
                           s.Lname.StartsWith(json)
                           orderby s.Lname
                           select s).ToList();
 
-            
-            foreach (var user in results)
+            var children = (from s in _context.Children
+                            where
+                            s.Fname.StartsWith(json) ||
+                            s.Lname.StartsWith(json)
+                            orderby s.Lname
+                            select s).ToList();
+
+            foreach (var user in users)
             {
                 var imgId = 0;
                 if (user.Thumbnail != null)
                 {
                     imgId = user.Thumbnail.ThumbNailId;
                 }
-                users.Add(new {Name = user.Fname +" "+ user.Lname, Id=user.Id,imgId = imgId});
+                enteties.Add(new {Name = user.Fname +" "+ user.Lname, type = "user", Id =user.Id, imgId = imgId});
             }
-            return Json(users);
+            foreach (var child in children)
+            {
+                var imgId = 0;
+                if (child.Thumbnail != null)
+                {
+                    imgId = child.Thumbnail.ThumbNailId;
+                }
+                enteties.Add(new { Name = child.Fname + " " + child.Lname, type = "child", Id = child.Id, imgId = imgId });
+            }
+            return Json(enteties);
         }
 
         [HttpPost]
@@ -89,15 +104,27 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             FileType = DbTables.FileType.Picture,
                             ContentType = file.ContentType,
                             Tags = list,
-                            User = new List<ApplicationUser>()
+                            User = new List<ApplicationUser>(),
+                            Children = new List<DbTables.Child>()
                         };
                         
                         foreach (var tagBox in list)
                         {
+                            if (tagBox.type =="user") { 
                             ApplicationUser user = _context.Users.Find(tagBox.Id);
-                            
-                            if (user != null) { 
+
+                            if (user != null)
+                            {
                                 picture.User.Add(user);
+                            }
+                            }
+                            else
+                            {
+                                DbTables.Child child = _context.Children.Find(Int32.Parse(tagBox.Id));
+                                if (child != null)
+                                {
+                                    picture.Children.Add(child);
+                                }
                             }
                         }
                         

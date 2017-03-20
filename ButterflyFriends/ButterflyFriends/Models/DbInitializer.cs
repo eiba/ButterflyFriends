@@ -217,35 +217,86 @@ namespace ButterflyFriends.Models
             {
                 Fname = "Mohammed",
                 Lname = "Bali",
-                DoB = "19.06.2005",
+                DoB = new DateTime(2005, 6, 19),
                 isActive = true,
             });
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Sasha",
                 Lname = "Dababa",
-                DoB = "19.06.2005",
+                DoB = new DateTime(2005, 6, 19),
                 isActive = true,
             });
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Moduba",
                 Lname = "Badabi",
-                DoB = "19.06.2005",
+                DoB = new DateTime(2005, 6, 19),
                 isActive = true,
             }); db.Children.Add(new DbTables.Child
             {
                 Fname = "Shika",
                 Lname = "Shinshi",
-                DoB = "19.06.2005",
+                DoB = new DateTime(2005, 6, 19),
                 isActive = true,
             }); db.Children.Add(new DbTables.Child
             {
                 Fname = "Abdu",
                 Lname = "Bali",
-                DoB = "19.06.2005",
+                DoB = new DateTime(2005, 6, 19),
                 isActive = true,
             });
+
+            db.Children.Add(new DbTables.Child
+            {
+                Fname = "Ekon",
+                Lname = "Isabis",
+                DoB = new DateTime(2005, 6, 19),
+                isActive = true,
+            });
+            db.Children.Add(new DbTables.Child
+            {
+                Fname = "Maha",
+                Lname = "Bahati",
+                DoB = new DateTime(2005, 6, 19),
+                isActive = true,
+            });
+            db.Children.Add(new DbTables.Child
+            {
+                Fname = "Kwame",
+                Lname = "Jafari",
+                DoB = new DateTime(2005, 6, 19),
+                isActive = true,
+            });
+            db.Children.Add(new DbTables.Child
+            {
+                Fname = "Uma",
+                Lname = "Maha",
+                DoB = new DateTime(2005, 6, 19),
+                isActive = true,
+            });
+            db.Children.Add(new DbTables.Child
+            {
+                Fname = "Lulu",
+                Lname = "Kalifa",
+                DoB = new DateTime(2005, 6, 19),
+                isActive = true,
+            });
+            db.Children.Add(new DbTables.Child
+            {
+                Fname = "Amare",
+                Lname = "Ode",
+                DoB = new DateTime(2005, 6, 19),
+                isActive = true,
+            });
+            db.Children.Add(new DbTables.Child
+            {
+                Fname = "Asha",
+                Lname = "haji",
+                DoB = new DateTime(2005, 6, 19),
+                isActive = true,
+            });
+
 
             db.SaveChanges();
 

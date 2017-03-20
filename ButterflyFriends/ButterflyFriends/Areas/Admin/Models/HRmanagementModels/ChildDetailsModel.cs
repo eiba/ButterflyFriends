@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using ButterflyFriends.Models;
 
 namespace ButterflyFriends.Areas.Admin.Models.HRmanagementModels
 {
-    public class FileModel
+    public class ChildDetailsModel
     {
-        public int? FileId { get; set; }
-        public string Type { get; set; }
+        public DbTables.Child Child { get; set; }
+        public FileModel File { get; set; }
     }
 }

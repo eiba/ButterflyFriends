@@ -1,0 +1,258 @@
+﻿@using ButterflyFriends.Areas.Admin.Controllers
+@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity.EntityFramework
+@model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.ChildCreateModel
+
+
+
+@{
+    var ModalId = "childrenCreate";
+}
+
+<div id="app">
+
+
+    <modal :show.sync="showModal">
+        <h3 slot="header">Legg til fadderbarn</h3>
+        <h5 slot="body">
+
+
+
+            @using (Ajax.BeginForm("CreateChild", "HRManagement", new { childrenPage = ViewBag.childrenPage }, new AjaxOptions
+            {
+                UpdateTargetId = "updateChildren",
+                InsertionMode = InsertionMode.Replace,
+                HttpMethod = "POST",
+
+            }, new { @class = "form-horizontal", role = "form", id = "childFormId" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Child.Fname, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Child.Fname, new { @class = "form-control", required = "required" })
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Child.Lname, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Child.Lname, new { @class = "form-control", required = "required" })
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Child.DoB, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        <input type="text" id="datepicker" name="Child.DoB" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Fadder</label>
+                    <div class="col-md-10">
+                        <input type="text" id="sponsor" Name="SponsorName" class="form-control" required>
+                    </div>
+                </div>
+
+                <input type="hidden" id="hiddenId" name="Child.SponsorId" class="form-control">
+            }
+
+
+        </h5>
+    </modal>
+</div>
+
+<script type="x/template" id="@ModalId">
+    <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
+        <div class="modal-wrapper">
+            <div class="modal-container" v-on:click.stop>
+
+                <div class="modal-header">
+                    <slot name="header">
+                    </slot>
+                </div>
+
+                <div class="modal-body">
+                    <slot name="body">
+
+                    </slot>
+
+                </div>
+
+                <div class="modal-footer">
+                    <slot name="footer">
+                        <button class="modal-default-button btn-primary btn" id="knapp" v-on:click="closeButton">
+                            Registrer <span class="glyphicon glyphicon-list-alt">
+                        </button>
+                    </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<script>
+
+    Vue.component('modal', {
+        template: '#@ModalId',
+        props: {
+            show: {
+                type: Boolean,
+                required: true,
+                twoWay: true
+
+            }
+        },
+        methods: {
+            close: function() {
+                this.show = false;
+            },
+            closeButton: function () {
+                $("form#childFormId").submit();
+                    this.show = false;
+
+            },
+            showMethod: function() {
+                this.showModal = true;
+            },
+            clearFields: function () {
+
+            }
+        },
+        ready: function() {
+            this.show = true;
+            document.addEventListener("keydown", (e) => {
+                if (this.show && e.keyCode == 27) {
+                    this.close();
+                    e.preventDefault();
+                }
+                else if (this.show && e.keyCode == 13) {
+                    this.closeButton();
+                }
+
+            });
+
+        },
+    });
+    new Vue({
+        el: '#app',
+        data: {
+            showModal: false,        }
+    });
+
+    $(function () {
+        $("#datepicker").datepicker({
+            dateFormat: "dd.mm.yy"
+        });
+    });
+
+    
+    $("#sponsor").on('input', function () {
+        if (!($(this).val())) {
+            return;
+        }
+        var text = $("#sponsor").val();
+        $.ajax({
+            url: '/Admin/HRManagement/GetUsers',
+            async: true,
+            contentType: false,//"application/json; charset=utf-8",
+            processData: false,
+            type: "POST",
+            dataType: "json",
+            data: text,//JSON.stringify(data),
+            xhr: function () {  // Custom XMLHttpRequest
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) { // Check if upload property exists
+
+                    // For handling the progress of the upload
+                    //myXhr.upload.id = id;
+                    //myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+
+                }
+                return myXhr;
+            }
+    ,
+            success: function (result) {
+                var tags = [];
+                for (var i = 0; i < result.length; i++) {
+                    var obj = { label: result[i].Name, id: result[i].Id, imgid: result[i].imgId }
+                    tags.push(obj);
+
+
+                }
+                //console.log(tags);
+                $("#sponsor")
+                    .autocomplete({
+                        source: tags,
+                        select: function(event, ui) {
+                            $("#hiddenId").attr("value", ui.item.id);
+
+                        },
+                        focus: function(event, ui) {
+                            $("#sponsor").val(ui.item.label);
+                            return false;
+                        }
+                    })
+                    .bind("keydown.autocomplete")
+                    .keydown(function(e) {
+                        if (e.keyCode == 13) {
+                            e.stopPropagation();
+                        };
+                    });
+
+                $("#sponsor").data("ui-autocomplete")._renderItem = function (ul, item) {
+
+                    if (item.imgid === 0) {
+
+                        var $li = $('<li>'),
+                        $i = $('<i class="fa fa-question-circle" aria-hidden="true"></i>');
+
+
+                        $i.css({
+                            "width": 40,
+                            "margin-right": 4,
+                            "padding-left": 13
+                        });
+
+                        $li.attr('data-value', item.label);
+                        $li.append('<a href="#">');
+                        $li.find('a').append($i).append(item.label);
+
+                        return $li.appendTo(ul);
+                    }
+                    var $li = $('<li>'),
+                        $img = $('<img class="thumbnailShow">');
+
+
+                    $img.attr({
+                        src: '../FileAdmin?id=' + item.imgid
+
+                    });
+                    $img.css({
+                        "width": 40,
+                        "margin-right": 4
+                    });
+
+                    $li.attr('data-value', item.label);
+                    $li.append('<a href="#">');
+                    $li.find('a').append($img).append(item.label);
+
+                    return $li.appendTo(ul);
+
+                };
+                $("#sponsor").autocomplete("search", text);
+
+
+            },
+            error: function (err) {
+                alert(err.statusText);
+                console.log(err);
+            }
+        });
+    });
+</script>
+

@@ -215,6 +215,11 @@ a:hover{
     border: 1px solid #000;
     margin: 10px 5px 0 0;
    }
+
+.thumbnailShow {
+    border: 1px solid #000;
+    box-shadow: 2px 2px 5px #000000;
+}
 .profileImageShow {
     position: relative;
     max-width: 300px;
@@ -337,30 +342,6 @@ a:hover{
                 border-width: 4px;
             }
 
-.suggestionBox {
-    display:none;
-    background-color:white;
-    color: #3b3835;
-    border: 1px solid rgba(0,0,0,0.3);
-    border-top: 0;
-    float: left;
-    left: 0;
-    list-style: none;
-    margin: 20px;
-    padding: 8px;
-    position: absolute;
-    top: 31px;
-    top: 31px;
-    width: 180px;
-    z-index: 1000;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25);  
-}
-
 .j {
     margin: 2px;
     float: left;
@@ -368,4 +349,16 @@ a:hover{
 
 .listHeader {
     text-align: right;
+}
+
+
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 20px;
+}
+
+ul.ui-autocomplete {
+    z-index: 9999;
 }

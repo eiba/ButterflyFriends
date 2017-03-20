@@ -67,16 +67,24 @@ namespace ButterflyFriends.Models
         {
             [Key]
             public int Id { get; set; }
+
+            [Required]
             [Display(Name = "Fornavn")]
             public string Fname { get; set; }
+            [Required]
             [Display(Name = "Etternavn")]
             public string Lname { get; set; }
+            [Required]
+            [DataType(DataType.DateTime)]
             [Display(Name = "Fødselsdato")]
-            public string DoB { get; set; }
+            public DateTime DoB { get; set; }
+            [ForeignKey("User")]
+            public string SponsorId { get; set; }
             public bool isActive { get; set; }
 
             public virtual ApplicationUser User { get; set; }
             public virtual IList<File> Pictures { get; set; }
+            public virtual ThumbNail Thumbnail { get; set; }
         }
         
         [Table("Picture")]
@@ -119,7 +127,7 @@ namespace ButterflyFriends.Models
         {
             [Key]
             public int TagId { get; set; }
-
+            public string type { get; set; }
             public string Id { get; set; }
             public int x { get; set; }
             public int y { get; set; }

@@ -32,12 +32,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         public ActionResult Index()
         {
             var users = from s in _context.Users
-                           orderby s.Lname
-                           select s;
+                orderby s.Lname
+                select s;
 
             var children = from s in _context.Children
-                           orderby s.Lname
-                           select s;
+                orderby s.Lname
+                select s;
 
             var model = new HRManagamentModel
             {
@@ -45,29 +45,59 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     Employees = users.ToPagedList(1, pageSize)
                 },
-                ChildrenModel = new ChildrenModel {Children = children.ToPagedList(1, pageSize) }
-    };
-            ViewBag.CurrentPage = 1;
+                ChildrenModel = new ChildrenModel {Children = children.ToPagedList(1, pageSize)}
+            };
             return View(model);
         }
 
-        public ActionResult ShowProfilePictureUpload(string id, int? page)
+        /*
+        public ActionResult ShowProfilePictureUpload(string id, int? employeePage, string type)
         {
-            ViewBag.page = page;
-            ApplicationUser user = _context.Users.Find(id);
-
-            var pictures = user.Pictures;
-            if (pictures.Any()) { 
-            foreach (var pic in pictures)
+            ViewBag.employeePage = (employeePage ?? 1);
+            if (type == "employee")
             {
-                if (pic.FileType == DbTables.FileType.Profile)
+                ApplicationUser user = _context.Users.Find(id);
+
+                var pictures = user.Pictures;
+                if (pictures.Any())
                 {
-                        return PartialView("UploadImagePartials/_EmployeeUploadImage", new FileModel {FileId = pic.FileId, userId = id});
+                    foreach (var pic in pictures)
+                    {
+                        if (pic.FileType == DbTables.FileType.Profile)
+                        {
+                            return PartialView("UploadImagePartials/_EmployeeUploadImage",
+                                new FileModel {FileId = pic.FileId, Id = id, Type = "employee"});
+                        }
                     }
+                }
+                return PartialView("UploadImagePartials/_EmployeeUploadImage",
+                    new FileModel {Id = id, Type = "employee"});
             }
+            else if (type == "child")
+            {
+                var childId = Int32.Parse(id);
+                var child = _context.Children.Find(childId);
+
+
+                var pictures = child.Pictures;
+                if (pictures.Any())
+                {
+                    foreach (var pic in pictures)
+                    {
+                        if (pic.FileType == DbTables.FileType.Profile)
+                        {
+                            return PartialView("UploadImagePartials/_EmployeeUploadImage",
+                                new FileModel {FileId = pic.FileId, Id = id, Type = "child"});
+                        }
+                    }
+                }
+                return PartialView("UploadImagePartials/_EmployeeUploadImage", new FileModel {Id = id, Type = "child"});
             }
-            return PartialView("UploadImagePartials/_EmployeeUploadImage",new FileModel {userId = id});
-        }
+            else
+            {
+                return null;
+            }
+        }*/
 
         [HttpPost]
         public ActionResult ProfilePictureUpload()
@@ -80,10 +110,24 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     var ProfileImageWidth = 300;
                     var ThumbnailImageWidth = 40;
                     var userId = Request.Form["userid"];
-                    ApplicationUser user = _context.Users.Find(userId);
+                    var type = Request.Form["type"];
+                    //ApplicationUser user = _context.Users.Find(userId);
                     var fileId = 0;
+                    var employee = new ApplicationUser();
+                    var child = new DbTables.Child();
+                    IList<DbTables.File> pictures = new List<DbTables.File>();
+                    if (type == "employee")
+                    {
+                        employee = _context.Users.Find(userId);
+                        pictures = employee.Pictures;
+                    }
+                    else if (type == "child")
+                    {
+                        child = _context.Children.Find(Int32.Parse(userId));
+                        pictures = child.Pictures;
+                    }
 
-                    var pictures = user.Pictures;
+                    //var pictures = user.Pictures;
                     var profPic = new DbTables.File();
                     var thumbNail = new DbTables.ThumbNail();
                     if (pictures.Any())
@@ -106,16 +150,29 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
                         if (profPic.Content == null)
                         {
+                            var picture = new DbTables.File();
                             //save profile picture
-                            var picture = new DbTables.File
+                            if (employee.Email != null)
                             {
-                                FileName = Path.GetFileName(file.FileName),
-                                FileType = DbTables.FileType.Profile,
-                                ContentType = file.ContentType,
-                                User = new List<ApplicationUser> {user}
-                            };
-
-                            byte[] content; 
+                                picture = new DbTables.File
+                                {
+                                    FileName = Path.GetFileName(file.FileName),
+                                    FileType = DbTables.FileType.Profile,
+                                    ContentType = file.ContentType,
+                                    User = new List<ApplicationUser> {employee}
+                                };
+                            }
+                            else
+                            {
+                                picture = new DbTables.File
+                                {
+                                    FileName = Path.GetFileName(file.FileName),
+                                    FileType = DbTables.FileType.Profile,
+                                    ContentType = file.ContentType,
+                                    Children = new List<DbTables.Child> {child}
+                                };
+                            }
+                            byte[] content;
                             using (var reader = new BinaryReader(file.InputStream))
                             {
 
@@ -127,8 +184,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             {
                                 bmp = new Bitmap(ms);
                             }
-                            double ratio = (double)((double)bmp.Width / (double)bmp.Height);
-                            int height = (int)((double)ProfileImageWidth / ratio);
+                            double ratio = (double) ((double) bmp.Width/(double) bmp.Height);
+                            int height = (int) ((double) ProfileImageWidth/ratio);
                             var newImg = ResizeImage(bmp, ProfileImageWidth, height);
 
                             byte[] cntnt;
@@ -151,7 +208,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                 //User = new List<ApplicationUser> {user}
                             };
 
-                            int Theight = (int)((double)ThumbnailImageWidth / ratio);
+                            int Theight = (int) ((double) ThumbnailImageWidth/ratio);
                             var newThumb = ResizeImage(bmp, ThumbnailImageWidth, Theight);
                             byte[] Tcntnt;
                             using (var stream = new MemoryStream())
@@ -162,9 +219,16 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             thumbnail.Content = Tcntnt;
                             _context.ThumbNails.Add(thumbnail);
 
-                            user.Thumbnail = thumbnail;
-                            _context.Entry(user).State = EntityState.Modified;
-
+                            if (employee.Email != null)
+                            {
+                                employee.Thumbnail = thumbnail;
+                                _context.Entry(employee).State = EntityState.Modified;
+                            }
+                            else
+                            {
+                                child.Thumbnail = thumbnail;
+                                _context.Entry(child).State = EntityState.Modified;
+                            }
                             _context.SaveChanges();
                             fileId = picture.FileId;
                         }
@@ -186,8 +250,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             {
                                 bmp = new Bitmap(ms);
                             }
-                            double ratio = (double)((double)bmp.Width / (double)bmp.Height);
-                            int height = (int)((double)ProfileImageWidth / ratio);
+                            double ratio = (double) ((double) bmp.Width/(double) bmp.Height);
+                            int height = (int) ((double) ProfileImageWidth/ratio);
                             var newImg = ResizeImage(bmp, ProfileImageWidth, height);
 
                             byte[] cntnt;
@@ -204,7 +268,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             thumbNail.ThumbNailName = Path.GetFileName(file.FileName);
                             thumbNail.ContentType = file.ContentType;
 
-                            int Theight = (int)((double)ThumbnailImageWidth / ratio);
+                            int Theight = (int) ((double) ThumbnailImageWidth/ratio);
                             var newThumb = ResizeImage(bmp, ThumbnailImageWidth, Theight);
                             byte[] Tcntnt;
                             using (var stream = new MemoryStream())
@@ -220,8 +284,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         }
 
                     }
-                    // Returns message that successfully uploaded  
-                    return PartialView("UploadImagePartials/_ProfileImagePartial",new FileModel {FileId = fileId});
+                    // Returns message that successfully uploaded
+                    return PartialView("UploadImagePartials/_ProfileImagePartial", new FileModel {FileId = fileId});
                     //return Json("Filopplastning var en suksess!");
                 }
                 catch (Exception ex)
@@ -235,6 +299,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
 
         }
+
         /// <summary>
         /// Rezises image so that it will be be compressed with smaller dimensions
         /// </summary>
@@ -253,20 +318,35 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return resizedImage;
         }
 
-        public ActionResult EmployeeList(int? page)
+        public ActionResult EmployeeList(int? employeePage)
         {
             var users = from s in _context.Users
-                           orderby s.Lname
-                           select s;
+                orderby s.Lname
+                select s;
 
-            int pageNumber = (page ?? 1);
-            ViewBag.page = page;
+            int pageNumber = (employeePage ?? 1);
+            ViewBag.employeePage = (employeePage ?? 1);
 
-            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList(pageNumber, pageSize) });
+            return PartialView("ListPartials/_EmployeePartial",
+                new EmployeeModel {Employees = users.ToPagedList(pageNumber, pageSize)});
         }
-        
+
+        public ActionResult ChildrenList(int? childrenPage)
+        {
+            var children = from s in _context.Children
+                        orderby s.Lname
+                        select s;
+
+            int pageNumber = (childrenPage ?? 1);
+            ViewBag.childrenPage = (childrenPage ?? 1);
+
+            return PartialView("ListPartials/_ChildrenPartial",
+                new ChildrenModel { Children = children.ToPagedList(pageNumber, pageSize) });
+        }
+
+        /****************Detail functions**************/
         [HttpGet]
-        public ActionResult showEmployeeDetails(string id)
+        public ActionResult showEmployeeDetails(string id, string type)
         {
             if (id == null)
             {
@@ -277,14 +357,55 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            var pictures = user.Pictures;
 
-            return PartialView("DetailPartials/_EmployeeDetailsPartial",user);
+            if (pictures.Any())
+            {
+                foreach (var pic in pictures)
+                {
+                    if (pic.FileType == DbTables.FileType.Profile)
+                    {
+                        return PartialView("DetailPartials/_EmployeeDetailsPartial",new EmployeeDetailsModel { File = new FileModel { FileId = pic.FileId, Type = "employee" },User = user});
+                    }
+                }
+            }
+            return PartialView("DetailPartials/_EmployeeDetailsPartial", new EmployeeDetailsModel { File = new FileModel { Type = "employee" }, User = user });
+
+
+        }
+        [HttpGet]
+        public ActionResult showChildDetails(int id, string type)
+        {
+            if (id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            DbTables.Child child = _context.Children.Find(id);
+            if (child == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var pictures = child.Pictures;
+
+            if (pictures.Any())
+            {
+                foreach (var pic in pictures)
+                {
+                    if (pic.FileType == DbTables.FileType.Profile)
+                    {
+                        return PartialView("DetailPartials/_ChildDetailsPartial", new ChildDetailsModel { File = new FileModel { FileId = pic.FileId, Type = "child" }, Child = child });
+                    }
+                }
+            }
+            return PartialView("DetailPartials/_ChildDetailsPartial", new ChildDetailsModel { File = new FileModel { Type = "child" },Child = child});
         }
 
+        /************************************************/
         [HttpGet]
-        public ActionResult showEmployeeEdit(string id, int? page)
+        public ActionResult showEmployeeEdit(string id, int? employeePage)
         {
-            ViewBag.page = page;
+            ViewBag.employeePage = (employeePage ?? 1);
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -308,20 +429,152 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             };
 
-            return PartialView("EditPartials/_EmployeeEditPartial",model);
+            return PartialView("EditPartials/_EmployeeEditPartial", model);
+        }
+
+        [HttpGet]
+        public ActionResult showChildEdit(int? id, int? childrenPage)
+        {
+            ViewBag.childrenPage = (childrenPage ?? 1);
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            DbTables.Child child = _context.Children.Find(id);
+            if (child == null)
+            {
+                return HttpNotFound();
+            }
+            ChildCreateModel model;
+            if (child.SponsorId == null)
+            {
+                model = new ChildCreateModel
+                {
+                    Child = child
+                };
+            }
+            else
+            {
+                model = new ChildCreateModel
+                {
+                    Child = child,
+                    SponsorName = child.User.Fname + " " + child.User.Lname
+                };
+            }
+            return PartialView("EditPartials/_ChildEditPartial", model);
+
+        }
+
+        [HttpPost]
+        public ActionResult ChildEdit(ChildCreateModel model, int? childrenPage)
+        {
+            ViewBag.childrenPage = (childrenPage ?? 1);
+            if (ModelState.IsValid)
+            {
+                var sponsormsg = "";
+                if (model.Child.Id == 0)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                var child = _context.Children.Find(model.Child.Id);
+                if (child == null)
+                {
+                    return HttpNotFound();
+                }
+                if (model.Child.DoB > DateTime.Now)
+                {
+                    var dateErrorChildren = from s in _context.Children
+                                        orderby s.Lname
+                                        select s;
+                    ViewBag.Error = "Barnet kan ikke være født i fremtiden!";
+
+                    return PartialView("ListPartials/_ChildrenPartial", new ChildrenModel { Children = dateErrorChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+                }
+
+                child.DoB = model.Child.DoB;
+                child.Fname = model.Child.Fname;
+                child.Lname = model.Child.Lname;
+                if (model.Child.SponsorId != null && model.SponsorName != null)
+                {
+                    var user = _context.Users.Find(model.Child.SponsorId);
+                    if (user != null)
+                    {
+                        if (user.Fname + " " + user.Lname != model.SponsorName)
+                        {
+                            //child.SponsorId = null;
+                            sponsormsg = ", men fant ikke bruker " + model.SponsorName;
+                        }
+                        else
+                        {
+                            child.SponsorId = model.Child.SponsorId;
+                        }
+                    }
+                }
+                else if (model.Child.SponsorId == null && model.SponsorName != null)
+                {
+                    sponsormsg = ", men fant ikke bruker " + model.SponsorName;
+                }
+                else if (model.SponsorName == null)
+                {
+                    child.SponsorId = null;
+                }
+                try
+                {
+                    _context.Entry(child).State = EntityState.Modified;
+                    _context.SaveChanges();
+
+                    var successChildren = from s in _context.Children
+                                          orderby s.Lname
+                                          select s;
+
+                    ViewBag.Success = "Fadderbarnet " + model.Child.Fname + " " + model.Child.Lname + " ble oppdatert" +sponsormsg;
+                    ViewBag.Id = model.Child.Id;
+                    return PartialView("ListPartials/_ChildrenPartial",
+                        new ChildrenModel { Children = successChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+                }
+                catch (EntityException ex)
+                {
+                    var entityErrorChildren = from s in _context.Children
+                                        orderby s.Lname
+                                        select s;
+
+                    ViewBag.Error = "Error: "+ex.Message;
+                    ViewBag.Id = model.Child.Id;
+
+                    return PartialView("ListPartials/_ChildrenPartial", new ChildrenModel { Children = entityErrorChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+                }
+
+            }
+            var errorChildren = from s in _context.Children
+                                orderby s.Lname
+                                select s;
+
+            ViewBag.Error = "Oops! Ugyldige verdier";
+            ViewBag.Id = model.Child.Id;
+
+            return PartialView("ListPartials/_ChildrenPartial",new ChildrenModel { Children = errorChildren.ToPagedList((childrenPage ?? 1), pageSize) });
         }
         [HttpGet]
-        public ActionResult showEmployeeCreate(int? page)
+        public ActionResult showEmployeeCreate(int? employeePage)
         {
-            ViewBag.page = page;
+            ViewBag.employeePage = (employeePage ?? 1);
 
             return PartialView("CreatePartials/_EmployeeCreatePartial", new RegisterViewModel());
         }
 
-        [HttpGet]
-        public async Task<ActionResult> employeeDeactivate(string id, int? page)
+        public ActionResult showChildCreate(int? childrenPage)
         {
-            ViewBag.page = page;
+            ViewBag.childrenPage = (childrenPage ?? 1);
+
+            return PartialView("CreatePartials/_ChildCreatePartial", new ChildCreateModel());
+        }
+
+        /************************deactivate functions**********************/
+
+        [HttpGet]
+        public async Task<ActionResult> employeeDeactivate(string id, int? employeePage)
+        {
+            ViewBag.employeePage = (employeePage ?? 1);
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -348,21 +601,66 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
             else
             {
-                
-                ViewBag.Error = "Noe gikk galt - "+ result.Errors;
+
+                ViewBag.Error = "Noe gikk galt - " + result.Errors;
                 ViewBag.Id = user.Id;
                 ViewBag.Worked = false;
             }
             var users = from s in _context.Users
-                        orderby s.Lname
-                        select s;
-            return PartialView("ListPartials/_EmployeePartial",new EmployeeModel { Employees = users.ToPagedList((page ?? 1), pageSize) });
+                orderby s.Lname
+                select s;
+            return PartialView("ListPartials/_EmployeePartial",
+                new EmployeeModel {Employees = users.ToPagedList((employeePage ?? 1), pageSize)});
         }
 
         [HttpGet]
-        public async Task<ActionResult> employeeActivate(string id, int? page)
+        public ActionResult childDeactivate(int id, int? childrenPage)
         {
-            ViewBag.page = page;
+            ViewBag.childrenPage = (childrenPage ?? 1);
+            if (id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            DbTables.Child child = _context.Children.Find(id);
+            if (child == null)
+            {
+                return HttpNotFound();
+            }
+            child.isActive = false;
+            try
+            {
+            _context.Entry(child).State = EntityState.Modified;
+            _context.SaveChanges();
+
+                var children = from s in _context.Children
+                            orderby s.Lname
+                            select s;
+                ViewBag.Success = "Barnet " + child.Fname +" "+child.Lname+ " har blitt deaktivert.";
+                ViewBag.Id = child.Id;
+                return PartialView("ListPartials/_ChildrenPartial",
+                    new ChildrenModel {Children = children.ToPagedList((childrenPage ?? 1), pageSize)});
+            }
+            catch (EntityException ex)
+            {
+                var children = from s in _context.Children
+                               orderby s.Lname
+                               select s;
+
+                ViewBag.Error = "Noe gikk galt "+ex.Message;
+                ViewBag.Id = child.Id;
+                return PartialView("ListPartials/_ChildrenPartial",
+                    new ChildrenModel { Children = children.ToPagedList((childrenPage ?? 1), pageSize) });
+            }
+            
+        }
+
+        /***************************************/
+
+        /************************activate functions**********************/
+        [HttpGet]
+        public async Task<ActionResult> employeeActivate(string id, int? employeePage)
+        {
+            ViewBag.employeePage = (employeePage ?? 1);
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -396,13 +694,53 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         orderby s.Lname
                         select s;
 
-            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((page ?? 1),pageSize) });
+            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((employeePage ?? 1),pageSize) });
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> childActivate(int id, int? childrenPage)
+        {
+            ViewBag.childrenPage = (childrenPage ?? 1);
+            if (id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            DbTables.Child child = _context.Children.Find(id);
+            if (child == null)
+            {
+                return HttpNotFound();
+            }
+            child.isActive = true;
+            try
+            {
+                _context.Entry(child).State = EntityState.Modified;
+                _context.SaveChanges();
+
+                var children = from s in _context.Children
+                               orderby s.Lname
+                               select s;
+                ViewBag.Success = "Barnet " + child.Fname + " " + child.Lname + " har blitt aktivert.";
+                ViewBag.Id = child.Id;
+                return PartialView("ListPartials/_ChildrenPartial",
+                    new ChildrenModel { Children = children.ToPagedList((childrenPage ?? 1), pageSize) });
+            }
+            catch (EntityException ex)
+            {
+                var children = from s in _context.Children
+                               orderby s.Lname
+                               select s;
+
+                ViewBag.Error = "Noe gikk galt " + ex.Message;
+                ViewBag.Id = child.Id;
+                return PartialView("ListPartials/_ChildrenPartial",
+                    new ChildrenModel { Children = children.ToPagedList((childrenPage ?? 1), pageSize) });
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult> EditEmployee(changeUserInfo model, int? page)
+        public async Task<ActionResult> EditEmployee(changeUserInfo model, int? employeePage)
         {
-            ViewBag.page = page;
+            ViewBag.employeePage = (employeePage ?? 1);
             var users = from s in _context.Users
                         orderby s.Lname
                         select s;
@@ -431,7 +769,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         ViewBag.Id = user.Id;
                         ViewBag.Error = "Emailen er allerede i bruk";
                             
-                            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((page ?? 1), pageSize) });
+                            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((employeePage ?? 1), pageSize) });
                     }
                 }
                 }
@@ -486,37 +824,37 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             ViewBag.Error = "Passordet må matche kriteriene";
                             ViewBag.Id = user.Id;
                            
-                            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = successUsers.ToPagedList((page ?? 1), pageSize) });
+                            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = successUsers.ToPagedList((employeePage ?? 1), pageSize) });
                         }
                     }
 
                     ViewBag.Success = "Brukeren "+ user.Email+" ble oppdatert.";
                     ViewBag.Id = user.Id;
 
-                    return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = successUsers.ToPagedList((page ?? 1), pageSize) });
+                    return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = successUsers.ToPagedList((employeePage ?? 1), pageSize) });
                     
                 }
                
 
                 ViewBag.Id = user.Id;
                     ViewBag.Error = "Noe gikk galt "+result.Errors;
-                    return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((page ?? 1), pageSize) });
+                    return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((employeePage ?? 1), pageSize) });
                 
             }
 
 
             ViewBag.Id = model.Id;
             ViewBag.Error = "Noe gikk galt";
-            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((page ?? 1), pageSize) });
+            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((employeePage ?? 1), pageSize) });
             
 
 
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateEmployee(RegisterViewModel model, int? page)
+        public async Task<ActionResult> CreateEmployee(RegisterViewModel model, int? employeePage)
         {
-            ViewBag.page = page;
+            ViewBag.employeePage = (employeePage ?? 1);
             var users = from s in _context.Users
                         orderby s.Lname
                         select s;
@@ -538,7 +876,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             ViewBag.Error = "Emailen er allerede i bruk.";
                            
                                 return PartialView("ListPartials/_EmployeePartial",
-                                    new EmployeeModel { Employees = users.ToPagedList((page ?? 1), pageSize) });
+                                    new EmployeeModel { Employees = users.ToPagedList((employeePage ?? 1), pageSize) });
                            
                         }
                     }
@@ -575,7 +913,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     catch (EntityException ex)
                     {
                         ViewBag.Error = "Noe gikk galt " + ex.Message;
-                        return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((page ?? 1), pageSize) });
+                        return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((employeePage ?? 1), pageSize) });
 
                     }
 
@@ -593,14 +931,80 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     ViewBag.Success = "Brukeren "+user.Email+" ble lagt til i databasen";
                     ViewBag.Id = user.Id;
                     //var users = _context.Users.ToList();
-                    return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = successUsers.ToPagedList((page ?? 1), pageSize) });
+                    return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = successUsers.ToPagedList((employeePage ?? 1), pageSize) });
                 }
                 ViewBag.Error = "Noe gikk galt "+ result.Errors;
-                return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((page ?? 1), pageSize) });
+                return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((employeePage ?? 1), pageSize) });
             }
 
             ViewBag.Error = "Noe gikk galt";
-            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((page ?? 1), pageSize) });
+            return PartialView("ListPartials/_EmployeePartial", new EmployeeModel { Employees = users.ToPagedList((employeePage ?? 1), pageSize) });
+        }
+
+        [HttpPost]
+        public ActionResult CreateChild(ChildCreateModel model, int? childrenPage)
+        {
+            ViewBag.childrenPage = (childrenPage ?? 1);
+            if (ModelState.IsValid)
+            {
+                var sponsormsg = "";
+                if (model.Child.SponsorId != null) { 
+                var user = _context.Users.Find(model.Child.SponsorId);
+                if (user != null)
+                {
+                    if (user.Fname +" "+user.Lname != model.SponsorName)
+                    {
+                        model.Child.SponsorId = null;
+                            sponsormsg = ", men fant ikke bruker " + model.SponsorName;
+                        }
+                }
+                }
+                else if (model.Child.SponsorId == null && model.SponsorName != null)
+                {
+                    sponsormsg = ", men fant ikke bruker " + model.SponsorName;
+                }
+                model.Child.isActive = true;
+                if (model.Child.DoB > DateTime.Now)
+                {
+                    var errorChildren = from s in _context.Children
+                                   orderby s.Lname
+                                   select s;
+                    ViewBag.Error = "Barnet kan ikke være født i fremtiden!";
+
+                    return PartialView("ListPartials/_ChildrenPartial", new ChildrenModel { Children = errorChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+                }
+                try
+                {
+                    _context.Children.Add(model.Child);
+                    _context.SaveChanges();
+
+                    var successChildren = from s in _context.Children
+                        orderby s.Lname
+                        select s;
+
+                    ViewBag.Success = "Fadderbarnet " + model.Child.Fname + " " + model.Child.Lname + " ble lagt til i databasen"+sponsormsg;
+                    ViewBag.Id = model.Child.Id;
+                    return PartialView("ListPartials/_ChildrenPartial",
+                        new ChildrenModel {Children = successChildren.ToPagedList((childrenPage ?? 1), pageSize)});
+                }
+                catch (EntityException ex)
+                {
+                    ViewBag.Error = "Error: "+ex.Message;
+                    var errorChildren = from s in _context.Children
+                                          orderby s.Lname
+                                          select s;
+
+                    return PartialView("ListPartials/_ChildrenPartial",
+                        new ChildrenModel { Children = errorChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+                }
+            }
+
+            var children = from s in _context.Children
+                           orderby s.Lname
+                           select s;
+            ViewBag.Error = "Oops, ikke gyldige verdier!";
+
+            return PartialView("ListPartials/_ChildrenPartial", new ChildrenModel { Children = children.ToPagedList((childrenPage ?? 1), pageSize) });
         }
 
         public DbTables.Adresses AdressExist(DbTables.Adresses adress)
@@ -614,6 +1018,36 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 }
             }
             return null;
+        }
+
+        [HttpPost]
+        public ActionResult GetUsers()
+        {
+            var body = Request.InputStream;
+            var encoding = Request.ContentEncoding;
+            var reader = new StreamReader(body, encoding);
+            var json = reader.ReadToEnd();
+
+
+            var enteties = new List<object>();
+
+            var users = (from s in _context.Users
+                         where
+                         s.Fname.StartsWith(json) ||
+                         s.Lname.StartsWith(json)
+                         orderby s.Lname
+                         select s).ToList();
+
+            foreach (var user in users)
+            {
+                var imgId = 0;
+                if (user.Thumbnail != null)
+                {
+                    imgId = user.Thumbnail.ThumbNailId;
+                }
+                enteties.Add(new { Name = user.Fname + " " + user.Lname, Id = user.Id, imgId = imgId });
+            }
+            return Json(enteties);
         }
     }
 }
