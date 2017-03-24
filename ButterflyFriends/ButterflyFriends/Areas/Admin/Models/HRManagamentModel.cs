@@ -10,5 +10,6 @@ namespace ButterflyFriends.Areas.Admin.Models
     {
         public EmployeeModel EmployeeModel { get; set; }
         public ChildrenModel ChildrenModel { get; set; }
+        public SponsorModel SponsorModel { get; set; }
     }
 }

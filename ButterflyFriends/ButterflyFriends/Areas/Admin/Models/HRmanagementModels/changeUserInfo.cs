@@ -52,5 +52,10 @@ namespace ButterflyFriends.Areas.Admin.Models
 
         [Required]
         public string Id { get; set; }
+
+        [Display(Name = "Stilling")]
+        public string Position { get; set; }
+        [Display(Name = "Bankonto")]
+        public int? AccountNumber { get; set; }
     }
 }

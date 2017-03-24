@@ -115,6 +115,11 @@ namespace ButterflyFriends.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Display(Name = "Posisjon")]
+        public string Position { get; set; }
+        [Display(Name = "Kontonummer")]
+        public int? AccountNumber { get; set; }
     }
 
     public class ResetPasswordViewModel

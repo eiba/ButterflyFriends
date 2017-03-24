@@ -21,7 +21,7 @@
     <div id="Sponsors" class="tab-pane fade">
 
         <div id="updateSponsors">
-            @Html.Partial("ListPartials/_SponsorPartial")
+            @Html.Partial("ListPartials/_SponsorPartial",Model.SponsorModel)
         </div>
     </div>
     <div id="Children" class="tab-pane fade">
@@ -62,6 +62,18 @@
                 cache: false,
                 success: function (result) {
                     $('#updateChildren').html(result);
+                }
+            });
+            return false;
+        });
+
+        $(document).on("click", "#sponsorPager a[href]", function () {
+            $.ajax({
+                url: $(this).attr("href"),
+                type: 'GET',
+                cache: false,
+                success: function (result) {
+                    $('#updateSponsors').html(result);
                 }
             });
             return false;

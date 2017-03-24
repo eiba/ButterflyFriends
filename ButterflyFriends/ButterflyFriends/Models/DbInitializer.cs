@@ -213,6 +213,21 @@ namespace ButterflyFriends.Models
             userManager.Create(user12, "Password1.");
             userManager.AddToRole(user12.Id, "Sponsor");
 
+            var employee1 = new ApplicationUser
+            {
+                UserName = "employee1@butterflyfriends.no",
+                Email = "employee1@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                AccessLvL = "Employee",
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees{Position = "Regnskapsfører",AccountNumber = 23452345}
+            };
+            userManager.Create(employee1, "Password1.");
+            userManager.AddToRole(employee1.Id, "Employee");
+
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Mohammed",

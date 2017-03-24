@@ -1,8 +1,8 @@
 ﻿@model ButterflyFriends.Areas.Admin.Models.changeUserInfo
 @{
 
-    var formId = "profileForm";
-    var ModalId = Model.Id + "d";
+    var formId = "sprofileForm";
+    var ModalId = Model.Id + "sd";
 }
 
 <div id="Box">
@@ -10,10 +10,10 @@
     <modal :show.sync="showModal">
         <h3 slot="header">Rediger ansatt</h3>
         <h5 slot="body">
-            @using (Ajax.BeginForm("EditEmployee", "HRManagement",new { employeePage = @ViewBag.employeePage }, new AjaxOptions
+            @using (Ajax.BeginForm("EditSponsor", "HRManagement", new { sponsorPage = @ViewBag.sponsorPage }, new AjaxOptions
             {
 
-                UpdateTargetId = "updateEmployees",
+                UpdateTargetId = "updateSponsors",
                 InsertionMode = InsertionMode.Replace,
                 HttpMethod = "POST",
 
@@ -24,7 +24,7 @@
                 <div class="form-horizontal">
                     @Html.ValidationSummary(true)
                     @Html.HiddenFor(model => model.Id)
-                    
+
                     <div class="form-group">
                         @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
@@ -83,22 +83,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        <input name="Position" value="@Model.Position" class="form-control">
-                        @Html.ValidationMessageFor(model => model.Position)
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.AccountNumber, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        <input name="AccountNumber" value ="@Model.AccountNumber" class="form-control">
-                        @Html.ValidationMessageFor(model => model.AccountNumber)
-                    </div>
-                </div>
-
                 <div class="form-group">
                     @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
@@ -201,3 +185,4 @@
 
 
 </script>
+

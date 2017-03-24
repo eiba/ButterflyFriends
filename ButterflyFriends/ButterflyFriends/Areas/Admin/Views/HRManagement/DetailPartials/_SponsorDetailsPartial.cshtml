@@ -5,7 +5,7 @@
 
     var fullname = Model.User.Fname + " " + Model.User.Lname;
     var mailto = "mailto:" + Model.User.Email;
-    var ModalId = Model.User.Id + "e";
+    var ModalId = Model.User.Id + "s";
 }
 
 <script type="x/template" id="@ModalId">
@@ -27,7 +27,7 @@
                     <slot name="footer">
                         <button class="modal-default-button btn-primary btn"
                                 v-on:click="close">
-                             OK <span class="glyphicon glyphicon-ok"></span>
+                            OK <span class="glyphicon glyphicon-ok"></span>
                         </button>
                     </slot>
                 </div>
@@ -90,24 +90,6 @@
                 <dd>
                     @Html.DisplayFor(modelItem => Model.User.AccessLvL)
                 </dd>
-                @if (Model.User.Employee.Position != null)
-                {
-                    <dt>
-                        Posisjon:
-                    </dt>
-                    <dd>
-                        @Html.DisplayFor(modelItem => Model.User.Employee.Position)
-                    </dd>
-                }
-                @if (Model.User.Employee.AccountNumber != null)
-                {
-                    <dt>
-                        Kontonummer:
-                    </dt>
-                    <dd>
-                        @Html.DisplayFor(modelItem => Model.User.Employee.AccountNumber)
-                    </dd>
-                }
 
             </dl>
             <hr />
@@ -140,7 +122,7 @@
                                     this.show = true;
                                     document.addEventListener("keydown", (e) => {
                                         if (this.show && e.keyCode == 27) {
-                                            
+
                                             this.close();
                                         }
                                         else if (this.show && e.keyCode == 13) {

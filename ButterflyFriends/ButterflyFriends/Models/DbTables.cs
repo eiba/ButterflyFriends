@@ -51,12 +51,13 @@ namespace ButterflyFriends.Models
             [Key, ForeignKey("User")]
             public string EmployeeId { get; set; }
 
-            [Display(Name="Bankonto")]
-            public string BankAccount { get; set; }
+            [Display(Name="Kontonummer")]
+            public int? AccountNumber { get; set; }
             [Display(Name = "Stilling")]
             public string Position { get; set; }
 
             public virtual ApplicationUser User { get; set; }
+            public virtual IList<Article> Articles { get; set; }
         }
 
         /// <summary>
@@ -135,6 +136,16 @@ namespace ButterflyFriends.Models
             public int height { get; set; }
             public string Name { get; set; }
             //public virtual File picture {get; set; }
+        }
+
+        public class Article
+        {
+            [Key]
+            public int Id { get; set; }
+            public string Header { get; set; }
+            public string Content { get; set; }
+
+            public virtual Employees Employee { get; set; }
         }
         public enum FileType
         {

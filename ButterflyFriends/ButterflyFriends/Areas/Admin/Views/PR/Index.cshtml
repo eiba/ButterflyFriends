@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Shiiiit, skriv en artikkel</h2>
+
+
+<!-- Include stylesheet -->
+<link href="https://cdn.quilljs.com/1.2.2/quill.snow.css" rel="stylesheet">
+
+<!-- Create the editor container -->
+<div id="editor">
+    <p>Hello World!</p>
+    <p>Some initial <strong>bold</strong> text</p>
+    <p><br></p>
+</div>
+
+<!-- Include the Quill library -->
+<script src="https://cdn.quilljs.com/1.2.2/quill.js"></script>
+
+<button class="btn btn-primary" onclick="func()"></button>
+<!-- Initialize Quill editor -->
+<script>
+  var quill = new Quill('#editor', {
+    theme: 'snow'
+  });
+
+  function func() {
+      console.log($("#editor").html());
+  }
+</script>

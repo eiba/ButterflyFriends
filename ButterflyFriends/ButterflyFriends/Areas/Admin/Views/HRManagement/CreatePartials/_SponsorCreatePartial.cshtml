@@ -19,24 +19,24 @@
 
 
 
-            @using (Ajax.BeginForm("CreateEmployee", "HRManagement",new { employeePage = ViewBag.employeePage }, new AjaxOptions
+            @using (Ajax.BeginForm("CreateSponsor", "HRManagement", new { sponsorPage = ViewBag.sponsorPage }, new AjaxOptions
             {
-                UpdateTargetId = "updateEmployees",
+                UpdateTargetId = "updateSponsors",
                 InsertionMode = InsertionMode.Replace,
                 HttpMethod = "POST",
 
-            }, new { @class = "form-horizontal", role = "form", id = "formId" }))
+            }, new { @class = "form-horizontal", role = "form", id = "sponsorForm" }))
             {
                 @Html.AntiForgeryToken()
-                
-                    @Html.ValidationSummary("", new { @class = "text-danger" })
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Fname, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Fname, new { @class = "form-control", id = "Fname", required = "required" })
 
-                        </div>
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Fname, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Fname, new { @class = "form-control", id = "Fname", required = "required" })
+
                     </div>
+                </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.Lname, new { @class = "col-md-2 control-label" })
                         <div class="col-md-10">
@@ -55,59 +55,47 @@
                             @Html.TextBoxFor(m => m.City, new { @class = "form-control", id = "City", required = "required" })
                         </div>
                     </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.PostCode, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.PostCode, new { @class = "form-control", id = "PostCode", required = "required" })
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PostCode, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.PostCode, new { @class = "form-control", id = "PostCode", required = "required" })
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.State, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.State, new { @class = "form-control", id = "State", required = "required" })
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.State, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.State, new { @class = "form-control", id = "State", required = "required" })
+                        </div>
                     </div>
-                </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.Phone, new { @class = "col-md-2 control-label" })
                         <div class="col-md-10">
                             @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", id = "Phone", required = "required" })
                         </div>
                     </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "Email", required = "required" })
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "Email", required = "required" })
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Position, new { @class = "form-control", id = "Position"})
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.AccountNumber, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control", id = "AccountNumber" })
-                    </div>
-                </div>
                     @*
-    var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-    ApplicationUser userr = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
-    var roleNr = userr.roleNr;
-    HRManagementController HR = new HRManagementController();
+                        var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+                        ApplicationUser userr = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
+                        var roleNr = userr.roleNr;
+                        HRManagementController HR = new HRManagementController();
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.UserRole, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            <select name="UserRole" class="form-control">
-                @for (int i = 1; i < roleNr; i++)
-                {
-                    <option value=@HR.ResolveUserRole(i)>@HR.ResolveUserRole(i)</option>
-                }
-            </select>
-        </div>
-    </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.UserRole, new { @class = "col-md-2 control-label" })
+                            <div class="col-md-10">
+                                <select name="UserRole" class="form-control">
+                                    @for (int i = 1; i < roleNr; i++)
+                                    {
+                                        <option value=@HR.ResolveUserRole(i)>@HR.ResolveUserRole(i)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
                     *@
                     <div class="form-group">
                         @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
@@ -128,7 +116,7 @@
     </modal>
 </div>
 
-<script type="x/template" id="ModalId">
+<script type="x/template" id="SponsorModalId">
     <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
         <div class="modal-wrapper">
             <div class="modal-container" style="width:650px;" v-on:click.stop>
@@ -161,7 +149,7 @@
 <script>
 
     Vue.component('modal', {
-        template: '#ModalId',
+        template: '#SponsorModalId',
         props: {
             show: {
                 type: Boolean,
@@ -176,7 +164,7 @@
 
             },
             closeButton: function () {
-                     $("form#formId").submit();
+                $("form#sponsorForm").submit();
                      $(".loader-mask").hide();
                     this.show = false;
 
@@ -220,3 +208,4 @@
         }
     });
 </script>
+

@@ -1,4 +1,6 @@
-﻿
+﻿@using ButterflyFriends.Areas.Admin.Models.HRmanagementModels
+@using PagedList.Mvc
+@model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.SponsorModel
 <div class="row">
 
     <div class="col-md-12">
@@ -9,30 +11,126 @@
                         <h3 class="panel-title listHeader"><b>Faddere</b></h3>
                     </div>
                     <div class="col col-xs-6 text-right">
-                        <button type="button" class="btn btn-sm btn-primary btn-create">Lag ny</button>
+
+                        @using (Ajax.BeginForm("showSponsorCreate", "HRManagement", new { sponsorPage = ViewBag.sponsorPage }, new AjaxOptions
+                        {
+                            UpdateTargetId = "Modal",
+                            InsertionMode = InsertionMode.Replace,
+                            HttpMethod = "GET"
+
+
+                        }, new { @class = "form-horizontal" }))
+                        {
+                            <button class="btn btn-sm btn-primary btn-create">Lag ny</button>
+                        }
+
+
                     </div>
+                    <h5 class="text-success statusText">@ViewBag.Success</h5>
+                    <h5 class="text-danger statusText">@ViewBag.Error</h5>
                 </div>
             </div>
             <div class="panel-body">
+                <div class="loader"></div>
                 <table class="table table-striped table-bordered table-list table-hover">
+
                     <thead>
                         <tr>
                             <th><em class="fa fa-cog"></em></th>
                             <th class="hidden-xs">ID</th>
-                            <th>Name</th>
+                            <th>Navn</th>
                             <th>Email</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        <tr>
-                            <td align="center">
-                                <a class="btn btn-default"><em class="fa fa-pencil"></em></a>
-                                <a class="btn btn-danger"><em class="fa fa-trash"></em></a>
-                            </td>
-                            <td class="hidden-xs">1</td>
-                            <td>John Doe</td>
-                            <td>johndoe@example.com</td>
-                        </tr>
+
+
+                        @foreach (var sponsor in Model.Sponsors)
+                        {
+
+                            var fullname = sponsor.Fname + " " + sponsor.Lname;
+                            var rowClass = "";
+                            if (ViewBag.Success != null && sponsor.Id == ViewBag.Id)
+                            {
+                                rowClass = "success";
+                            }
+                            else if (ViewBag.Error != null && sponsor.Id == ViewBag.Id)
+                            {
+                                rowClass = "danger";
+                            }
+                            <tr class="@rowClass">
+
+                                <td align="center">
+                                    <div class="row">
+                                        <div class="col-md-offset-2">
+                                            <div class="col-md-3">
+                                                @using (Ajax.BeginForm("showSponsorDetails", "HRManagement", new { id = @sponsor.Id }, new AjaxOptions
+                                                {
+                                                    UpdateTargetId = "Modal",
+                                                    InsertionMode = InsertionMode.Replace,
+                                                    HttpMethod = "GET",
+
+
+                                                }, new { @class = "form-horizontal" }))
+                                                {
+
+                                                    <button class="btn btn-primary"><em class="fa fa-user-circle-o"></em></button>
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @using (Ajax.BeginForm("showSponsorEdit", "HRManagement", new { id = @sponsor.Id, sponsorPage = ViewBag.sponsorPage }, new AjaxOptions
+                                                {
+                                                    UpdateTargetId = "Modal",
+                                                    InsertionMode = InsertionMode.Replace,
+                                                    HttpMethod = "GET",
+
+
+                                                }, new { @class = "form-horizontal" }))
+                                                {
+                                                    <button class="btn btn-default"><em class="fa fa-pencil"></em></button>
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (sponsor.IsEnabeled)
+                                                {
+                                                    using (Ajax.BeginForm("sponsorDeactivate", "HRManagement", new { id = @sponsor.Id, sponsorPage = ViewBag.sponsorPage }, new AjaxOptions
+                                                    {
+                                                        UpdateTargetId = "updateSponsors",
+                                                        InsertionMode = InsertionMode.Replace,
+                                                        HttpMethod = "GET",
+
+
+                                                    }, new { @class = "form-horizontal" }))
+                                                    {
+                                                        <button class="btn btn-danger"><em class="fa fa-lock"></em></button>
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    using (Ajax.BeginForm("sponsorActivate", "HRManagement", new { id = @sponsor.Id, sponsorPage = ViewBag.sponsorPage }, new AjaxOptions
+                                                    {
+                                                        UpdateTargetId = "updateSponsors",
+                                                        InsertionMode = InsertionMode.Replace,
+                                                        HttpMethod = "GET",
+
+
+                                                    }, new { @class = "form-horizontal" }))
+                                                    {
+                                                        <button class="btn btn-success"><em class="fa fa-unlock"></em></button>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="hidden-xs">@sponsor.Id</td>
+                                <td>@fullname</td>
+                                <td>@sponsor.Email</td>
+                            </tr>
+                        }
+
                     </tbody>
                 </table>
 
@@ -40,20 +138,16 @@
             <div class="panel-footer">
                 <div class="row">
                     <div class="col col-xs-4">
-                        Side 1 of 5
+                        Side @Model.Sponsors.PageNumber av @Model.Sponsors.PageCount
                     </div>
                     <div class="col col-xs-8">
-                        <ul class="pagination hidden-xs pull-right">
-                            <li><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">5</a></li>
-                        </ul>
-                        <ul class="pagination visible-xs pull-right">
-                            <li><a href="#">«</a></li>
-                            <li><a href="#">»</a></li>
-                        </ul>
+
+                        <div id="sponsorPager">
+                            <ul class="pagination hidden-xs pull-right">
+                                @Html.PagedListPager(Model.Sponsors, sponsorPage => Url.Action("SponsorList", "HRManagement", new { sponsorPage }))
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -61,3 +155,6 @@
     </div>
 </div>
 
+<script>
+    $(".loader-mask").hide();
+</script>
