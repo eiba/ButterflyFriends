@@ -1,0 +1,37 @@
+﻿@model IList<DbTables.MembershipRequest>
+@{
+    var id = 0;
+}
+<h5 class="text-danger statusText">@ViewBag.Error</h5>
+<h5 class="text-success statusText">@ViewBag.Success</h5>
+<div id="accordion">
+    @foreach (var request in Model)
+    {
+        id += 1;
+        <h3>@request.Fname @request.Lname</h3>
+
+        <div>
+            <ul>
+                <li id="@id-email">@request.Email</li>
+                <li id="@id-phone">@request.Phone</li>
+                <li id="@id-streetadress">@request.StreetAdress</li>
+                <li id="@id-postcode">@request.PostCode</li>
+                <li id="@id-city">@request.City</li>
+                <li id="@id-state">@request.State</li>
+
+
+            </ul>
+            <input id="@id-fname" value="@request.Fname" hidden />
+            <input id="@id-lname" value="@request.Lname" hidden />
+            <input id="@id-requestid" value="@request.Id" hidden />
+            <p>
+                @request.Description
+            </p>
+            <button onclick="acceptRequest(@id)" class="btn btn-primary">Aksepter</button>
+
+        </div>
+
+
+    }
+
+</div>

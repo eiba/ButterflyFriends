@@ -138,6 +138,7 @@ namespace ButterflyFriends.Models
             //public virtual File picture {get; set; }
         }
 
+
         public class Article
         {
             [Key]
@@ -146,6 +147,51 @@ namespace ButterflyFriends.Models
             public string Content { get; set; }
 
             public virtual Employees Employee { get; set; }
+        }
+        public class MembershipRequest
+        {
+            [Key]
+            public int Id { get; set; }
+
+            [Required]
+            [Display(Name = "Fornavn")]
+            public string Fname { get; set; }
+
+            [Required]
+            [Display(Name = "Etternavn")]
+            public string Lname { get; set; }
+
+            [Required]
+            [Display(Name = "Gateadresse")]
+            public string StreetAdress { get; set; }
+
+            [Required]
+            [Display(Name = "Postkode")]
+            public int PostCode { get; set; }
+
+            [Required]
+            [Display(Name = "Kommune")]
+            public string City { get; set; }
+
+            [Required]
+            [Display(Name = "Fylke")]
+            public string State { get; set; }
+
+            [Required]
+            [StringLength(12, ErrorMessage = "Telefonummer må være mellom 8 og 12 karakterer", MinimumLength = 8)]
+            [RegularExpression(@"^[0-9]+$", ErrorMessage = "Telefonummer kan kun vare karakterer mellom 0 og 9")]
+            [Display(Name = "Tlf")]
+            public string Phone { get; set; }
+
+            [Required]
+            [EmailAddress]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+
+            [Display(Name = "Beskrivelse")]
+            public string Description { get; set; }
+
+
         }
         public enum FileType
         {

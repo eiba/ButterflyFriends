@@ -1,0 +1,107 @@
+﻿@model IList<DbTables.MembershipRequest>
+@{
+    ViewBag.Title = "Medlemskapsforespørseler";
+    var id = 0;
+}
+
+<h2>Administrer medlemskapsforespørseler</h2>
+<div class="loader"></div>
+@if (!Model.Any())
+{
+    <br/>
+    <h5 class="statusText">Ingen medlemskapsforespørseler</h5>
+    <br/>
+}
+<div id="updateAccordion">
+    <div id="accordion">
+
+        @foreach (var request in Model)
+        {
+
+            id += 1;
+            <h3>@request.Fname @request.Lname</h3>
+
+            <div>
+                <ul>
+                    <li id="@id-email">@request.Email</li>
+                    <li id="@id-phone">@request.Phone</li>
+                    <li id="@id-streetadress">@request.StreetAdress</li>
+                    <li id="@id-postcode">@request.PostCode</li>
+                    <li id="@id-city">@request.City</li>
+                    <li id="@id-state">@request.State</li>
+
+
+                </ul>
+                <input id="@id-fname" value="@request.Fname" hidden />
+                <input id="@id-lname" value="@request.Lname" hidden />
+                <input id="@id-requestid" value="@request.Id" hidden />
+                <p>
+                    @request.Description
+                </p>
+                <button onclick="acceptRequest(@id)" class="btn btn-primary">Aksepter</button>
+
+            </div>
+
+
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+    $(".loader").hide();
+    $(document).ajaxStart(function () {
+        $(".loader").show();
+    }).ajaxStop(function () {
+        $(".loader").hide();
+    });
+
+    $("#accordion").accordion({
+        collapsible: true,
+        active: false,
+        heightStyle: "content"
+    });
+    });
+
+
+
+
+    function acceptRequest(id) {
+
+        
+        var formdata = new FormData();
+        formdata.append('email', $("#"+id+"-email").text());
+        formdata.append('phone', $("#"+id+"-phone").text());
+        formdata.append('streetadress', $("#"+id+"-streetadress").text());
+        formdata.append('city', $("#"+id+"-city").text());
+        formdata.append('postcode', $("#"+id+"-postcode").text());
+        formdata.append('state', $("#"+id+"-state").text());
+        formdata.append('fname', $("#"+id+"-fname").val());
+        formdata.append('lname', $("#" + id + "-lname").val());
+        formdata.append('requestid', $("#" + id + "-requestid").val());
+
+        $.ajax({
+            url: '/Admin/MemberRequests/RequestAccept',
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: formdata,
+            success: function (result) {
+                $("#updateAccordion").html(result);
+
+                //$("#accordion").accordion("destroy");
+
+                    $("#accordion").accordion({
+                        collapsible: true,
+                        active: false,
+                        heightStyle: "content"
+                    });
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+</script>

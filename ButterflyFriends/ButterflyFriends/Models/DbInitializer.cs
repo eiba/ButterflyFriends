@@ -15,7 +15,7 @@ namespace ButterflyFriends.Models
     /// The database initializer. Here we seed the database with test data when we run the project.
     /// The database is current DropCreateDatabaseIfModelChanges, so it drops and reseeds the database if any of the models/database tables change
     /// </summary>
-    public class DbInitializer: DropCreateDatabaseIfModelChanges<ApplicationDbContext>
+    public class DbInitializer: DropCreateDatabaseAlways<ApplicationDbContext>
     {
 
         /// <summary>
@@ -54,7 +54,8 @@ namespace ButterflyFriends.Models
                 AdressId = ownerAdress.AdressId,
                 AccessLvL = "Owner",
                 IsEnabeled = true,
-                Phone = "96347584"
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Daglig Leder", AccountNumber = 53355335 }
             };
             userManager.Create(owner, "Password1.");
             userManager.AddToRole(owner.Id, "Owner");
@@ -311,7 +312,30 @@ namespace ButterflyFriends.Models
                 DoB = new DateTime(2005, 6, 19),
                 isActive = true,
             });
-
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Arendal",
+                Description = "Please I wanna join",
+                Email = "Bojackman@gmail.com",
+                Fname = "Hans",
+                Lname = "Johansen",
+                Phone = "234234234",
+                PostCode = 3434,
+                State = "Aust-Agder",
+                StreetAdress = "Neptunveien 9"
+            });
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Kristiansand",
+                Description = "Hi I wanna help",
+                Email = "Nobro@gmail.com",
+                Fname = "Egil",
+                Lname = "André",
+                Phone = "56566565",
+                PostCode = 4554,
+                State = "Vest-Agder",
+                StreetAdress = "Åsveien 34"
+            });
 
             db.SaveChanges();
 

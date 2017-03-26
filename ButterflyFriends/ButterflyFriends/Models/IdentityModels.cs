@@ -67,6 +67,9 @@ namespace ButterflyFriends.Models
         public DbSet<DbTables.File> Files { get; set; }
         public DbSet<DbTables.TagBox> TagBoxs { get; set; }
         public DbSet<DbTables.ThumbNail> ThumbNails { get; set; }
+        public DbSet<DbTables.Article> Articles { get; set; }
+        public DbSet<DbTables.MembershipRequest> MembershipRequests { get; set; }
+
         /// <summary>
         /// Creates the database
         /// </summary>

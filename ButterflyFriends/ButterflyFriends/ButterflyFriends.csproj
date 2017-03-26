@@ -221,6 +221,7 @@
     <Compile Include="Areas\Admin\Controllers\FileAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\HRManagementController.cs" />
+    <Compile Include="Areas\Admin\Controllers\MemberRequestsController.cs" />
     <Compile Include="Areas\Admin\Controllers\PRController.cs" />
     <Compile Include="Areas\Admin\Models\HRmanagementModels\changeUserInfo.cs" />
     <Compile Include="Areas\Admin\Models\HRManagamentModel.cs" />
@@ -352,6 +353,8 @@
     <Content Include="Areas\Admin\Views\HRManagement\DetailPartials\_SponsorDetailsPartial.cshtml" />
     <Content Include="Areas\Admin\Views\HRManagement\CreatePartials\_SponsorCreatePartial.cshtml" />
     <Content Include="Areas\Admin\Views\PR\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\MemberRequests\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\MemberRequests\_AccordionPartial.cshtml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -410,6 +413,8 @@
     <Content Include="Views\Manage\_EditProfilePartial.cshtml" />
     <Content Include="Views\Manage\_UserInfoPartial.cshtml" />
     <Content Include="Views\Shared\_Logo.cshtml" />
+    <Content Include="Views\Home\RequestMembership.cshtml" />
+    <Content Include="Views\Home\_statusPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

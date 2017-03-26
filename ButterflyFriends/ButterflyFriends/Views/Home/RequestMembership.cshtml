@@ -1,0 +1,113 @@
+﻿@model ButterflyFriends.Models.DbTables.MembershipRequest
+
+@{
+    ViewBag.Title = "Forespør medlemskap";
+}
+
+<h2>Forespør medlemskap</h2>
+
+
+@using (Ajax.BeginForm("RequestMembership", "Home", new AjaxOptions
+            {
+
+                UpdateTargetId = "updateTxt",
+                InsertionMode = InsertionMode.Replace,
+                HttpMethod = "POST",
+                OnSuccess = "success"
+
+            }, new { @class = "form-horizontal", role = "form",id="form"}))
+            {
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true)
+        <div class="loader"></div>
+        <br/>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", required = "required" })
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Fname, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Fname, new { @class = "form-control", required = "required" })
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Lname, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Lname, new { @class = "form-control", required = "required" })
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Phone, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", required = "required" })
+
+            </div>
+        </div>
+        
+        <br/>
+        <h4>Adresse</h4>
+        <hr/>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.StreetAdress, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.StreetAdress, new { @class = "form-control", required = "required" })
+
+            </div>
+        </div><div class="form-group">
+            @Html.LabelFor(m => m.PostCode, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.PostCode, new { @class = "form-control", required = "required" })
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.City, new { @class = "form-control", required = "required" })
+
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.State, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.State, new { @class = "form-control", required = "required" })
+
+            </div>
+        </div>
+        <br/>
+        <h4>Beskrivelse</h4>
+        <p>Skriv litt om deg selv og hvorfor du vil bli fadder hos oss</p>
+        <hr/>
+                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", required = "required", @style="height:200px; max-width:100%;"})
+        
+        <br/>
+        <button type="submit" class="btn btn-primary">Forespør medlemskap</button>
+        
+        <div id="updateTxt">
+            @Html.Partial("_statusPartial")
+        </div>
+    </div>
+
+
+}
+
+<script>
+    $(document).ready(function () {
+        $(".loader").hide();
+        $(document).ajaxStart(function () {
+            $(".loader").show();
+        }).ajaxStop(function () {
+            $(".loader").hide();
+        });
+    });
+
+</script>

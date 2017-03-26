@@ -10,22 +10,16 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/Scripts/vue.js")
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    @RenderSection("scripts", required: false)
+
 
 </head>
 <body>
-@*facebook stuff*@
-<div id="fb-root"></div>
-<script>
-    (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s);
-        js.id = id;
-        js.src = "//connect.facebook.net/nb_NO/sdk.js#xfbml=1&version=v2.8";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-</script>
-    @*--------------*@
+
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -92,11 +86,5 @@
     </div>
 </div>
 
-
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/Scripts/vue.js")
-<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-@RenderSection("scripts", required: false)
 </body>
 </html>
