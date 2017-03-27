@@ -10,18 +10,23 @@ using ButterflyFriends.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.BuilderProperties;
+using PagedList;
 
 namespace ButterflyFriends.Areas.Admin.Controllers
 {
     public class MemberRequestsController : Controller
     {
         ApplicationDbContext _context = new ApplicationDbContext();
+        public int pageSize = 10;
 
         // GET: Admin/MemberRequests
         public ActionResult Index()
         {
-
-            return View(_context.MembershipRequests.ToList());
+            var requests = from s in _context.MembershipRequests
+                           orderby s.Lname
+                           select s;
+            ViewBag.page = 1;
+            return View(requests.ToPagedList(3,pageSize));
         }
 
 
@@ -31,12 +36,19 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
             var email = Request.Form["email"];
             var id = int.Parse(Request.Form["requestid"]);
+            var message = Request.Form["message"];
             var req = _context.MembershipRequests.Find(id);
 
+            ViewBag.page = Request.Form["page"];
+            var pageNumber = int.Parse(Request.Form["page"]);
+            var requests = from s in _context.MembershipRequests
+                           orderby s.Lname
+                           select s;
+
             var results = (from s in _context.Users
-                           where
-                               s.Email.Contains(email)
-                           select s).ToList();
+                where
+                s.Email.Contains(email)
+                select s).ToList();
 
             if (results.Any())
             {
@@ -46,21 +58,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     {
 
                         ViewBag.Error = "Emailen er allerede i bruk.";
-                        return PartialView("_AccordionPartial", _context.MembershipRequests.ToList());
+                        return PartialView("_AccordionPartial", requests.ToPagedList(pageNumber,pageSize));
 
 
                     }
                 }
 
-            }/*
-            var fname = Request.Form["fname"];
-            var lname = Request.Form["lname"];
-            var phone = Request.Form["phone"];
-            var streetadress = Request.Form["streetadress"];
-            var city = Request.Form["city"];
-            var state = Request.Form["state"];
-            var postcode = Request.Form["postcode"];*/
-
+            }
 
             var newUser = new ApplicationUser
             {
@@ -83,26 +87,80 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var userAdress = AdressExist(adress);
             newUser.Adress = userAdress;
             var password = Membership.GeneratePassword(12, 1);
-            var result = await userManager.CreateAsync(newUser,password);
+            var result = await userManager.CreateAsync(newUser, password);
             if (result.Succeeded)
             {
+                var successRequests = from s in _context.MembershipRequests
+                                      orderby s.Lname
+                                      select s;
                 try
                 {
+                    
+
                     userManager.AddToRole(newUser.Id, newUser.AccessLvL);
                     _context.MembershipRequests.Remove(req);
                     _context.SaveChanges();
                     ViewBag.Success = "Brukeren " + newUser.Email + " ble lagt til i databasen";
-                    return PartialView("_AccordionPartial", _context.MembershipRequests.ToList());
+                    return PartialView("_AccordionPartial", successRequests.ToPagedList(pageNumber, pageSize));
                 }
                 catch (EntityException ex)
                 {
-                    ViewBag.Error = "Error "+ex.Message;
-                    return PartialView("_AccordionPartial", _context.MembershipRequests.ToList());
+                    ViewBag.Error = "Error " + ex.Message;
+                    return PartialView("_AccordionPartial", successRequests.ToPagedList(pageNumber, pageSize));
                 }
 
             }
             ViewBag.Error = "Noe gikk galt " + result.Errors;
-            return PartialView("_AccordionPartial",_context.MembershipRequests.ToList());
+            return PartialView("_AccordionPartial", requests.ToPagedList(pageNumber, pageSize));
+        }
+
+        [HttpPost]
+        public ActionResult RequestDecline()
+        {
+            var id = int.Parse(Request.Form["requestid"]);
+            var message = Request.Form["message"];
+
+            ViewBag.page = Request.Form["page"];
+            var pageNumber = int.Parse(Request.Form["page"]);
+            
+
+            try
+            {
+                var req = _context.MembershipRequests.Find(id);
+                var name = req.Fname + " " + req.Lname;
+                _context.MembershipRequests.Remove(req);
+                _context.SaveChanges();
+
+                var requests = from s in _context.MembershipRequests
+                               orderby s.Lname
+                               select s;
+
+                ViewBag.Success = "Forespørselen fra "+name+" ble fjernet";
+                return PartialView("_AccordionPartial", requests.ToPagedList(pageNumber, pageSize));
+
+            }
+            catch (EntityException ex)
+            {
+                var requests = from s in _context.MembershipRequests
+                               orderby s.Lname
+                               select s;
+
+                ViewBag.Error = "Noe gikk galt: "+ex.Message;
+                return PartialView("_AccordionPartial", requests.ToPagedList(pageNumber, pageSize));
+            }
+        }
+
+        public ActionResult RequestList(int? page)
+        {
+            var requests = from s in _context.MembershipRequests
+                        orderby s.Lname
+                        select s;
+
+            int pageNumber = (page ?? 1);
+            ViewBag.page = (page ?? 1);
+
+            return PartialView("_AccordionPartial", requests.ToPagedList(pageNumber,pageSize));
+
         }
 
         public DbTables.Adresses AdressExist(DbTables.Adresses adress)

@@ -1,48 +1,99 @@
-﻿@model IList<DbTables.MembershipRequest>
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<DbTables.MembershipRequest>
 @{
     ViewBag.Title = "Medlemskapsforespørseler";
     var id = 0;
 }
 
-<h2>Administrer medlemskapsforespørseler</h2>
-<div class="loader"></div>
-@if (!Model.Any())
-{
-    <br/>
-    <h5 class="statusText">Ingen medlemskapsforespørseler</h5>
-    <br/>
-}
+<br/>
+
 <div id="updateAccordion">
-    <div id="accordion">
+    @if (!Model.Any() && Model.PageCount == 0)
+    {
+        <h3 class="statusText">Administrer medlemskapsforespørseler</h3>
+        <br />
+        <h5 class="text-success statusText">@ViewBag.Success</h5>
+        <h5 id="error" class="text-danger statusText">@ViewBag.Error</h5>
+        <h5 class="statusText">Ingen medlemskapsforespørseler</h5>
+        <br />
+        return;
+    }
+    <input id="page" value="@ViewBag.page" hidden />
+    <br />
+    <div class="panel panel-default panel-table">
+        <div class="panel-heading">
+            <div class="row">
+                <br/>
+                <h3 class="panel-title statusText"><b>Medlemskapsforespørsler</b>
+                </h3>
 
-        @foreach (var request in Model)
-        {
-
-            id += 1;
-            <h3>@request.Fname @request.Lname</h3>
-
-            <div>
-                <ul>
-                    <li id="@id-email">@request.Email</li>
-                    <li id="@id-phone">@request.Phone</li>
-                    <li id="@id-streetadress">@request.StreetAdress</li>
-                    <li id="@id-postcode">@request.PostCode</li>
-                    <li id="@id-city">@request.City</li>
-                    <li id="@id-state">@request.State</li>
-
-
-                </ul>
-                <input id="@id-fname" value="@request.Fname" hidden />
-                <input id="@id-lname" value="@request.Lname" hidden />
-                <input id="@id-requestid" value="@request.Id" hidden />
-                <p>
-                    @request.Description
-                </p>
-                <button onclick="acceptRequest(@id)" class="btn btn-primary">Aksepter</button>
-
+                <h5 class="text-success statusText">@ViewBag.Success</h5>
+                <h5 id="error" class="text-danger statusText">@ViewBag.Error</h5>
             </div>
+        </div>
+        <div class="panel-body">
+            <div class="loader" style="top: 50% !important;"></div>
+            <div id="accordion">
+
+                @foreach (var request in Model)
+                {
+
+                    id += 1;
+                    <h3>@request.Fname @request.Lname</h3>
+
+                    <div>
+                        <ul>
+                            <li id="@id-email">@request.Email</li>
+                            <li id="@id-phone">@request.Phone</li>
+                            <li id="@id-streetadress">@request.StreetAdress</li>
+                            <li id="@id-postcode">@request.PostCode</li>
+                            <li id="@id-city">@request.City</li>
+                            <li id="@id-state">@request.State</li>
 
 
+                        </ul>
+                        <input id="@id-fname" value="@request.Fname" hidden/>
+                        <input id="@id-lname" value="@request.Lname" hidden/>
+                        <input id="@id-requestid" value="@request.Id" hidden/>
+                        <p>
+                            @request.Description
+                        </p>
+                        <br/>
+                        <p>Melding:</p>
+                        <textarea id="@id-ta" class="form-control" style="max-width: 100%"></textarea>
+                        <br/>
+
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <button onclick="acceptRequest(@id)" class="btn btn-primary">Aksepter</button>
+                            </div>
+                            <div class="col-sm-11">
+                                <button onclick="declineRequest(@id)" class="btn btn-danger">Avslå</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                }
+            </div>
+        </div>
+        @if (Model.PageCount > 0)
+        {
+            <div class="panel-footer requestFooter">
+                <div class="row">
+                    <br/>
+                    <div class="col col-xs-4">
+                        Side @Model.PageNumber av @Model.PageCount
+                    </div>
+                    <div class="col col-xs-8">
+                            <div id="Pager">
+                                <ul class="pagination hidden-xs pull-right">
+                                    @Html.PagedListPager(Model, page => Url.Action("RequestList", "MemberRequests", new {page}))
+                                </ul>
+                            </div>
+                    </div>
+                </div>
+            </div>
         }
     </div>
 </div>
@@ -69,7 +120,7 @@
 
     function acceptRequest(id) {
 
-        
+
         var formdata = new FormData();
         formdata.append('email', $("#"+id+"-email").text());
         formdata.append('phone', $("#"+id+"-phone").text());
@@ -80,6 +131,8 @@
         formdata.append('fname', $("#"+id+"-fname").val());
         formdata.append('lname', $("#" + id + "-lname").val());
         formdata.append('requestid', $("#" + id + "-requestid").val());
+        formdata.append('message', $("#" + id + "-ta").val());
+        formdata.append('page', $("#page").val());
 
         $.ajax({
             url: '/Admin/MemberRequests/RequestAccept',
@@ -99,9 +152,62 @@
                     });
             },
             error: function (err) {
+                $("#error").text("Error: "+err);
                 console.log(err);
             }
         });
     }
 
+    function declineRequest(id) {
+        var formdata = new FormData();
+        formdata.append('message', $("#" + id + "-ta").val());
+        formdata.append('requestid', $("#" + id + "-requestid").val());
+        formdata.append('page', $("#page").val());
+
+        $.ajax({
+            url: '/Admin/MemberRequests/RequestDecline',
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: formdata,
+            success: function (result) {
+                $("#updateAccordion").html(result);
+
+                //$("#accordion").accordion("destroy");
+
+                $("#accordion").accordion({
+                    collapsible: true,
+                    active: false,
+                    heightStyle: "content"
+                });
+            },
+            error: function (err) {
+                $("#error").text("Error: "+err);
+                console.log(err);
+            }
+        });
+
+    }
+
+    $(document).on("click", "#Pager a[href]", function () {
+        $.ajax({
+            url: $(this).attr("href"),
+            type: 'GET',
+            cache: false,
+            success: function (result) {
+                $('#updateAccordion').html(result);
+
+                $("#accordion").accordion({
+                    collapsible: true,
+                    active: false,
+                    heightStyle: "content"
+                });
+            },
+            error:function(err) {
+                $("#error").text("Error: " + err);
+                console.log(err);
+            }
+        });
+        return false;
+    });
 </script>

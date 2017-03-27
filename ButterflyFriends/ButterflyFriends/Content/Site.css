@@ -362,3 +362,9 @@ a:hover{
 ul.ui-autocomplete {
     z-index: 9999;
 }
+
+.requestFooter {
+    height: 120px;
+    margin-top: 10px;
+    padding-bottom: 120px;
+}

@@ -319,7 +319,7 @@ namespace ButterflyFriends.Models
                 Email = "Bojackman@gmail.com",
                 Fname = "Hans",
                 Lname = "Johansen",
-                Phone = "234234234",
+                Phone = "34343434",
                 PostCode = 3434,
                 State = "Aust-Agder",
                 StreetAdress = "Neptunveien 9"
@@ -331,12 +331,133 @@ namespace ButterflyFriends.Models
                 Email = "Nobro@gmail.com",
                 Fname = "Egil",
                 Lname = "André",
-                Phone = "56566565",
+                Phone = "34343434",
                 PostCode = 4554,
                 State = "Vest-Agder",
                 StreetAdress = "Åsveien 34"
             });
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Ålesund",
+                Description = "Hi I wanna help",
+                Email = "Ayay@gmail.com",
+                Fname = "Mari",
+                Lname = "Almdahl",
+                Phone = "34343434",
+                PostCode = 3434,
+                State = "Rogaland",
+                StreetAdress = "Brabra 34"
+            });
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Oslo",
+                Description = "Hi I wanna help",
+                Email = "kari@gmail.com",
+                Fname = "Kari",
+                Lname = "Hisland",
+                Phone = "34343434",
+                PostCode = 4554,
+                State = "Akershus",
+                StreetAdress = "Kongsvei 34"
+            });
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Kristiansand",
+                Description = "Hi I wanna help",
+                Email = "kuman@gmail.com",
+                Fname = "Lisa",
+                Lname = "Kuman",
+                Phone = "34343434",
+                PostCode = 4554,
+                State = "Vest-Agder",
+                StreetAdress = "Kvadraturen 56"
+            });
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Hammerfest",
+                Description = "Hi I wanna help",
+                Email = "ali@gmail.com",
+                Fname = "Mohammed",
+                Lname = "Ali",
+                Phone = "34343434",
+                PostCode = 6566,
+                State = "Finmark",
+                StreetAdress = "Snøland 67"
+            });
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Lillehammer",
+                Description = "Hi I wanna help",
+                Email = "hal@gmail.com",
+                Fname = "Halgeir",
+                Lname = "Helgeir",
+                Phone = "34343434",
+                PostCode = 4554,
+                State = "Something",
+                StreetAdress = "Hammervei 6"
+            });
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Chicago",
+                Description = "Hi I wanna help",
+                Email = "mike@gmail.com",
+                Fname = "Mike",
+                Lname = "Hefner",
+                Phone = "34343434",
+                PostCode = 4554,
+                State = "Virginia",
+                StreetAdress = "Queenstreet 7"
+            });
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Bergen",
+                Description = "Hi I wanna help",
+                Email = "sunn@gmail.com",
+                Fname = "Sunniva",
+                Lname = "Olsen",
+                Phone = "34343434",
+                PostCode = 4554,
+                State = "Hordaland",
+                StreetAdress = "Nygård 56"
+            });
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Bergen",
+                Description = "Hi I wanna help",
+                Email = "Nobro@gmail.com",
+                Fname = "Jan",
+                Lname = "Olsen",
+                Phone = "34343434",
+                PostCode = 4554,
+                State = "Hordaland",
+                StreetAdress = "Nygård 56"
+            });
 
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Stavanger",
+                Description = "Hi I wanna help",
+                Email = "sta@gmail.com",
+                Fname = "Jun",
+                Lname = "Johansen",
+                Phone = "34343434",
+                PostCode = 4554,
+                State = "Hordaland",
+                StreetAdress = "Vangvei 45"
+            });
+
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Stavanger",
+                Description = "Hi I wanna help",
+                Email = "sta@gmail.com",
+                Fname = "Egge",
+                Lname = "Johansen",
+                Phone = "34343434",
+                PostCode = 4554,
+                State = "Hordaland",
+                StreetAdress = "Vangvei 45"
+            });
             db.SaveChanges();
 
 
