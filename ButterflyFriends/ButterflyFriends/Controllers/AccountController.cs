@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using ButterflyFriends.Models;
+using Microsoft.Owin.Security.DataProtection;
 
 namespace ButterflyFriends.Controllers
 {
@@ -232,7 +233,7 @@ namespace ButterflyFriends.Controllers
         //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
-        public ActionResult ResetPassword(string code)
+        public ActionResult ResetPassword(string userId ,string code)
         {
             return code == null ? View("Error") : View();
         }
@@ -248,18 +249,65 @@ namespace ButterflyFriends.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await UserManager.FindByIdAsync(model.userId);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
-            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            //var code = model.Code.Replace(" ", "+");
+            var provider = new DpapiDataProtectionProvider("ButterflyFriends");
+            UserManager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(provider.Create("Passwordresetting"));
+            var result = await UserManager.ResetPasswordAsync(user.Id,model.Code, model.Password);
             if (result.Succeeded)
             {
+                
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
             AddErrors(result);
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult SetPassword(string userId, string code)
+        {
+            return code == null ? View("Error") : View();
+        }
+
+        //
+        // POST: /Account/SetPassword
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SetPassword(SetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await UserManager.FindByIdAsync(model.userId);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return RedirectToAction("SetPasswordConfirmation", "Account");
+            }
+            var provider = new DpapiDataProtectionProvider("ButterflyFriends");
+            UserManager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(provider.Create("Passwordresetting"));
+            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.NewPassword);
+            if (result.Succeeded)
+            {
+
+                return RedirectToAction("SetPasswordConfirmation", "Account");
+            }
+            AddErrors(result);
+            return View();
+        }
+
+        //
+        // GET: /Account/SetPasswordConfirmation
+        [AllowAnonymous]
+        public ActionResult SetPasswordConfirmation()
+        {
             return View();
         }
 

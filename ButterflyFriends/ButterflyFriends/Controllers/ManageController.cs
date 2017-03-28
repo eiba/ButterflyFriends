@@ -77,7 +77,6 @@ namespace ButterflyFriends.Controllers
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
             var user =_context.Users.Find(userId);
-            var images = user.Pictures;
             var profileModel = new changeProfileModel 
             {
                 Fname = user.Fname,
@@ -256,8 +255,10 @@ namespace ButterflyFriends.Controllers
             if (result.Succeeded)
             {
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+
                 if (user != null)
                 {
+
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });

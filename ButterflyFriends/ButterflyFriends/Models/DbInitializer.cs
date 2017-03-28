@@ -458,6 +458,18 @@ namespace ButterflyFriends.Models
                 State = "Hordaland",
                 StreetAdress = "Vangvei 45"
             });
+            db.MembershipRequests.Add(new DbTables.MembershipRequest
+            {
+                City = "Stavanger",
+                Description = "Hei jeg vil donere penger",
+                Email = "eirikbaug@hotmail.com",
+                Fname = "Eirik",
+                Lname = "Baug",
+                Phone = "34343434",
+                PostCode = 4554,
+                State = "Hordaland",
+                StreetAdress = "Vangvei 45"
+            });
             db.SaveChanges();
 
 

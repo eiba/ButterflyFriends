@@ -26,6 +26,7 @@
 
             <h5 class="text-success statusText">@ViewBag.Success</h5>
             <h5 id="error" class="text-danger statusText">@ViewBag.Error</h5>
+            <h5 class="text-danger statusText">@ViewBag.MailError</h5>
         </div>
     </div>
     <div class="panel-body">
@@ -35,26 +36,63 @@
             @foreach (var request in Model)
             {
 
+                var mailto = "mailto:" + request.Email;
                 id += 1;
                 <h3>@request.Fname @request.Lname</h3>
 
                     <div>
-                        <ul>
-                            <li id="@id-email">@request.Email</li>
-                            <li id="@id-phone">@request.Phone</li>
-                            <li id="@id-streetadress">@request.StreetAdress</li>
-                            <li id="@id-postcode">@request.PostCode</li>
-                            <li id="@id-city">@request.City</li>
-                            <li id="@id-state">@request.State</li>
+                        <br />
+                        <h4>@request.Fname @request.Lname</h4>
+                        <hr />
+                        <dl class="dl-horizontal">
+                            <dt>
+                                Email:
+                            </dt>
+                            <dd>
+                                <a href="@mailto">@Html.DisplayFor(modelItem => request.Email)</a>
+                            </dd>
+                            <dt>
+                                Gateadresse:
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(modelItem => request.StreetAdress)
+                            </dd>
+                            <dt>
+                                Poststed:
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(modelItem => request.City)
+                            </dd>
+                            <dt>
+                                Postnummer:
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(modelItem => request.PostCode)
+                            </dd>
+                            <dt>
+                                Fylke:
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(modelItem => request.State)
+                            </dd>
+                            <dt>
+                                Tlf:
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(modelItem => request.Phone)
+                            </dd>
+                            <br />
 
+                            <hr />
+                            <label>Beskrivelse:</label>
+                            <p>
+                                @request.Description
+                            </p>
+                            <hr />
+                        </dl>
 
-                        </ul>
-                        <input id="@id-fname" value="@request.Fname" hidden />
-                        <input id="@id-lname" value="@request.Lname" hidden />
                         <input id="@id-requestid" value="@request.Id" hidden />
-                        <p>
-                            @request.Description
-                        </p>
+
                         <br />
                         <p>Melding:</p>
                         <textarea id="@id-ta" class="form-control" style="max-width: 100%"></textarea>
@@ -62,14 +100,13 @@
 
                         <div class="row">
                             <div class="col-sm-1">
-                                <button onclick="acceptRequest(@id)" class="btn btn-primary">Aksepter</button>
+                                <button onclick="acceptRequest(@id)" class="btn btn-primary">Aksepter <span class="glyphicon glyphicon-ok-sign"></span></button>
                             </div>
-                            <div class="col-sm-11">
-                                <button onclick="declineRequest(@id)" class="btn btn-danger">Avslå</button>
+                            <div class="col-sm-1" style="margin-left: 20px;">
+                                <button onclick="declineRequest(@id)" class="btn btn-danger">Avslå <span class="glyphicon glyphicon-minus-sign"></span></button>
                             </div>
                         </div>
                     </div>
-
 
             }
         </div>

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
@@ -28,6 +29,7 @@ namespace ButterflyFriends.Models
         [Display(Name = "Tlf")]
         public string Phone { get; set; }
         public string AccessLvL { get; set; }
+        [DefaultValue(true)]
         public bool IsEnabeled { get; set; }
         public int RoleNr { get; set; }
 

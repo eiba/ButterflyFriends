@@ -105,6 +105,10 @@
       <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SendGrid, Version=9.1.0.0, Culture=neutral, PublicKeyToken=4f047e93159395ca, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sendgrid.9.1.0\lib\net452\SendGrid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -415,6 +419,8 @@
     <Content Include="Views\Shared\_Logo.cshtml" />
     <Content Include="Views\Home\RequestMembership.cshtml" />
     <Content Include="Views\Home\_statusPartial.cshtml" />
+    <Content Include="Views\Account\SetPassword.cshtml" />
+    <Content Include="Views\Account\SetPasswordConfirmation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
