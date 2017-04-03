@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ButterflyFriends.Models;
@@ -14,9 +15,24 @@ namespace ButterflyFriends.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            return View(new FrontPageModel { Articles = _context.Articles.ToList()});
         }
 
+        [HttpGet]
+        public ActionResult Article(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var article = _context.Articles.Find(id);
+            if (article == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(article);
+        }
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

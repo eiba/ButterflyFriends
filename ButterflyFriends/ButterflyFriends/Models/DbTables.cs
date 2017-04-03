@@ -99,9 +99,10 @@ namespace ButterflyFriends.Models
             public string ContentType { get; set; }
             public byte[] Content { get; set; }
             public FileType FileType { get; set; }
+            public bool Temporary { get; set; }
+            public DateTime? UploadDate { get; set; }
 
             public virtual IList<TagBox> Tags { get; set; }
-
             public virtual IList<Child> Children { get; set; }
             public virtual IList<ApplicationUser> User { get; set; }
             public virtual ThumbNail ThumbNail { get; set; }
@@ -135,6 +136,9 @@ namespace ButterflyFriends.Models
             public int width { get; set; }
             public int height { get; set; }
             public string Name { get; set; }
+
+            public DateTime UploadTime { get; set; }
+            public bool Temporary { get; set; }
             //public virtual File picture {get; set; }
         }
 
@@ -145,7 +149,9 @@ namespace ButterflyFriends.Models
             public int Id { get; set; }
             public string Header { get; set; }
             public string Content { get; set; }
-
+            public bool Published { get; set; }
+            public string Title { get; set; }
+            public DateTime LastSavedDateTime { get; set; }
             public virtual Employees Employee { get; set; }
         }
         public class MembershipRequest
@@ -195,7 +201,7 @@ namespace ButterflyFriends.Models
         }
         public enum FileType
         {
-            Picture = 1,Profile,Thumbnail
+            Picture = 1,Profile,Thumbnail,ArticleImage
         }
     }
 }

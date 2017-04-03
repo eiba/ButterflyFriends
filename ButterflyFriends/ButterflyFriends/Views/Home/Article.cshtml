@@ -1,0 +1,16 @@
+﻿@model ButterflyFriends.Models.DbTables.Article
+<link href="~/Scripts/ContentTools/editor.css" rel="stylesheet" />
+ 
+<div>
+    <article class="article">
+        <section class="article__content">
+            <div>
+                @Html.Raw(Model.Header)
+            </div>
+            <div>
+                @Html.Raw(Model.Content)
+            </div>
+        </section>
+       
+    </article>
+</div>

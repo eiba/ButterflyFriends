@@ -27,6 +27,10 @@ namespace ButterflyFriends
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
                       "~/Content/themes/base/*.css"));
+
+            bundles.Add(new ScriptBundle("~/trumbowyg/plugins").Include(
+                     "~/Scripts/Trumbowyg/dist/plugins/trumbowyg.base64.min.js",
+                      "~/Scripts/Trumbowyg/dist/plugins/trumbowyg.upload.min.js"));
         }
     }
 }

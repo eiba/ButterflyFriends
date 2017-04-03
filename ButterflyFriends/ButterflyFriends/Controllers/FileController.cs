@@ -24,5 +24,14 @@ namespace ButterflyFriends.Controllers
             var fileToRetrieve = _context.Files.Find(id);
             return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
         }
+        public ActionResult ArticleImg(int id)
+        {
+            var fileToRetrieve = _context.ThumbNails.Find(id);
+            if (fileToRetrieve == null)
+            {
+                return null;
+            }
+            return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
+        }
     }
 }

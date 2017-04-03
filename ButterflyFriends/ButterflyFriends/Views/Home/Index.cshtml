@@ -1,15 +1,24 @@
-﻿@{
+﻿@model ButterflyFriends.Models.FrontPageModel
+@{
     ViewBag.Title = "Home Page";
 }
 
-<div class="row">
-    <div class="col-md-4">
+@if (!Model.Articles.Any())
+{
+    return;
+}
+ 
+@foreach (var article in Model.Articles)
+{
+    
+    <div>
         
+        <h3>
+            <a href="@Url.Action("Article", "Home", new {id = article.Id, area = ""})">
+                @Html.Raw(article.Header)
+            </a>
+        </h3>
     </div>
-    <div class="col-md-4">
-        
-    </div>
-    <div class="col-md-4">
-        
-    </div>
-</div>
+
+    <br/>
+}

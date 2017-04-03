@@ -1378,7 +1378,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     imgId = user.Thumbnail.ThumbNailId;
                 }
-                enteties.Add(new { Name = user.Fname + " " + user.Lname, Id = user.Id, imgId = imgId });
+                enteties.Add(new { Name = user.Fname + " " + user.Lname + "\n\ryo", Id = user.Id, imgId = imgId });
             }
             return Json(enteties);
         }

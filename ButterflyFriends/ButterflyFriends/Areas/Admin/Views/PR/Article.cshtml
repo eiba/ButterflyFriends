@@ -1,0 +1,416 @@
+﻿@model DbTables.Article
+@{
+    ViewBag.Title = "Rediger Artikkel";
+    var headerClass = "";
+    if (Model.Header.Contains("text-center"))
+    {
+        headerClass = "text-center";
+    }
+    else if (Model.Header.Contains("text-right"))
+    {
+        headerClass = "text-right";
+    }
+}
+<link href="~/Scripts/ContentTools/editor.css" rel="stylesheet" />
+<br />
+<h5 id="success" class="text-success statusText"></h5>
+<h5 id="error" class="text-danger statusText"></h5>
+<div>
+    <div id="dialog" title="Instruksjoner">
+        <p>Snarveier:</p>
+        <ul>
+            <li>Shift+Enter: Legger til ny linje i et avsnitt.</li>
+            <li>Enter: Legger til ny seksjon av dokumentet.</li>
+        </ul>
+        <p>Tips:</p>
+        <ul>
+            <li>Trykk på blyanten for å starte å redigere. Trykk så på den grønne checkboksen når du vil lagre, og det røde krysset dersom du ønsker fjerne nylie endringer.</li>
+            <li>Trykk på tagen nede i venstre hjørne for å endre stilen på den aktive seksjonen i dokumentet.</li>
+            <li>Et dokument må både ha tittel og innhold for å bli godkjent for lagring.</li>
+        </ul>
+    </div>
+</div>
+<button id="dilaogBtn" class="btn btn-primary articleInstructionBtn"><span class="glyphicon glyphicon-question-sign"></span></button>
+
+<article class="article">
+    <section class="article__content">
+        <h1 data-fixture data-name="article-title" class="@headerClass" id="title">
+            @Model.Title
+        </h1>
+
+        <div data-editable data-name="article">
+            @Html.Raw(Model.Content)
+        </div>
+    </section>
+</article>
+<input id="articleid" value="@Model.Id" hidden />
+
+<script src="~/Scripts/ContentTools/content-tools.min.js"></script>
+<script>
+
+    window.addEventListener('load', function () {
+        var editor;
+
+        ContentTools.StylePalette.add([
+                 new ContentTools.Style('Bildetext', 'article__caption', ['p']),
+                 new ContentTools.Style('Forfatter 1', 'author', ['p']),
+                 new ContentTools.Style('Forfatter 2', 'authorBorder', ['p']),
+                 new ContentTools.Style('Separer tekst', 'textSeparation', ['p']),
+                 new ContentTools.Style('Sitat', 'quote', ['p']),
+                 new ContentTools.Style('Font: Standard', 'font-Standard'),
+                 new ContentTools.Style('Font: Georgia', 'article__by-line'),
+                 new ContentTools.Style('Font: Arial Black', 'font-Arial'),
+                 new ContentTools.Style('Font: Comic Sans', 'font-Comic'),
+                 new ContentTools.Style('Font: Impact', 'font-Impact'),
+                 new ContentTools.Style('Font: Courier New', 'font-Courier'),
+                 new ContentTools.Style('Font: Trebuchet MS', 'font-Trebuchet')
+                 ]);
+
+        editor = ContentTools.EditorApp.get();
+        editor.init('[data-editable], [data-fixture]', 'data-name');
+
+        editor.addEventListener('saved', function (ev) {
+            var name, payload, regions;
+            // Check that something changed
+            regions = ev.detail().regions;
+            //console.log(regions);
+            if (Object.keys(regions).length < 0) {
+                return;
+            }
+
+            // Set the editor as busy while we save our changes
+            this.busy(true);
+            // Collect the contents of each region into a FormData instance
+            payload = new FormData();
+            for (name in regions) {
+                if (regions.hasOwnProperty(name)) {
+                    if (name == "article-title") {
+                        payload.append("title", regions[name]);
+                        var classList = document.getElementById('title').className.split(/\s+/);
+                        for (var i = 0; i < classList.length; i++) {
+                            if (classList[i] === 'text-center' ||
+                                classList[i] === 'text-left' ||
+                                classList[i] === 'text-right') {
+                                payload.append(name, "<h1 class=" + classList[i] + ">" + regions[name] + "</h1>");
+                            } else {
+                                payload.append(name, "<h1>" + regions[name] + "</h1>");
+                            }
+                        }
+                    } else {
+                        payload.append(name, regions[name]);
+                    }
+                }
+            }
+
+            payload.append("articleid", $('#articleid').val());
+            $.ajax({
+                url: '/Admin/PR/UploadArticle',
+                async: true,
+                contentType: false,//"application/json; charset=utf-8",
+                processData: false,
+                type: "POST",
+                data: payload,
+                xhr: function () {  // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) { // Check if upload property exists, method to be used for progress bars or the like
+
+                        // For handling the progress of the upload
+                        //myXhr.upload.id = id;
+                        //myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+
+                    }
+                    return myXhr;
+                }
+            ,
+                success: function (result) {
+                    if (result.error == true) {
+                        $("#error").text(result.message);
+                        $("#success").text("");
+                        new ContentTools.FlashUI('no');
+                        editor.busy(false);
+                    }
+                    else if (result.success == true) {
+                        $("#success").text(result.message);
+                        $("#success").removeClass("fadeOut");
+                        setTimeout(function () {
+                            $("#success").addClass("fadeOut");
+                        }, 500);
+                        $("#articleid").val(result.articleid);
+                        $("#error").text("");
+                        new ContentTools.FlashUI('ok');
+                        editor.busy(false);
+                    }
+
+                },
+                error: function (err) {
+                    $("#error").text(err.statusText);
+                    $("#success").text("");
+                    new ContentTools.FlashUI('no');
+                    editor.busy(false);
+                }
+            });
+        });
+        FIXTURE_TOOLS = [['bold', 'italic', 'link', 'align-left', 'align-center', 'align-right', 'undo', 'redo', 'remove']];
+        ContentEdit.Root.get().bind('focus', function (element) {
+            var tools;
+            if (element.isFixed()) {
+                tools = FIXTURE_TOOLS;
+            } else {
+                tools = ContentTools.DEFAULT_TOOLS;
+            }
+            if (editor.toolbox().tools() !== tools) {
+                return editor.toolbox().tools(tools);
+            }
+        });
+
+        function imageUploader(dialog) {
+            var image, xhr, xhrComplete, xhrProgress;
+            dialog.addEventListener('imageuploader.cancelupload', function () {
+                // Cancel the current upload
+
+                // Stop the upload
+                if (xhr) {
+                    xhr.upload.removeEventListener('progress', xhrProgress);
+                    xhr.removeEventListener('readystatechange', xhrComplete);
+                    xhr.abort();
+                }
+
+                // Set the dialog to empty
+                dialog.state('empty');
+            });
+
+            dialog.addEventListener('imageuploader.clear', function () {
+                // Clear the current image
+                dialog.clear();
+                image = null;
+            });
+
+            dialog.addEventListener('imageuploader.fileready', function (ev) {
+
+                // Upload a file to the server
+                var formData;
+                var file = ev.detail().file;
+
+                // Define functions to handle upload progress and completion
+                xhrProgress = function (ev) {
+                    // Set the progress for the upload
+                    dialog.progress((ev.loaded / ev.total) * 100);
+                }
+
+                xhrComplete = function (ev) {
+                    var response;
+
+                    // Check the request is complete
+                    if (ev.target.readyState != 4) {
+                        return;
+                    }
+
+                    // Clear the request
+                    xhr = null;
+                    xhrProgress = null;
+                    xhrComplete = null;
+
+                    // Handle the result of the upload
+                    if (parseInt(ev.target.status) == 200) {
+                        //console.log(ev.target);
+                        // Unpack the response (from JSON)
+                        response = JSON.parse(ev.target.responseText);
+                        if (response.error == null) {
+                            //console.log(response);
+
+                            // Store the image details
+                            image = {
+                                size: response.size.split(","),
+                                url: response.url,
+                                id: response.id
+                            };
+                            //console.log(image);
+                            // Populate the dialog
+                            dialog.populate(image.url, image.size);
+                        } else {
+                            //do something with error message
+                        }
+                    } else {
+                        console.log(ev.target);
+                        // The request failed, notify the user
+                        new ContentTools.FlashUI('no');
+                    }
+                }
+
+                // Set the dialog state to uploading and reset the progress bar to 0
+                dialog.state('uploading');
+                dialog.progress(0);
+
+                // Build the form data to post to the server
+                formData = new FormData();
+                formData.append('image', file);
+
+                // Make the request
+                xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener('progress', xhrProgress);
+                xhr.addEventListener('readystatechange', xhrComplete);
+                xhr.open('POST', '/Admin/PR/uploadImage', true);
+                xhr.send(formData);
+            });
+
+            function rotateImage(direction) {
+                // Request a rotated version of the image from the server
+                var formData;
+
+                // Define a function to handle the request completion
+                xhrComplete = function (ev) {
+                    var response;
+
+                    // Check the request is complete
+                    if (ev.target.readyState != 4) {
+                        return;
+                    }
+
+                    // Clear the request
+                    xhr = null;
+                    xhrComplete = null;
+
+                    // Free the dialog from its busy state
+                    dialog.busy(false);
+
+                    // Handle the result of the rotation
+                    if (parseInt(ev.target.status) == 200) {
+                        // Unpack the response (from JSON)
+                        response = JSON.parse(ev.target.responseText);
+                        console.log(response);
+                        if (response.error == null) {
+                            // Store the image details (use fake param to force refresh)
+                            image = {
+                                size: response.size.split(","),
+                                url: response.url + '&_ignore=' + Date.now(),
+                                id: response.id
+                            };
+
+                            // Populate the dialog
+                            dialog.populate(image.url, image.size);
+                        } else {
+                            //do something with error message
+                        }
+                    } else {
+                        // The request failed, notify the user
+                        new ContentTools.FlashUI('no');
+                    }
+                }
+
+                // Set the dialog to busy while the rotate is performed
+                dialog.busy(true);
+
+                // Build the form data to post to the server
+                formData = new FormData();
+                formData.append('id', image.id);
+                formData.append('direction', direction);
+
+                // Make the request
+                xhr = new XMLHttpRequest();
+                xhr.addEventListener('readystatechange', xhrComplete);
+                xhr.open('POST', '/Admin/PR/rotateImage', true);
+                xhr.send(formData);
+            }
+
+            dialog.addEventListener('imageuploader.rotateccw', function () {
+                rotateImage('CCW');
+            });
+
+            dialog.addEventListener('imageuploader.rotatecw',
+                function() {
+                    rotateImage('CW');
+                });
+
+            dialog.addEventListener('imageuploader.save', function () {
+                var crop, cropRegion, formData;
+
+                // Define a function to handle the request completion
+                xhrComplete = function (ev) {
+                    // Check the request is complete
+                    if (ev.target.readyState !== 4) {
+                        return;
+                    }
+
+                    // Clear the request
+                    xhr = null
+                    xhrComplete = null
+
+                    // Free the dialog from its busy state
+                    dialog.busy(false);
+
+                    // Handle the result of the rotation
+                    if (parseInt(ev.target.status) === 200) {
+                        // Unpack the response (from JSON)
+                        var response = JSON.parse(ev.target.responseText);
+                        if (response.error == null) {
+                            // Trigger the save event against the dialog with details of the
+                            // image to be inserted.
+                            dialog.save(
+                                response.url + '&_ignore=' + Date.now(),
+                                response.size.split(","),
+                                {
+                                    'class': "articleImage",
+                                    'alt': response.alt,
+                                    'data-ce-max-width': response.cemax,
+                                    'id':response.id
+
+                                });
+                        } else {
+                            //do something with error message
+                        }
+                    } else {
+                        // The request failed, notify the user
+                        new ContentTools.FlashUI('no');
+                    }
+                }
+
+                // Set the dialog to busy while the rotate is performed
+                dialog.busy(true);
+
+                // Build the form data to post to the server
+                formData = new FormData();
+                formData.append('id', image.id);
+
+                // Set the width of the image when it's inserted, this is a default
+                // the user will be able to resize the image afterwards.
+                formData.append('width', 600);
+
+                // Check if a crop region has been defined by the user
+                if (dialog.cropRegion()) {
+                    formData.append('crop', dialog.cropRegion());
+                }
+
+                // Make the request
+                xhr = new XMLHttpRequest();
+                xhr.addEventListener('readystatechange', xhrComplete);
+                xhr.open('POST', '/Admin/PR/insertImage', true);
+                xhr.send(formData);
+            });
+        }
+
+        ContentTools.IMAGE_UPLOADER = imageUploader;
+
+
+    });
+
+    $("#dilaogBtn").on('click', function () {
+        if ($('#dialog').dialog('isOpen')) {
+             $("#dialog").dialog('close');
+        } else {
+            $("#dialog").dialog('open');
+        }
+    });
+
+    $(function () {
+        $("#dialog").dialog({
+            position: { my: "left top", at: "left bottom", of: $("#dilaogBtn") },
+            autoOpen:false,
+            resizable:false
+        });
+        $("#dialog").parent().css('position', 'fixed');
+        //$('#dialog').parent().css({ position: "fixed" }).end().dialog('open');
+        //$("#dialog").dialog('close');
+    });
+
+</script>
+

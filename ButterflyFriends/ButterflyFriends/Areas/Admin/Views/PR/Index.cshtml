@@ -1,32 +1,69 @@
-﻿
-@{
-    ViewBag.Title = "Index";
-}
+﻿@model IList<DbTables.Article>
+<div class="row">
+    <div class="col-md-6 article-column">
+        @foreach (var article in Model)
+        {
+            <div>
 
-<h2>Shiiiit, skriv en artikkel</h2>
+                <h3>
+                    <a href="@Url.Action("Article", "PR", new {id = article.Id, area = "Admin"})">
+                        @article.Title
+                    </a>
+                </h3>
+            </div>
 
-
-<!-- Include stylesheet -->
-<link href="https://cdn.quilljs.com/1.2.2/quill.snow.css" rel="stylesheet">
-
-<!-- Create the editor container -->
-<div id="editor">
-    <p>Hello World!</p>
-    <p>Some initial <strong>bold</strong> text</p>
-    <p><br></p>
+            <br />
+        }
+    </div>
+    <div class="col-md-6 writeButtons separate">
+        <div class="row">
+            <div class="col-md-6">
+                <span id="desc-text">{{ description }}</span>
+            </div>
+            <div class="col-md-6">
+                <a class="btn btn-lg btn-primary center-block home-button-link"
+                   href='@Url.Action("New", "PR")'
+                   style="width: 14em; margin-top: 1em; margin-bottom: 1em;"
+                   v-on:mouseover="NewArticle"
+                   v-on:mouseleave="MouseLeave">
+                    Nytt innlegg
+                </a>
+                <a class="btn btn-lg btn-primary center-block home-button-link"
+                   href='@Url.Action("Email", "PR")'
+                   style="width: 14em; margin-top: 1em; margin-bottom: 1em;"
+                   v-on:mouseover="SendEmail"
+                   v-on:mouseleave="MouseLeave">
+                    Skriv email
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Include the Quill library -->
-<script src="https://cdn.quilljs.com/1.2.2/quill.js"></script>
-
-<button class="btn btn-primary" onclick="func()"></button>
-<!-- Initialize Quill editor -->
 <script>
-  var quill = new Quill('#editor', {
-    theme: 'snow'
-  });
+    new Vue({
+        el: 'body',
 
-  function func() {
-      console.log($("#editor").html());
-  }
+        data: {
+            description: ""
+        },
+
+        methods: {
+            NewArticle: function () {
+                this
+                    .description =
+                    "Skriv blogginlegg som kan legges ut på sidens forside";
+            },
+
+            MouseLeave: function () {
+                this.description = "";
+            },
+
+            SendEmail: function () {
+                this
+                    .description =
+                    "Send email til registrerte brukere";
+            }
+        }
+    });
 </script>

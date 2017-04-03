@@ -368,3 +368,42 @@ ul.ui-autocomplete {
     margin-top: 10px;
     padding-bottom: 120px;
 }
+
+.articleInstructionBtn {
+    position: fixed;
+    top: 8%;
+    left: 1%;
+    opacity: 0.8;
+    border-radius: 100px;
+}
+
+.article-column {
+    border-right: 1px solid #B8B8B8;
+    margin: 4em 0;
+    text-decoration: none;
+
+}
+.separate {
+    font-size: 1.5em; 
+    display: block;
+    height: 1.7em;
+    margin: auto;
+    margin-top: 3em;
+    padding: 0em 7em 0em 7em;
+    padding-top: 0.17em;
+    text-align: center;
+    color: #545454;
+}
+.writeButtons {
+    padding-top: 20%;
+}
+
+.fadeOut {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 2s linear;
+}
+.visible {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
