@@ -1,5 +1,6 @@
 ﻿@model IList<DbTables.Article>
 <div class="row">
+    <h5 class="text-success statusText" style="padding-left: 55px;">@ViewBag.Message</h5>
     <div class="col-md-6 article-column">
         @foreach (var article in Model)
         {
@@ -7,12 +8,12 @@
 
                 <h3>
                     <a href="@Url.Action("Article", "PR", new {id = article.Id, area = "Admin"})">
-                        @article.Title
+                        @article.Name
                     </a>
                 </h3>
             </div>
 
-            <br />
+            <br/>
         }
     </div>
     <div class="col-md-6 writeButtons separate">

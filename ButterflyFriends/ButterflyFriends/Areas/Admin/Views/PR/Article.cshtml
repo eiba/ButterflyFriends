@@ -1,16 +1,28 @@
 ﻿@model DbTables.Article
+
 @{
-    ViewBag.Title = "Rediger Artikkel";
+    var publishTxt = "";
+    if (Model.Published)
+    {
+        publishTxt = "Stopp publisering <i class='fa fa-stop-circle' aria-hidden='true'></i>";
+    }
+    else
+    {
+        publishTxt = "Publiser <i class='fa fa-telegram' aria-hidden='true'></i>";
+    }
+
     var headerClass = "";
     if (Model.Header.Contains("text-center"))
     {
         headerClass = "text-center";
-    }
-    else if (Model.Header.Contains("text-right"))
+    }else if (Model.Header.Contains("text-right"))
     {
         headerClass = "text-right";
     }
-}
+    ViewBag.Title = @Model.Name;
+
+    }
+
 <link href="~/Scripts/ContentTools/editor.css" rel="stylesheet" />
 <br />
 <h5 id="success" class="text-success statusText"></h5>
@@ -21,35 +33,248 @@
         <ul>
             <li>Shift+Enter: Legger til ny linje i et avsnitt.</li>
             <li>Enter: Legger til ny seksjon av dokumentet.</li>
+            <li>Ctrl+S: Lagrer dokumentet.</li>
         </ul>
         <p>Tips:</p>
         <ul>
             <li>Trykk på blyanten for å starte å redigere. Trykk så på den grønne checkboksen når du vil lagre, og det røde krysset dersom du ønsker fjerne nylie endringer.</li>
             <li>Trykk på tagen nede i venstre hjørne for å endre stilen på den aktive seksjonen i dokumentet.</li>
-            <li>Et dokument må både ha tittel og innhold for å bli godkjent for lagring.</li>
         </ul>
     </div>
 </div>
-<button id="dilaogBtn" class="btn btn-primary articleInstructionBtn"><span class="glyphicon glyphicon-question-sign"></span></button>
+<button id="dilaogBtn" class="btn btn-info articleInstructionBtn"><span class="glyphicon glyphicon-question-sign"></span></button>
 
-<article class="article">
+<article class="article" style="border: 1px solid #888888;">
     <section class="article__content">
-        <h1 data-fixture data-name="article-title" class="@headerClass" id="title">
+        <h1 data-fixture data-name="article-title" class="@headerClass" id="header">
             @Model.Title
         </h1>
 
-        <div data-editable data-name="article">
+        <div data-editable data-name="article" id ="content">
             @Html.Raw(Model.Content)
         </div>
     </section>
 </article>
 <input id="articleid" value="@Model.Id" hidden />
+<a id="publishBtn" class="btn btn-lg btn-primary center-block home-button-link publishButton">
+    @Html.Raw(publishTxt)
+</a>
+<a id="deleteBtn" class="btn btn-lg btn-danger center-block home-button-link deleteButton">
+    Slett <i class="fa fa-trash" aria-hidden="true"></i>
+</a>
+<a id="changeNameBtn" class="btn btn-lg btn-primary center-block home-button-link changeNameButton">
+    Endre Filnavn <i class="fa fa-file-text" aria-hidden="true"></i>
+</a>
+
+<script type="x/template" id="modal-template">
+    <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
+        <div class="modal-wrapper">
+            <div class="modal-container" v-on:click.stop>
+
+                <div class="modal-header">
+                    <slot name="header">
+                    </slot>
+                </div>
+
+                <div class="modal-body">
+                    <slot name="body">
+                    </slot>
+                </div>
+
+                <div class="modal-footer">
+                    <slot name="footer">
+
+                        <button class="btn btn-primary"
+                                v-on:click="submit">
+                            OK <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="x/template" id="delete-modal-template">
+    <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
+        <div class="modal-wrapper">
+            <div class="modal-container" v-on:click.stop>
+
+                <div class="modal-header">
+                    <slot name="header">
+                    </slot>
+                </div>
+
+                <div class="modal-body">
+                    <slot name="body">
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+                                <button class="btn btn-success" v-on:click="submit">Ja <i class="fa fa-check-square" aria-hidden="true"></i></button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-danger" v-on:click="close">Nei <i class="fa fa-minus-square" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<div id="app">
+    <modal :show.sync="showModal">
+
+        <h3 slot="header" style="text-align: center;">Gi inlegget et navn</h3>
+        <h5 slot="body">
+            <p id="nameError" class="text-danger statusText"></p>
+            <div class="form-group">
+                <div class="col-md-2"></div>
+
+                <div class="col-md-10">
+                    <input id="articlenName" value="@Model.Name" placeholder="Dokumentnavn" class="form-control" required>
+                </div>
+            </div>
+        </h5>
+
+    </modal>
+</div>
+<div id="deletePrompt">
+    <modal :show.sync="showModal">
+
+        <h3 slot="header" style="text-align: center;">Er du sikker på at du vil slette denne artikkelen?</h3>
+
+    </modal>
+</div>
 
 <script src="~/Scripts/ContentTools/content-tools.min.js"></script>
 <script>
+    var editor;
+
+    Vue.component('modal',
+{
+    template: '#modal-template',
+    props: {
+        show: {
+            type: Boolean,
+            required: true,
+            twoWay: true
+        }
+    },
+    methods: {
+        close: function () {
+            this.show = false;
+        },
+        submit: function () {
+            if ($("#articlenName").val() !== "") {
+                editor.save(true);
+                this.close();
+            } else {
+                $("#nameError").text("Navnefeltet kan ikke være tomt");
+            }
+        }
+    },
+    ready: function () {
+        document.addEventListener("keydown", (e) => {
+            if (this.show && e.keyCode == 27) {
+
+                this.close();
+            }
+            else if (this.show && e.keyCode == 13) {
+                this.submit();
+            }
+
+
+        });
+    }
+});
+
+    var v = new Vue({
+        el: '#app',
+        data: {
+            showModal: false
+        }
+    });
+
+    //delete prompt modal
+    Vue.component('modal',
+{
+    template: '#delete-modal-template',
+    props: {
+        show: {
+            type: Boolean,
+            required: true,
+            twoWay: true
+        }
+    },
+    methods: {
+        close: function () {
+            this.show = false;
+        },
+        submit: function () {
+            var formData = new FormData();
+            formData.append('articleid', $("#articleid").val());
+            $.ajax({
+                url: '/Admin/PR/Delete',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                success: function (result) {
+                    if (result.error == true) {
+                        $("#error").text(result.message);
+                        $("#success").text("");
+                        new ContentTools.FlashUI('no');
+                        editor.busy(false);
+                    }
+                    else if (result.success == true) {
+                        window.removeEventListener('beforeunload', editor._handleBeforeUnload);
+                        window.location = result.url;
+                    }
+
+                },
+                error: function (err) {
+                    $("#error").text(err.statusText);
+                    $("#success").text("");
+                    new ContentTools.FlashUI('no');
+                    editor.busy(false);
+                }
+            });
+        }
+    },
+    ready: function () {
+        document.addEventListener("keydown", (e) => {
+            if (this.show && e.keyCode == 27) {
+
+                this.close();
+            }
+            else if (this.show && e.keyCode == 13) {
+                this.submit();
+            }
+
+
+        });
+    }
+});
+
+    var deleteV = new Vue({
+        el: '#deletePrompt',
+        data: {
+            showModal: false
+        }
+    });
+
+    function deleteImage(id) {
+
+        var formData = new FormData();
+        formData.append('imageid', id);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/Admin/PR/DeleteImage', true);
+        xhr.send(formData);
+    }
 
     window.addEventListener('load', function () {
-        var editor;
 
         ContentTools.StylePalette.add([
                  new ContentTools.Style('Bildetext', 'article__caption', ['p']),
@@ -68,11 +293,19 @@
 
         editor = ContentTools.EditorApp.get();
         editor.init('[data-editable], [data-fixture]', 'data-name');
-
+        editor.start();
         editor.addEventListener('saved', function (ev) {
+            if ($("#articlenName").val() === "") {
+                v.showModal = true;
+                return;
+            }
             var name, payload, regions;
             // Check that something changed
-            regions = ev.detail().regions;
+            var regObj = ContentTools.EditorApp.get().regions();
+            regions = {};
+            for (var regName in regObj) {
+                regions[regName] = regObj[regName].html();
+            }
             //console.log(regions);
             if (Object.keys(regions).length < 0) {
                 return;
@@ -82,19 +315,24 @@
             this.busy(true);
             // Collect the contents of each region into a FormData instance
             payload = new FormData();
+
             for (name in regions) {
                 if (regions.hasOwnProperty(name)) {
                     if (name == "article-title") {
                         payload.append("title", regions[name]);
-                        var classList = document.getElementById('title').className.split(/\s+/);
+                        var classList = document.getElementById('header').className.split(/\s+/);
+                        var found = false;
                         for (var i = 0; i < classList.length; i++) {
                             if (classList[i] === 'text-center' ||
                                 classList[i] === 'text-left' ||
                                 classList[i] === 'text-right') {
                                 payload.append(name, "<h1 class=" + classList[i] + ">" + regions[name] + "</h1>");
-                            } else {
-                                payload.append(name, "<h1>" + regions[name] + "</h1>");
+                                found = true;
+                                break;
                             }
+                        }
+                        if (!found) {
+                            payload.append(name, "<h1>" + regions[name] + "</h1>");
                         }
                     } else {
                         payload.append(name, regions[name]);
@@ -103,6 +341,7 @@
             }
 
             payload.append("articleid", $('#articleid').val());
+            payload.append("articlenName", $('#articlenName').val());
             $.ajax({
                 url: '/Admin/PR/UploadArticle',
                 async: true,
@@ -137,8 +376,10 @@
                         }, 500);
                         $("#articleid").val(result.articleid);
                         $("#error").text("");
-                        new ContentTools.FlashUI('ok');
-                        editor.busy(false);
+
+                            new ContentTools.FlashUI('ok');
+                            editor.busy(false);
+                        
                     }
 
                 },
@@ -150,6 +391,50 @@
                 }
             });
         });
+
+        function publishArticle() {
+            var formData = new FormData();
+            formData.append('articleid', $("#articleid").val());
+            $.ajax({
+                url: '/Admin/PR/Publish',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                success: function (result) {
+                    if (result.error == true) {
+                        $("#error").text(result.message);
+                        $("#success").text("");
+                        new ContentTools.FlashUI('no');
+                        editor.busy(false);
+                    }
+                    else if (result.success == true) {
+                        $("#success").text(result.message);
+                        $("#success").removeClass("fadeOut");
+                        setTimeout(function () {
+                            $("#success").addClass("fadeOut");
+                        }, 2000);
+                        $("#error").text("");
+                        new ContentTools.FlashUI('ok');
+                        editor.busy(false);
+                        if (result.published == true) {
+                            $("#publishBtn").html('Stopp publisering <i class="fa fa-stop-circle" aria-hidden="true"></i>');
+                        } else {
+                            $("#publishBtn").html('Publiser <i class="fa fa-telegram" aria-hidden="true"></i>');
+
+                        }
+                    }
+
+                },
+                error: function (err) {
+                    $("#error").text(err.statusText);
+                    $("#success").text("");
+                    new ContentTools.FlashUI('no');
+                    editor.busy(false);
+                }
+            });
+        }
         FIXTURE_TOOLS = [['bold', 'italic', 'link', 'align-left', 'align-center', 'align-right', 'undo', 'redo', 'remove']];
         ContentEdit.Root.get().bind('focus', function (element) {
             var tools;
@@ -181,9 +466,16 @@
 
             dialog.addEventListener('imageuploader.clear', function () {
                 // Clear the current image
+                deleteImage(image.id);
                 dialog.clear();
                 image = null;
             });
+            /*dialog.addEventListener('imageuploader.unmount', function () {
+                if (image != null) {
+
+                    deleteImage(image.id);
+                }
+            });*/
 
             dialog.addEventListener('imageuploader.fileready', function (ev) {
 
@@ -390,7 +682,26 @@
 
         ContentTools.IMAGE_UPLOADER = imageUploader;
 
+        $(document).on('keydown', function (e) {
+            if (e.ctrlKey && e.which === 83) {
+                e.preventDefault();
+                if (editor.getState() == "editing") {
+                    editor.save(true);
+                }
+            }
+        });
 
+        $("#publishBtn").on('click', function () {
+                editor.busy(true);
+                publishArticle();
+        });
+        $("#deleteBtn").on('click', function () {
+            deleteV.showModal = true;
+        });
+
+        $("#changeNameBtn").on('click', function () {
+            v.showModal = true;
+        });
     });
 
     $("#dilaogBtn").on('click', function () {
@@ -408,8 +719,6 @@
             resizable:false
         });
         $("#dialog").parent().css('position', 'fixed');
-        //$('#dialog').parent().css({ position: "fixed" }).end().dialog('open');
-        //$("#dialog").dialog('close');
     });
 
 </script>

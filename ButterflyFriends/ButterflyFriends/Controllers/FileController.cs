@@ -15,6 +15,10 @@ namespace ButterflyFriends.Controllers
         public ActionResult Index(int id)
         {
             var fileToRetrieve = _context.Files.Find(id);
+            if (fileToRetrieve == null)
+            {
+                return null;
+            }
             return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
         }
 
@@ -22,6 +26,10 @@ namespace ButterflyFriends.Controllers
         public ActionResult ProfilePicture(int id)
         {
             var fileToRetrieve = _context.Files.Find(id);
+            if (fileToRetrieve == null)
+            {
+                return null;
+            }
             return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
         }
         public ActionResult ArticleImg(int id)

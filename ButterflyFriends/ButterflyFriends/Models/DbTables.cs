@@ -151,6 +151,7 @@ namespace ButterflyFriends.Models
             public string Content { get; set; }
             public bool Published { get; set; }
             public string Title { get; set; }
+            public string Name { get; set; }
             public DateTime LastSavedDateTime { get; set; }
             public virtual Employees Employee { get; set; }
         }

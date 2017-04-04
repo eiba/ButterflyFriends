@@ -15,7 +15,7 @@ namespace ButterflyFriends.Controllers
 
         public ActionResult Index()
         {
-            return View(new FrontPageModel { Articles = _context.Articles.ToList()});
+            return View(new FrontPageModel { Articles = _context.Articles.Where(s => s.Published).ToList()});
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace ButterflyFriends.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var article = _context.Articles.Find(id);
-            if (article == null)
+            if (article == null || !article.Published)
             {
                 return HttpNotFound();
             }

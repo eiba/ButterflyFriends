@@ -23,11 +23,15 @@ namespace ButterflyFriends.Areas.Admin.Controllers
     {
         ApplicationDbContext _context = new ApplicationDbContext();
         // GET: Admin/PR
-        public ActionResult Index()
+        public ActionResult Index(string message)
         {
-
+            if (message != null)
+            {
+                ViewBag.Message = message;
+            }
             return View(_context.Articles.ToList());
         }
+
         public ActionResult Article(int? id)
         {
 
@@ -43,8 +47,100 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return View(article);
         }
-        public ActionResult New()
+
+        [HttpPost]
+        public ActionResult Publish()
         {
+            var id = Request.Form["articleid"];
+            if (id == "")
+            {
+                return Json(new { error = true, message = "Artikkelen må lagres først", success = false });
+            }
+            var article = _context.Articles.Find(int.Parse(id));
+            if (article == null)
+            {
+                return HttpNotFound();
+            }
+            try
+            {
+
+                    article.Published = !article.Published;
+                    _context.Entry(article).State = EntityState.Modified;
+                    _context.SaveChanges();
+
+                if (article.Published)
+                {
+                    return Json(new { error = false, message = "Siste lagrede versjon av " + article.Name + " ble publisert", success = true ,published =true});
+
+                }
+
+                    return Json(new { error = false, message = "Siste lagrede versjon av " + article.Name + " ble endret til ikke publisert", success = true, published=false});
+
+            }
+            catch (EntityException ex)
+            {
+                return Json(new { error = true, message = "Error, artikkelens status ble ikke endret: " + ex.Message, success = false });
+
+            }
+
+        }
+        [HttpPost]
+        public ActionResult Delete()
+        {
+            var id = Request.Form["articleid"];
+            if (id == "")
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            }
+            var article = _context.Articles.Find(int.Parse(id));
+            if (article == null)
+            {
+                return HttpNotFound();
+            }
+            try
+            {
+                var message = "Artikkelen " + article.Name + " ble slettet";
+                _context.Articles.Remove(article);
+                _context.SaveChanges();
+
+
+
+                return Json(new { success=true,error=false, reload= Url.Action("New", "PR", new { message }), url = Url.Action("Index", "PR",new {message}) });
+            }
+            catch (EntityException ex)
+            {
+                return Json(new { error = true, message = "Error, artikkelen ble ikke slettet: " + ex.Message, success = false });
+
+            }
+
+        }
+        [HttpPost]
+        public void DeleteImage()
+        {
+            var id = Request.Form["imageid"];
+            if (id == "")
+            {
+                return;
+
+            }
+            var image = _context.Files.Find(int.Parse(id));
+            if (image == null)
+            {
+                return;
+            }
+
+                _context.Files.Remove(image);
+                _context.SaveChanges();
+
+        }
+        public ActionResult New(string message)
+        {
+            if (message != null)
+            {
+                ViewBag.Message = message;
+            }
+
             var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
             ApplicationUser currentUser = manager.FindById(User.Identity.GetUserId());
 
@@ -60,8 +156,18 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var title = Request.Unvalidated.Form["article-title"];
             var titleNoHTML = Request.Unvalidated.Form["title"];
             var id = Request.Form["articleid"];
+            var articleName = Request.Form["articlenName"];
 
-                if (currentUser != null)
+            if (title==null)
+            {
+                title = "";
+                titleNoHTML = "";
+            }
+            if (content == null)
+            {
+                content = "";
+            }
+            if (currentUser != null)
                 {
                     if (currentUser.Employee != null)
                     {
@@ -76,6 +182,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                     Header = title,
                                     Published = false,
                                     Title = titleNoHTML,
+                                    Name = articleName,
                                     LastSavedDateTime = DateTime.Now
                                 };
 
@@ -87,7 +194,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                         new
                                         {
                                             error = false,
-                                            message = "Artikkelen ble suksessfult lastet opp og lagret",
+                                            message = "Artikkelen "+article.Name+" ble suksessfult lastet opp og lagret",
                                             success = true,
                                             articleid = article.Id
                                         });
@@ -105,18 +212,15 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                 var article = _context.Articles.Find(int.Parse(id));
                                 if (article == null)
                                 {
-                                    return Json(new { error = true, message = "Error, fanit ikke artikkel som skulle lagres", success = false });
+                                    return Json(new { error = true, message = "Error, fant ikke artikkelen som skulle lagres", success = false });
 
                                 }
-                                if (title != null)
-                                {
+
                                 article.Header = title;
                                 article.Title = titleNoHTML;
-                                }
-                                if (content != null)
-                                {
                                 article.Content = content;
-                                }
+                                article.Name = articleName;
+
 
                                 article.LastSavedDateTime = DateTime.Now;
                                 _context.Entry(article).State = EntityState.Modified;
@@ -127,7 +231,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                         new
                                         {
                                             error = false,
-                                            message = "Artikkelen ble lagret",
+                                            message = "Artikkelen " + article.Name + " ble lagret",
                                             success = true,
                                             articleid = article.Id
                                         });
@@ -304,7 +408,6 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var id = int.Parse(Request.Form["id"]);
             var crop = Request.Form["crop"];
             double[] cropList = new double[4];
-            string[] jkkj = Request.Form["crop"].Split(',');
             if (crop != "0,0,1,1")
             {
                 string[] cropArray = Request.Form["crop"].Split(',');
@@ -356,7 +459,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     _context.Entry(picture).State = EntityState.Modified;
                     _context.SaveChanges();
-
+                    if (CroppedImage.Width < width)
+                    {
+                        width = CroppedImage.Width;
+                    }
                     double ratio = (double)((double)CroppedImage.Width / (double)CroppedImage.Height);
                     int height = (int)((double)width / ratio);
 
@@ -380,7 +486,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             }
             //Image is not to be cropped
-
+            if (bmp.Width < width)
+            {
+                width = bmp.Width;
+            }
             double Ratio = (double)((double)bmp.Width / (double)bmp.Height);
             int Height = (int)((double)width / Ratio);
             return

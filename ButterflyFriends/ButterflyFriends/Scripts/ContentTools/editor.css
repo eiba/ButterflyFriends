@@ -392,7 +392,9 @@ th {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 10px 2em; }
+  padding: 0 10px 2em;
+
+}
   .article::after {
     clear: both;
     content: "";
@@ -669,3 +671,7 @@ video,
     border: 1px solid #888888;
     box-shadow: 2px 2px 2px #888888;
    }
+
+.ct-ignition {
+    display: none;
+}
