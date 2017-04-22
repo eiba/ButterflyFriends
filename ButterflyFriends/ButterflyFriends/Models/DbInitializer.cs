@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -470,6 +472,32 @@ namespace ButterflyFriends.Models
                 State = "Hordaland",
                 StreetAdress = "Vangvei 45"
             });
+            var filePathProfile = @"c:\Users\eirik\Documents\Visual Studio stuff\Bachelor\ButterflyFriends\ButterflyFriends\ButterflyFriends\defaultUserBig.png";
+            byte[] profile = File.ReadAllBytes(filePathProfile);
+            var Profile = new DbTables.File()
+            {
+                FileName = "defalutUser.png",
+                FileType = DbTables.FileType.Thumbnail,
+                Temporary = false,
+                ContentType = "image/png",
+                Content = profile
+            };
+
+            db.Files.Add(Profile);
+
+            var filePathThumbNail = @"c:\Users\eirik\Documents\Visual Studio stuff\Bachelor\ButterflyFriends\ButterflyFriends\ButterflyFriends\defautUser.png";
+            byte[] thumbnail = File.ReadAllBytes(filePathThumbNail);
+            var Thumbnail = new DbTables.ThumbNail()
+            {
+                ThumbNailName = "defalutUser.png",
+                FileType = DbTables.FileType.Thumbnail,
+                Content = thumbnail,
+                ContentType = "image/png",
+                File = Profile
+            };
+
+            db.ThumbNails.Add(Thumbnail);
+
             db.SaveChanges();
 
 

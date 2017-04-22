@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Linq;
 using System.Web;
 using ButterflyFriends.Areas.Admin.Controllers;
@@ -137,9 +138,6 @@ namespace ButterflyFriends.Models
             public int height { get; set; }
             public string Name { get; set; }
 
-            public DateTime UploadTime { get; set; }
-            public bool Temporary { get; set; }
-            //public virtual File picture {get; set; }
         }
 
 
@@ -153,7 +151,9 @@ namespace ButterflyFriends.Models
             public string Title { get; set; }
             public string Name { get; set; }
             public DateTime LastSavedDateTime { get; set; }
-            public virtual Employees Employee { get; set; }
+            public DateTime? FirstPublisheDateTime { get; set; }
+            public virtual IList<Employees> Employees { get; set; }
+            public virtual IList<File> Images { get; set; }
         }
         public class MembershipRequest
         {

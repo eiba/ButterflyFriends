@@ -306,6 +306,8 @@
     <Content Include="Content\themes\base\tabs.css" />
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
+    <Content Include="defaultUserBig.png" />
+    <Content Include="defautUser.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -327,6 +329,10 @@
     <Content Include="Scripts\jquery.facedetection.min.js" />
     <Content Include="Scripts\jquery.waypoints.js" />
     <Content Include="Scripts\jquery.waypoints.min.js" />
+    <Content Include="Scripts\MagicSuggest\magicsuggest-min.css" />
+    <Content Include="Scripts\MagicSuggest\magicsuggest-min.js" />
+    <Content Include="Scripts\tagEditor\jquery.tag-editor.css" />
+    <Content Include="Scripts\tagEditor\jquery.tag-editor.min.js" />
     <Content Include="Scripts\Trumbowyg\dist\langs\ar.min.js" />
     <Content Include="Scripts\Trumbowyg\dist\langs\bg.min.js" />
     <Content Include="Scripts\Trumbowyg\dist\langs\ca.min.js" />
@@ -440,6 +446,9 @@
     <Content Include="Scripts\ContentTools\icons.woff" />
     <Content Include="Areas\Admin\Views\PR\New.cshtml" />
     <Content Include="Areas\Admin\Views\PR\Article.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_EmailLayout.cshtml" />
+    <Content Include="Areas\Admin\Views\PR\Email.cshtml" />
+    <Content Include="Areas\Admin\Views\PR\_ArticleListPartial.cshtml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

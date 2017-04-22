@@ -88,8 +88,10 @@
         <p>Skriv litt om deg selv og hvorfor du vil bli fadder hos oss</p>
         <hr/>
                 @Html.TextAreaFor(m => m.Description, new { @class = "form-control", required = "required", @style="height:200px; max-width:100%;"})
+        <hr />
         
-        <br/>
+        <div class="g-recaptcha" data-sitekey="6LdechwUAAAAAFGSpfDeR0o_5JEgtRDtpDrObXEA"></div>
+        <br />
         <button type="submit" class="btn btn-primary">Forespør medlemskap</button>
         
         <div id="updateTxt">

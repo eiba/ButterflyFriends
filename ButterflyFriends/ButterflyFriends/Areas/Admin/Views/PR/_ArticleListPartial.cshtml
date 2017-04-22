@@ -1,0 +1,62 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<DbTables.Article>
+@if (!Model.Any())
+{
+    <p>Ingen resultater funnet</p>
+}
+@foreach (var article in Model)
+{
+    var lastSave = article.LastSavedDateTime.Day + ". " + article.LastSavedDateTime.ToString("MMMM") + " " + article.LastSavedDateTime.Year;
+    <div class="article_display" id="@article.Id" onclick="goTo(this)">
+
+        <h3>
+            <a href="@Url.Action("Article", "PR", new {id = article.Id, area = "Admin"})">
+                @article.Name
+            </a>
+            @if (!string.IsNullOrEmpty(article.Title))
+            {
+                <span>- @article.Title </span>
+            }
+        </h3>
+        <p>Sist lagret: @lastSave</p>
+        @if (article.Published)
+                {
+            <p>Status: <b>Publisert</b></p>
+
+        }
+        else
+        {
+            <p>Status: <b>Ikke publisert</b></p>
+        }
+        @if (article.FirstPublisheDateTime != null)
+                {
+                    var firstPublish = article.FirstPublisheDateTime.Value.Day + ". " + article.FirstPublisheDateTime.Value.ToString("MMMM") + " " + article.FirstPublisheDateTime.Value.Year;
+
+            <p>Først publisert: @firstPublish</p>
+
+        }
+        else
+        {
+            <p>Aldri publisert</p>
+        }
+    </div>
+
+            <br />
+}
+@if (Model.PageCount > 0) { 
+    <div class="row">
+        <div class="col col-xs-4">
+            Side @Model.PageNumber av @Model.PageCount
+        </div>
+        <div class="col col-xs-8">
+
+            <div id="Pager">
+                <ul class="pagination hidden-xs pull-right">
+                    @Html.PagedListPager(Model, page => Url.Action("ArticleList", "PR", new { page }))
+                </ul>
+            </div>
+
+        </div>
+    </div>
+}
+<input type="hidden" id="pageInput" value="@ViewBag.page"/>

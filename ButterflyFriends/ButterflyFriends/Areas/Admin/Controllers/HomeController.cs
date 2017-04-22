@@ -49,7 +49,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                           where
                           s.Fname.StartsWith(json) ||
                           s.Lname.StartsWith(json)
-                          orderby s.Lname
+                         orderby s.Lname
                           select s).ToList();
 
             var children = (from s in _context.Children
@@ -66,7 +66,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     imgId = user.Thumbnail.ThumbNailId;
                 }
-                enteties.Add(new {Name = user.Fname +" "+ user.Lname, type = "user", Id =user.Id, imgId = imgId});
+                enteties.Add(new {Name = user.Fname +" "+ user.Lname, type = "user", Id =user.Id, imgId = imgId, email=user.Email});
             }
             foreach (var child in children)
             {
@@ -75,7 +75,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     imgId = child.Thumbnail.ThumbNailId;
                 }
-                enteties.Add(new { Name = child.Fname + " " + child.Lname, type = "child", Id = child.Id, imgId = imgId });
+                enteties.Add(new { Name = child.Fname + " " + child.Lname, type = "child", Id = child.Id, imgId = imgId,email=""});
             }
             return Json(enteties);
         }
@@ -120,10 +120,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             }
                             else
                             {
+                                if (tagBox.Id != null) {//if nothing is selected id comes in as null, do nothing then
+
                                 DbTables.Child child = _context.Children.Find(Int32.Parse(tagBox.Id));
                                 if (child != null)
                                 {
                                     picture.Children.Add(child);
+                                }
                                 }
                             }
                         }

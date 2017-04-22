@@ -1093,6 +1093,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         where s.Employee != null
                         orderby s.Lname
                         select s;
+            var k = ModelState;
             if (ModelState.IsValid)
             {
                 var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
@@ -1103,18 +1104,19 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 
                 if (results.Any())
                 {
+                    /*
                     foreach (var r in results)
                     {
                         if (r.Email == model.Email)
-                        {
+                        {*/
                             
                             ViewBag.Error = "Emailen er allerede i bruk.";
                            
                                 return PartialView("ListPartials/_EmployeePartial",
                                     new EmployeeModel { Employees = users.ToPagedList((employeePage ?? 1), pageSize) });
                            
-                        }
-                    }
+                       /* }
+                    }*/
 
                 }
                 var user = new ApplicationUser
@@ -1197,18 +1199,18 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
                 if (results.Any())
                 {
-                    foreach (var r in results)
+                    /*foreach (var r in results)
                     {
                         if (r.Email == model.Email)
-                        {
+                        {*/
 
                             ViewBag.Error = "Emailen er allerede i bruk.";
 
                             return PartialView("ListPartials/_SponsorPartial", new SponsorModel { Sponsors = users.ToPagedList((sponsorPage ?? 1), pageSize) });
 
 
-                        }
-                    }
+                        /*}
+                    }*/
 
                 }
                 var user = new ApplicationUser

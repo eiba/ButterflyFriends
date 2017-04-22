@@ -65,7 +65,9 @@
 <a id="changeNameBtn" class="btn btn-lg btn-primary center-block home-button-link changeNameButton">
     Endre Filnavn <i class="fa fa-file-text" aria-hidden="true"></i>
 </a>
-
+<a id="saveBtn" class="btn btn-lg btn-success center-block home-button-link saveButton">
+    Lagre <i class="fa fa-floppy-o" aria-hidden="true"></i>
+</a>
 <script type="x/template" id="modal-template">
     <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
         <div class="modal-wrapper">
@@ -342,6 +344,7 @@
 
             payload.append("articleid", $('#articleid').val());
             payload.append("articlenName", $('#articlenName').val());
+            payload.append("images", getImages());
             $.ajax({
                 url: '/Admin/PR/UploadArticle',
                 async: true,
@@ -702,6 +705,36 @@
         $("#changeNameBtn").on('click', function () {
             v.showModal = true;
         });
+        $("#saveBtn").on('click', function () {
+            editor.save(true);
+        });
+
+        function getImages() {
+            // Return an object containing image URLs and widths for all regions
+            var descendants, i, images;
+
+            images = [];
+            for (name in editor.regions()) {
+                // Search each region for images
+                descendants = editor.regions()[name].descendants();
+                for (i = 0; i < descendants.length; i++) {
+                    // Filter out elements that are not images
+                    if (descendants[i].type() !== 'Image') {
+                        continue;
+                    }
+                    var url = descendants[i].attr('src');
+                    var start_pos = url.indexOf('=') + 1;
+                    var end_pos = url.indexOf('&', start_pos);
+                    var id = url.substring(start_pos, end_pos);
+
+                    images.push(id);
+                }
+            }
+            if (images.length === 0) {
+                images = "none";
+            }
+            return images;
+        }
     });
 
     $("#dilaogBtn").on('click', function () {

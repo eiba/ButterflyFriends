@@ -1,4 +1,7 @@
 ﻿@model ButterflyFriends.Models.DbTables.Article
+@{
+    var date = @Model.LastSavedDateTime.Day + ". " + Model.LastSavedDateTime.ToString("MMMM") + " " + Model.LastSavedDateTime.Year;
+}
 <link href="~/Scripts/ContentTools/editor.css" rel="stylesheet" />
  
 <div>
@@ -13,4 +16,6 @@
         </section>
        
     </article>
+    <hr />
+    <p><i>Sist endret: </i><b>@date</b></p>
 </div>

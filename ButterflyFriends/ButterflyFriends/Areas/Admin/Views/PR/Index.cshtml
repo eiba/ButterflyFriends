@@ -1,20 +1,77 @@
-﻿@model IList<DbTables.Article>
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<DbTables.Article>
+<div class="loader" style="top: 50% !important;" hidden></div>
 <div class="row">
     <h5 class="text-success statusText" style="padding-left: 55px;">@ViewBag.Message</h5>
-    <div class="col-md-6 article-column">
-        @foreach (var article in Model)
+    <div class="col-md-6 article-column article_show_encapsule">
+        @if (Model.Any())
         {
-            <div>
+        <div class="searchFilter">
+            <div class="input-group" id="Search">
+                <input type="text" id="searchField" class="form-control max_width" placeholder="Søk etter dokumentnavn eller tittel..."/>
+                <div class="input-group-btn">
+                    <div class="btn-group" role="group">
+                        <div class="dropdown dropdown-lg" id="#dropDown">
+                            <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+                            <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                
+                                <form class="form-horizontal" role="form">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label>Filtrer etter</label>
+                                                <select class="form-control max_width" id="selected">
+                                                    <option id="lastSaved" value="0" selected>Sist lagret</option>
+                                                    <option value="1">Først publisert</option>
+                                                    <option value="2">Tittel</option>
+                                                    <option value="3">Dokumentnavn</option>
+                                                </select>
 
-                <h3>
-                    <a href="@Url.Action("Article", "PR", new {id = article.Id, area = "Admin"})">
-                        @article.Name
-                    </a>
-                </h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" style="padding-top: 2%">
+                                            <div id="orderFilter">
+                                                <label class="radio-inline"><input type="radio" name="opt" value="ascending" checked>Stigende</label>
+                                                <br />
+                                                <label class="radio-inline"><input type="radio" id="orderDefault" name="opt" value="descending">Synkende</label>
+                                            </div>
+                                            </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Forfatter</label>
+                                        <input id="author" class="form-control max_width" type="text"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Inderholder</label>
+                                        <input id="content" class="form-control max_width" type="text"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Publisert
+                                            <div id="publishFilter">
+                                                <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
+                                                <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
+                                                <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="defaultRadio" checked>Uvesentlig</label>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                </form>
+                                <button id="reset" class="btn btn-primary" style="float: right">Reset</button>
+                            </div>
+                        </div>
+                        <button type="button" id="searchBtn" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                    </div>
+                </div>
             </div>
 
+        </div>
+
+            <br/>
             <br/>
         }
+        <div id="articleUpdate">
+            @Html.Partial("_ArticleListPartial", Model)
+        </div>
     </div>
     <div class="col-md-6 writeButtons separate">
         <div class="row">
@@ -41,7 +98,16 @@
     </div>
 </div>
 
+
 <script>
+    $(document).ready(function () {
+
+        $(document).ajaxStart(function () {
+            $(".loader").show();
+        }).ajaxStop(function () {
+            $(".loader").hide();
+        });
+    });
     new Vue({
         el: 'body',
 
@@ -67,4 +133,92 @@
             }
         }
     });
+
+    function goTo(e) {
+        location.href = '/Admin/PR/Article/' + e.id;
+    }
+
+    $(document).on("click", "#Pager a[href]", function () {
+        var formData = new FormData();
+        formData.append('published', $('#publishFilter input:radio:checked').val());
+        formData.append('order', $('#orderFilter input:radio:checked').val());
+        formData.append('filter', $("#selected option:selected").val());
+        formData.append('search', $('#searchField').val());
+        formData.append('author', $('#author').val());
+        formData.append('content', $('#content').val());
+        $.ajax({
+            url: $(this).attr("href"),
+            type: 'POST',
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formData,
+            cache: false,
+            success: function (result) {
+                $('#articleUpdate').html(result);
+            }
+        });
+        return false;
+    });
+
+    $("#searchBtn").on('click', function () {
+        filter();
+        $(this).closest(".dropdown-menu").prev().dropdown("toggle");
+        return false;
+    });
+    $("#searchField").on('keydown', function () {
+        if (event.keyCode == 13) {
+            $(this).closest(".dropdown-menu").prev().dropdown("toggle");
+            filter();
+            return false;
+        }
+    });
+    $("#author").on('keydown', function () {
+        if (event.keyCode == 13) {
+            $(this).closest(".dropdown-menu").prev().dropdown("toggle");
+            filter();
+            return false;
+        }
+    });
+    $("#content").on('keydown', function () {
+        if (event.keyCode == 13) {
+            $(this).closest(".dropdown-menu").prev().dropdown("toggle");
+            filter();
+            return false;
+        }
+    });
+
+    function filter() {
+        var formData = new FormData();
+
+        formData.append('published', $('#publishFilter input:radio:checked').val());
+        formData.append('order', $('#orderFilter input:radio:checked').val());
+        formData.append('filter', $("#selected option:selected").val());
+        formData.append('search', $('#searchField').val());
+        formData.append('author', $('#author').val());
+        formData.append('content', $('#content').val());
+
+        $.ajax({
+            url: '/Admin/PR/Filter',
+            type: 'POST',
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (result) {
+                $('#articleUpdate').html(result);
+            }
+        });
+    }
+
+    $("#reset").on('click', function () {
+        event.stopPropagation();
+        $('#searchField').val("");
+        $('#author').val("");
+        $('#content').val("");
+        document.getElementById("lastSaved").selected = "true";
+        $("#defaultRadio").prop("checked", true);
+        $("#orderDefault").prop("checked", true);
+    });
+    
 </script>

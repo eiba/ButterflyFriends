@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity.Core;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ButterflyFriends.Models;
+using Newtonsoft.Json;
 
 namespace ButterflyFriends.Controllers
 {
@@ -57,9 +59,20 @@ namespace ButterflyFriends.Controllers
 
         [HttpPost]
         public ActionResult RequestMembership(DbTables.MembershipRequest model)
-        {   
-            if (ModelState.IsValid) { 
-            try
+        {
+            
+            if (ModelState.IsValid) {
+                var encodedResponse = Request.Form["g-Recaptcha-Response"];
+                var isCaptchaValid = ReCaptcha.Validate(encodedResponse);
+
+                if (!isCaptchaValid)
+                {
+                    
+                    ViewBag.Error = "Recaptcha feilet";
+                    ViewBag.Reset = "false";
+                    return PartialView("_statusPartial");
+                }
+                try
             {
                 _context.MembershipRequests.Add(model);
                 _context.SaveChanges();
@@ -82,6 +95,29 @@ namespace ButterflyFriends.Controllers
             ViewBag.Error = "Ugyldige verdier: " + messages;
             ViewBag.Reset = "false";
             return PartialView("_statusPartial");
+        }
+    }
+    public class ReCaptcha
+    {
+        public bool Success { get; set; }
+        public List<string> ErrorCodes { get; set; }
+
+        public static bool Validate(string encodedResponse)
+        {
+            if (string.IsNullOrEmpty(encodedResponse)) return false;
+
+            var client = new System.Net.WebClient();
+            var secret = "6LdechwUAAAAAMgUKGwZntwpCT8PksWPETIBvyCi";
+
+            if (string.IsNullOrEmpty(secret)) return false;
+
+            var googleReply = client.DownloadString(string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, encodedResponse));
+
+            var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+            var reCaptcha = serializer.Deserialize<ReCaptcha>(googleReply);
+
+            return reCaptcha.Success;
         }
     }
 }

@@ -7,7 +7,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
+using System.Net.Mime;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
@@ -16,20 +19,143 @@ using ButterflyFriends.Models;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using PagedList;
+using SendGrid.Helpers.Mail;
+using Attachment = System.Net.Mail.Attachment;
 
 namespace ButterflyFriends.Areas.Admin.Controllers
 {
     public class PRController : Controller
     {
         ApplicationDbContext _context = new ApplicationDbContext();
+        public int pageSize = 4;
         // GET: Admin/PR
         public ActionResult Index(string message)
-        {
+        {   
             if (message != null)
             {
                 ViewBag.Message = message;
             }
-            return View(_context.Articles.ToList());
+            var articles = from s in _context.Articles
+                           select s;
+            articles = articles.OrderByDescending(s => s.LastSavedDateTime.Year).ThenByDescending(s => s.LastSavedDateTime.Day);
+            ViewBag.page = 1;
+            return View(articles.ToPagedList(1, pageSize));
+        }
+        public ActionResult Email()
+        {
+
+            return View();
+        }
+
+        public ActionResult SendEmail()
+        {
+            var emailHTML = Request.Unvalidated.Form["html"];
+            var emailSubject = Request.Form["subject"];
+            var recipients = Request.Form["recipients"].Split(',');
+            var allsponsors = Request.Form["allsponsors"];
+            var allemployees = Request.Form["allemployees"];
+            
+            if (!string.IsNullOrEmpty(emailHTML) && !string.IsNullOrEmpty(emailSubject))
+            {
+                if (recipients[0] == "" && recipients.Length == 1 && allsponsors ==null && allemployees ==null)
+                {
+                    return Json(new { error = true, message = "Error: Ingen mottakere", success = false });
+                }
+
+                try
+            {
+                MailMessage mailMsg = new MailMessage();
+
+                    if (Request.Files.Count > 0)
+                    {
+                            //  Get all files from Request object  
+                            HttpFileCollectionBase files = Request.Files;
+                            for (int i = 0; i < files.Count; i++)
+                            {
+
+                                HttpPostedFileBase file = files[i];
+                            
+                            mailMsg.Attachments.Add(new Attachment(file.InputStream, Path.GetFileName(file.FileName),file.ContentType));
+                        }
+                    }
+
+                    // To
+                if (allsponsors != null && allemployees != null)    //add everyone in the database
+                {
+                    var results = _context.Users.ToList();
+                    foreach (var result in results)
+                    {
+                            mailMsg.To.Add(new MailAddress(result.Email, result.Fname+" "+result.Lname));
+                    }
+                }
+                else if (allsponsors != null)    //add all sponsors
+                {
+                        var sponsors = (from s in _context.Users
+                                       where
+                                           s.Employee == null
+                                       select s).ToList();
+                    foreach (var sponsor in sponsors)
+                    {
+                            mailMsg.To.Add(new MailAddress(sponsor.Email, sponsor.Fname + " " + sponsor.Lname));
+
+                        }
+                    }
+                else if( allemployees != null)  //add all employees
+                {
+                        var employees = (from s in _context.Users
+                                        where
+                                            s.Employee != null
+                                        select s).ToList();
+                        foreach (var employee in employees)
+                        {
+                            mailMsg.To.Add(new MailAddress(employee.Email, employee.Fname + " " + employee.Lname));
+
+                        }
+                    }
+
+                if (!(recipients[0] == "" && recipients.Length == 1))  //there's recipients in recipient list
+                {
+
+                        foreach (var recipient in recipients)
+                        {
+                            mailMsg.To.Add(new MailAddress(recipient));
+
+                        }
+                    }
+
+                // From
+                mailMsg.From = new MailAddress("noreply@butterflyfriends.com", "Butterfly Friends");
+
+                    mailMsg.Subject = "Email";
+
+                        string html = @emailHTML;
+                        mailMsg.Body = html;
+                        mailMsg.IsBodyHtml = true;
+                    
+                
+                // Init SmtpClient and send
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials =
+                    new System.Net.NetworkCredential("azure_37743dcaeaf80d7f3e17e3f077a91b20@azure.com",
+                        "MJK67pm30g");
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMsg);
+
+                return Json(new { error = false, message = "Emailen ble sendt", success = true });
+
+
+            }
+            catch (Exception ex)
+            {
+                    return Json(new { error = true, message = "Error: "+ex.Message, success = false });
+
+                }
+            
+            }
+            return Json(new { error = true, message = "Kan ikke sende en tom email", success = false });
+
         }
 
         public ActionResult Article(int? id)
@@ -63,6 +189,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
             try
             {
+                if (article.FirstPublisheDateTime == null)
+                {
+                    article.FirstPublisheDateTime = DateTime.Now;;
+                }
 
                     article.Published = !article.Published;
                     _context.Entry(article).State = EntityState.Modified;
@@ -157,6 +287,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var titleNoHTML = Request.Unvalidated.Form["title"];
             var id = Request.Form["articleid"];
             var articleName = Request.Form["articlenName"];
+            List<DbTables.File> imagesList = new List<DbTables.File>();
+            if (Request.Form["images"] != "none")
+            {
+                var images = Array.ConvertAll(Request.Form["images"].Split(','), s => int.Parse(s));
+                imagesList = _context.Files.Where(s => images.Contains(s.FileId)).ToList();
+            }
 
             if (title==null)
             {
@@ -175,17 +311,27 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         {
                             try
                             {
+                                IList<DbTables.Employees> autorList = new List<DbTables.Employees>();
+                                autorList.Add(currentUser.Employee);
                                 DbTables.Article article = new DbTables.Article
                                 {
                                     Content = content,
-                                    Employee = currentUser.Employee,
+                                    Employees = autorList,
                                     Header = title,
                                     Published = false,
                                     Title = titleNoHTML,
                                     Name = articleName,
-                                    LastSavedDateTime = DateTime.Now
-                                };
-
+                                    LastSavedDateTime = DateTime.Now,
+                                    Images = imagesList
+                        };
+                                foreach (var image in imagesList)
+                                {
+                                    if (image != null)
+                                    {
+                                        image.Temporary = false;
+                                        _context.Entry(image).State = EntityState.Modified;
+                                }
+                                }   
                                 _context.Articles.Add(article);
                                 _context.SaveChanges();
 
@@ -215,11 +361,43 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                     return Json(new { error = true, message = "Error, fant ikke artikkelen som skulle lagres", success = false });
 
                                 }
+                                IList<DbTables.File> imagesToRemove = new List<DbTables.File>();
+                                foreach (var image in article.Images)
+                                {
+                                    if (imagesList.Contains(image))
+                                    {
+                                        continue;
+                                    }
+                                    imagesToRemove.Add(image);
+                                }
+                                foreach (var image in imagesList)
+                                {
+                                    if (image != null && image.Temporary)
+                                    {
+                                        image.Temporary = false;
+                                        _context.Entry(image).State = EntityState.Modified;
+                                }
+                                }
+                                article.Images.Clear();
+                                _context.Files.RemoveRange(imagesToRemove);
 
+                                bool newAuthor = true;
+                                foreach (var employee in article.Employees)
+                                {
+                                    if (employee == currentUser.Employee)
+                                    {
+                                        newAuthor = false;
+                                    }
+                                }
+                                if (newAuthor)
+                                {
+                                    article.Employees.Add(currentUser.Employee);
+                                }
                                 article.Header = title;
                                 article.Title = titleNoHTML;
                                 article.Content = content;
                                 article.Name = articleName;
+                                article.Images = imagesList;
 
 
                                 article.LastSavedDateTime = DateTime.Now;
@@ -516,6 +694,153 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                  GraphicsUnit.Pixel);
             }
             return target;
+        }
+
+        public ActionResult GetUsers()
+        {
+           var k = Request.Form["query"];
+           var enteties = new List<object>();
+           if (!string.IsNullOrEmpty(k)) { 
+            
+            var users = (from s in _context.Users
+                         where
+                         (s.Fname +" "+ s.Lname).Contains(k)||
+                         s.Email.Contains(k)
+                         orderby s.Lname
+                         select s).ToList();
+
+            foreach (var user in users)
+            {
+                var imgId = 1;
+                bool isEmployee = new bool();
+                if (user.Employee != null)
+                {
+                        isEmployee = true;
+                 }
+                if (user.Thumbnail != null)
+                {
+                    imgId = user.Thumbnail.ThumbNailId;
+                }
+                enteties.Add(new { name = user.Fname + " " + user.Lname +" "+user.Email,fullname= user.Fname + " " + user.Lname, id = user.Email, imgid = imgId, employee = isEmployee});
+            }
+
+            }
+            return Json(enteties);
+        }
+
+        public ActionResult ArticleList(int? page)
+        {
+            var published = Request.Form["published"];
+            var filter = Request.Form["filter"];
+            var search = Request.Form["search"];
+            var author = Request.Form["author"];
+            var content = Request.Form["content"];
+            var order = Request.Form["order"];
+
+            int pageNumber = (page ?? 1);
+            ViewBag.page = pageNumber;
+
+            return FilterResult(published, search, content, filter, pageNumber,order);
+        }
+
+        public ActionResult Filter()
+        {
+
+            var published = Request.Form["published"];
+            var filter = Request.Form["filter"];
+            var search = Request.Form["search"];
+            var author = Request.Form["author"];
+            var content = Request.Form["content"];
+            var order = Request.Form["order"];
+
+            int pageNumber = 1;
+            ViewBag.page = 1;
+
+
+            return FilterResult(published, search, content, filter, pageNumber,order);
+        }
+
+        public PartialViewResult FilterResult(string published, string search, string content, string filter, int pageNumber,string order)
+        {
+            var articles = from s in _context.Articles
+                           select s;
+
+            if (published == "yes")
+            {
+                articles = articles.Where(s => s.Published);
+
+            }
+            else if (published == "no")
+            {
+                articles = articles.Where(s => !s.Published);
+
+            }
+            if (!string.IsNullOrEmpty(search))
+            {
+                articles = articles.Where(s => s.Name.Contains(search) || s.Title.Contains(search));
+            }
+            if (!string.IsNullOrEmpty(content))
+            {
+                articles = articles.Where(s => s.Content.Contains(content));
+            }
+            if (order == "descending")
+            {
+                switch (filter)
+                {
+                    case "1":
+                        articles =
+                            articles.OrderByDescending(s => s.FirstPublisheDateTime.Value.Year)
+                                .ThenByDescending(s => s.FirstPublisheDateTime.Value.Day);
+                        break;
+                    case "2":
+                        articles = articles.OrderByDescending(s => s.Title);
+                        break;
+                    case "3":
+                        articles = articles.OrderByDescending(s => s.Name);
+                        break;
+                    default:
+                        articles =
+                            articles.OrderByDescending(s => s.LastSavedDateTime.Year)
+                                .ThenByDescending(s => s.LastSavedDateTime.Day);
+                        break;
+                }
+            }
+            else
+            {
+                switch (filter)
+                {
+                    case "1":
+                        articles =
+                            articles.OrderBy(s => s.FirstPublisheDateTime.Value.Year)
+                                .ThenBy(s => s.FirstPublisheDateTime.Value.Day);
+                        break;
+                    case "2":
+                        articles = articles.OrderBy(s => s.Title);
+                        break;
+                    case "3":
+                        articles = articles.OrderBy(s => s.Name);
+                        break;
+                    default:
+                        articles =
+                            articles.OrderBy(s => s.LastSavedDateTime.Year)
+                                .ThenBy(s => s.LastSavedDateTime.Day);
+                        break;
+                }
+            }
+            /*foreach (var article in articles)
+            {
+                foreach (var articleAuthor in article.Employees)
+                {
+                    var user = articleAuthor.User;
+                    var name = user.Fname + user.Lname;
+                    if (!name.Contains(author))
+                    {
+                        articles = articles.Where(s => s.Name.Contains(content));
+                    }
+                }
+            }*/
+
+            return PartialView("_ArticleListPartial", articles.ToPagedList(pageNumber, pageSize));
         }
         /*
         private static Bitmap ResizeImage(Bitmap image, int width, int height)
