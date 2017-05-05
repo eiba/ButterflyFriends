@@ -8,6 +8,7 @@
 @{
     ViewBag.render = "false";
     var k = false;
+    var formId = "createSponsorForm";
 }
 
 <div id="app">
@@ -25,7 +26,7 @@
                 InsertionMode = InsertionMode.Replace,
                 HttpMethod = "POST",
 
-            }, new { @class = "form-horizontal", role = "form", id = "sponsorForm" }))
+            }, new { @class = "form-horizontal", role = "form", id = formId }))
             {
                 @Html.AntiForgeryToken()
 
@@ -164,7 +165,52 @@
 
             },
             closeButton: function () {
-                $("form#sponsorForm").submit();
+                $('<input />').attr('type', 'hidden')
+               .attr('name', "search")
+               .attr('value', $('#SponsorsearchField').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                .attr('name', "active")
+                .attr('value', $('#SponsorActive input:radio:checked').val())
+                .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'order')
+               .attr('value', $('#SponsorOrderFilter input:radio:checked').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'filter')
+               .attr('value', $("#SponsorSelected option:selected").val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'SponsorPhone')
+               .attr('value', $('#SponsorPhone').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'SponsorStreetadress')
+               .attr('value', $('#SponsorStreetadress').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                           .attr('name', 'SponsorZip')
+                           .attr('value', $('#SponsorZip').val())
+                           .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                           .attr('name', 'SponsorCounty')
+                           .attr('value', $('#SponsorCounty').val())
+                           .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'SponsorCity')
+               .attr('value', $('#SponsorCity').val())
+               .appendTo('#@formId');
+
+                $("form#@formId").submit();
                      $(".loader-mask").hide();
                     this.show = false;
 

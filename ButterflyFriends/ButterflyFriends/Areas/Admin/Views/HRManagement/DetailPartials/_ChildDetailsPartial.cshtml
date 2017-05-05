@@ -4,6 +4,7 @@
 @{
     var fullname = Model.Child.Fname + " " + Model.Child.Lname;
     var ModalId = Model.Child.Id + "c";
+    var formId = "deleteChildShowForm";
 }
 
 <script type="x/template" id="@ModalId">
@@ -37,7 +38,31 @@
 <div id="Box">
 
     <modal :show.sync="showModal">
-        <h3 slot="header">@fullname</h3>
+        <h3 slot="header">
+            
+            @using (Ajax.BeginForm("showChildDelete", "HRManagement", new { id = Model.Child.Id, childrenPage = ViewBag.childrenPage }, new AjaxOptions
+            {
+            UpdateTargetId = "DeleteModal",
+            InsertionMode = InsertionMode.Replace,
+            HttpMethod = "GET",
+
+
+            }, new { @class = "form-horizontal", id = formId }))
+            {
+            }
+            <div class="row">
+                <div calss="col-md-11" style="float: right">
+                    <button class="btn btn-danger" onclick="submitForm()"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+
+                </div>
+                <div calss="col-md-1">
+                    @fullname
+                </div>
+                <h5 id="roleError" class="text-danger" style="text-align: center;"></h5>
+
+
+            </div>
+        </h3>
         <h5 slot="body">
             <div id="profilePicture">
                 @Html.Partial("UploadImagePartials/_ProfileImagePartial", Model.File)
@@ -58,6 +83,15 @@
                     </dt>
                     <dd>
                         @(Model.Child.User.Fname + " "+ Model.Child.User.Lname)
+                    </dd>
+                }
+                @if (Model.Child.InactiveSince != null)
+                {
+                    <dt>
+                        Tid siden sist aktiv:
+                    </dt>
+                    <dd>
+                        @Convert.ToInt32(DateTime.Now.Subtract(Model.Child.InactiveSince.Value).TotalDays) dag(er)
                     </dd>
                 }
 
@@ -102,7 +136,7 @@
                                     });
                                 }
                             });
-                            new Vue({
+    var vueChildDetails = new Vue({
                                 el: '#Box',
                                 data: {
                                     showModal: false
@@ -226,5 +260,9 @@
                                     $('#' + id + "t").text(percentage + '%');
                                     $('#' + id + "p").css("width", percentage + '%');
                                 }
+                            }
+                            function submitForm() {
+                                    $("form#@formId").submit();
+
                             }
 </script>

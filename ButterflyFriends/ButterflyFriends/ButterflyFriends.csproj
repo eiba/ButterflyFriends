@@ -227,6 +227,7 @@
     <Compile Include="Areas\Admin\Controllers\HRManagementController.cs" />
     <Compile Include="Areas\Admin\Controllers\MemberRequestsController.cs" />
     <Compile Include="Areas\Admin\Controllers\PRController.cs" />
+    <Compile Include="Areas\Admin\Controllers\VariousController.cs" />
     <Compile Include="Areas\Admin\Models\ArticleModel.cs" />
     <Compile Include="Areas\Admin\Models\HRmanagementModels\changeUserInfo.cs" />
     <Compile Include="Areas\Admin\Models\HRManagamentModel.cs" />
@@ -237,6 +238,7 @@
     <Compile Include="Areas\Admin\Models\HRmanagementModels\EmployeeModel.cs" />
     <Compile Include="Areas\Admin\Models\HRmanagementModels\FileModel.cs" />
     <Compile Include="Areas\Admin\Models\HRmanagementModels\SponsorModel.cs" />
+    <Compile Include="Areas\Admin\Models\VariousModel.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -252,6 +254,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ProfileViewModel.cs" />
+    <Compile Include="Models\RequestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -449,6 +452,13 @@
     <Content Include="Areas\Admin\Views\Shared\_EmailLayout.cshtml" />
     <Content Include="Areas\Admin\Views\PR\Email.cshtml" />
     <Content Include="Areas\Admin\Views\PR\_ArticleListPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Various\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Various\_SendGridPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Various\_RecaptchaPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Various\_TermsOfUserPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\DeletePartials\_DeleteEmployeePartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\DeletePartials\_DeleteSponsorPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\HRManagement\DeletePartials\_DeleteChildPartial.cshtml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

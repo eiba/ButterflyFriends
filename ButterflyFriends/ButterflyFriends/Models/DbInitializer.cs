@@ -32,9 +32,9 @@ namespace ButterflyFriends.Models
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
 
             roleManager.Create(new IdentityRole("Admin")); // rights to view admin 
-            roleManager.Create(new IdentityRole("Employee")); // The employee role
-            roleManager.Create(new IdentityRole("Sponsor")); //the sponsor role
-            roleManager.Create(new IdentityRole("Owner"));// The owner of the website
+            roleManager.Create(new IdentityRole("Ansatt")); // The employee role
+            roleManager.Create(new IdentityRole("Fadder")); //the sponsor role
+            roleManager.Create(new IdentityRole("Eier"));// The owner of the website
 
             //Adding different test values
             var ownerAdress = new DbTables.Adresses
@@ -54,13 +54,13 @@ namespace ButterflyFriends.Models
                 Fname = "Mr.",
                 Lname = "Owner",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Owner",
+                RoleNr = 0,
                 IsEnabeled = true,
                 Phone = "96347584",
                 Employee = new DbTables.Employees { Position = "Daglig Leder", AccountNumber = 53355335 }
             };
             userManager.Create(owner, "Password1.");
-            userManager.AddToRole(owner.Id, "Owner");
+            userManager.AddToRole(owner.Id, "Eier");
 
             var user1 = new ApplicationUser
             {
@@ -69,12 +69,12 @@ namespace ButterflyFriends.Models
                 Fname = "Frank",
                 Lname = "Åsnes",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user1, "Password1.");
-            userManager.AddToRole(user1.Id, "Sponsor");
+            userManager.AddToRole(user1.Id, "Fadder");
 
             var user2 = new ApplicationUser
             {
@@ -83,12 +83,12 @@ namespace ButterflyFriends.Models
                 Fname = "Janne",
                 Lname = "Fiskeman",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user2, "Password1.");
-            userManager.AddToRole(user2.Id, "Sponsor");
+            userManager.AddToRole(user2.Id, "Fadder");
 
             var user3 = new ApplicationUser
             {
@@ -97,12 +97,12 @@ namespace ButterflyFriends.Models
                 Fname = "Ole",
                 Lname = "Ingeredsen",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user3, "Password1.");
-            userManager.AddToRole(user3.Id, "Sponsor");
+            userManager.AddToRole(user3.Id, "Fadder");
 
             var user4 = new ApplicationUser
             {
@@ -111,12 +111,12 @@ namespace ButterflyFriends.Models
                 Fname = "Mari",
                 Lname = "Flatland",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user4, "Password1.");
-            userManager.AddToRole(user4.Id, "Sponsor");
+            userManager.AddToRole(user4.Id, "Fadder");
 
             var user6 = new ApplicationUser
             {
@@ -125,12 +125,12 @@ namespace ButterflyFriends.Models
                 Fname = "Jan",
                 Lname = "Johansen",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user6, "Password1.");
-            userManager.AddToRole(user6.Id, "Sponsor");
+            userManager.AddToRole(user6.Id, "Fadder");
 
             var user7 = new ApplicationUser
             {
@@ -139,12 +139,12 @@ namespace ButterflyFriends.Models
                 Fname = "Lisa",
                 Lname = "Buadhl",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user7, "Password1.");
-            userManager.AddToRole(user7.Id, "Sponsor");
+            userManager.AddToRole(user7.Id, "Fadder");
 
             var user8 = new ApplicationUser
             {
@@ -153,12 +153,12 @@ namespace ButterflyFriends.Models
                 Fname = "Tor",
                 Lname = "Hammer",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user8, "Password1.");
-            userManager.AddToRole(user8.Id, "Sponsor");
+            userManager.AddToRole(user8.Id, "Fadder");
 
             var user9 = new ApplicationUser
             {
@@ -167,12 +167,12 @@ namespace ButterflyFriends.Models
                 Fname = "Karoline",
                 Lname = "Sørsvann",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user9, "Password1.");
-            userManager.AddToRole(user9.Id, "Sponsor");
+            userManager.AddToRole(user9.Id, "Fadder");
 
             var user10 = new ApplicationUser
             {
@@ -181,12 +181,12 @@ namespace ButterflyFriends.Models
                 Fname = "Lars",
                 Lname = "Møllestad",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user10, "Password1.");
-            userManager.AddToRole(user10.Id, "Sponsor");
+            userManager.AddToRole(user10.Id, "Fadder");
 
             var user11 = new ApplicationUser
             {
@@ -195,12 +195,12 @@ namespace ButterflyFriends.Models
                 Fname = "Camilla",
                 Lname = "Bam",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user11, "Password1.");
-            userManager.AddToRole(user11.Id, "Sponsor");
+            userManager.AddToRole(user11.Id, "Fadder");
 
             var user12 = new ApplicationUser
             {
@@ -209,12 +209,12 @@ namespace ButterflyFriends.Models
                 Fname = "Asgeir",
                 Lname = "Millen",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true,
                 Phone = "96347584"
             };
             userManager.Create(user12, "Password1.");
-            userManager.AddToRole(user12.Id, "Sponsor");
+            userManager.AddToRole(user12.Id, "Fadder");
 
             var employee1 = new ApplicationUser
             {
@@ -223,13 +223,181 @@ namespace ButterflyFriends.Models
                 Fname = "Åse",
                 Lname = "Klevland",
                 AdressId = ownerAdress.AdressId,
-                AccessLvL = "Employee",
+                RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
                 Employee = new DbTables.Employees{Position = "Regnskapsfører",AccountNumber = 23452345}
             };
             userManager.Create(employee1, "Password1.");
-            userManager.AddToRole(employee1.Id, "Employee");
+            userManager.AddToRole(employee1.Id, "Ansatt");
+            var employee2 = new ApplicationUser
+            {
+                UserName = "employee2@butterflyfriends.no",
+                Email = "employee2@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee2, "Password1.");
+            userManager.AddToRole(employee2.Id, "Ansatt");
+            var employee3 = new ApplicationUser
+            {
+                UserName = "employee3@butterflyfriends.no",
+                Email = "employee3@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee3, "Password1.");
+            userManager.AddToRole(employee3.Id, "Ansatt");
+            var employee4 = new ApplicationUser
+            {
+                UserName = "employee4@butterflyfriends.no",
+                Email = "employee4@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee4, "Password1.");
+            userManager.AddToRole(employee4.Id, "Ansatt");
+            var employee5 = new ApplicationUser
+            {
+                UserName = "employee5@butterflyfriends.no",
+                Email = "employee5@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee5, "Password1.");
+            userManager.AddToRole(employee5.Id, "Ansatt");
+            var employee6 = new ApplicationUser
+            {
+                UserName = "employee6@butterflyfriends.no",
+                Email = "employee6@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee6, "Password1.");
+            userManager.AddToRole(employee6.Id, "Ansatt");
+            var employee7 = new ApplicationUser
+            {
+                UserName = "employee7@butterflyfriends.no",
+                Email = "employee7@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee7, "Password1.");
+            userManager.AddToRole(employee7.Id, "Ansatt");
+            var employee8 = new ApplicationUser
+            {
+                UserName = "employee8@butterflyfriends.no",
+                Email = "employee8@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee8, "Password1.");
+            userManager.AddToRole(employee8.Id, "Ansatt");
+            var employee9 = new ApplicationUser
+            {
+                UserName = "employee9@butterflyfriends.no",
+                Email = "employee9@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee9, "Password1.");
+            userManager.AddToRole(employee9.Id, "Ansatt");
+            var employee10 = new ApplicationUser
+            {
+                UserName = "employee10@butterflyfriends.no",
+                Email = "employee10@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee10, "Password1.");
+            userManager.AddToRole(employee10.Id, "Ansatt");
+            var employee11 = new ApplicationUser
+            {
+                UserName = "employee11@butterflyfriends.no",
+                Email = "employee11@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee11, "Password1.");
+            userManager.AddToRole(employee11.Id, "Ansatt");
+            var employee12 = new ApplicationUser
+            {
+                UserName = "employee12@butterflyfriends.no",
+                Email = "employee12@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee12, "Password1.");
+            userManager.AddToRole(employee12.Id, "Ansatt");
+            var employee13 = new ApplicationUser
+            {
+                UserName = "employee13@butterflyfriends.no",
+                Email = "employee13@butterflyfriends.no",
+                Fname = "Åse",
+                Lname = "Klevland",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 2,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+            };
+            userManager.Create(employee13, "Password1.");
+            userManager.AddToRole(employee13.Id, "Ansatt");
 
             db.Children.Add(new DbTables.Child
             {
@@ -471,6 +639,16 @@ namespace ButterflyFriends.Models
                 PostCode = 4554,
                 State = "Hordaland",
                 StreetAdress = "Vangvei 45"
+            });
+            db.SendGridAPI.Add(new DbTables.SendGridAPI
+            {
+                PassWord = "MJK67pm30g",
+                UserName = "azure_37743dcaeaf80d7f3e17e3f077a91b20@azure.com"
+            });
+            db.GoogleCaptchaAPI.Add(new DbTables.GoogleCaptchaAPI
+            {
+                SiteKey = "6LdechwUAAAAAFGSpfDeR0o_5JEgtRDtpDrObXEA",
+                Secret = "6LdechwUAAAAAMgUKGwZntwpCT8PksWPETIBvyCi"
             });
             var filePathProfile = @"c:\Users\eirik\Documents\Visual Studio stuff\Bachelor\ButterflyFriends\ButterflyFriends\ButterflyFriends\defaultUserBig.png";
             byte[] profile = File.ReadAllBytes(filePathProfile);

@@ -8,6 +8,7 @@
 @{
     ViewBag.render = "false";
     var k = false;
+    var formId = "employeeCreate";
 }
 
 <div id="app">
@@ -25,7 +26,7 @@
                 InsertionMode = InsertionMode.Replace,
                 HttpMethod = "POST",
 
-            }, new { @class = "form-horizontal", role = "form", id = "formId" }))
+            }, new { @class = "form-horizontal", role = "form", id = @formId }))
             {
                 @Html.AntiForgeryToken()
                 
@@ -91,24 +92,24 @@
                         @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control", id = "AccountNumber" })
                     </div>
                 </div>
-                    @*
+                    
     var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-    ApplicationUser userr = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
-    var roleNr = userr.roleNr;
+    ApplicationUser user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
+    var roleNr = user.RoleNr;
     HRManagementController HR = new HRManagementController();
 
     <div class="form-group">
-        @Html.LabelFor(m => m.UserRole, new { @class = "col-md-2 control-label" })
+        <label class="control-label col-md-2" for="RoleNr">Brukerrolle</label>
         <div class="col-md-10">
-            <select name="UserRole" class="form-control">
-                @for (int i = 1; i < roleNr; i++)
+            <select name="RoleNr" class="form-control">
+                @for (int i = 2; i > roleNr; i--)
                 {
-                    <option value=@HR.ResolveUserRole(i)>@HR.ResolveUserRole(i)</option>
+                    <option value="@i">@HR.ResolveUserRole(i)</option>
                 }
             </select>
         </div>
     </div>
-                    *@
+                    
                     <div class="form-group">
                         @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
                         <div class="col-md-10">
@@ -176,25 +177,67 @@
 
             },
             closeButton: function () {
-                     $("form#formId").submit();
-                     $(".loader-mask").hide();
+                $('<input />').attr('type', 'hidden')
+           .attr('name', "search")
+           .attr('value', $('#EmployeesearchField').val())
+           .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                .attr('name', "active")
+                .attr('value', $('#employeeActive input:radio:checked').val())
+                .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'order')
+               .attr('value', $('#EmployeeOrderFilter input:radio:checked').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'filter')
+               .attr('value', $("#EmployeeSelected option:selected").val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'employeePhone')
+               .attr('value', $('#employeePhone').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'EmployeeStreetadress')
+               .attr('value', $('#EmployeeStreetadress').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                           .attr('name', 'EmployeeZip')
+                           .attr('value', $('#EmployeeZip').val())
+                           .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                           .attr('name', 'EmployeeCounty')
+                           .attr('value', $('#EmployeeCounty').val())
+                           .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'EmployeeCity')
+               .attr('value', $('#EmployeeCity').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'EmployeePosition')
+               .attr('value', $('#EmployeePosition').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'employeeAccountNumber')
+               .attr('value', $('#employeeAccountNumber').val())
+               .appendTo('#@formId');
+
+                     $("form#@formId").submit();
                     this.show = false;
 
             },
             showMethod: function() {
                 this.showModal = true;
-            },
-            clearFields: function () {
-                $("#firstName").val("");
-                $("#lastName").val("");
-                $("#Address").val("");
-                $("#zipCode").val("");
-                $("#City").val("");
-                $("#Email").val("");
-                $("#Phone").val("");
-                $("#Password").val("");
-                $("#ConfirmPassword").val("");
-
             }
         },
         ready: function() {

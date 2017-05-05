@@ -57,5 +57,7 @@ namespace ButterflyFriends.Areas.Admin.Models
         public string Position { get; set; }
         [Display(Name = "Bankonto")]
         public int? AccountNumber { get; set; }
+
+        public int? RoleNr { get; set; }
     }
 }

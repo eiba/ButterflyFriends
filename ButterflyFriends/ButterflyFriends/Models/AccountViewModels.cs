@@ -88,12 +88,6 @@ namespace ButterflyFriends.Models
         [Display(Name = "Fylke")]
         public string State { get; set; }
 
-        [Display(Name = "Rollenummer")]
-        public int roleNr { get; set; }
-
-        [Display(Name = "Brukertype")]
-        public string UserRole { get; set; }
-
         [Required]
         [StringLength(12, ErrorMessage = "Telefonummer må være mellom 8 og 12 karakterer", MinimumLength = 8)]
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Telefonummer kan kun vare karakterer mellom 0 og 9")]
@@ -120,6 +114,7 @@ namespace ButterflyFriends.Models
         public string Position { get; set; }
         [Display(Name = "Kontonummer")]
         public int? AccountNumber { get; set; }
+        public int RoleNr { get; set; }
     }
 
     public class ResetPasswordViewModel

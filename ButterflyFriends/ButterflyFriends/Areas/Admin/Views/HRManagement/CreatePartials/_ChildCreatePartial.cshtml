@@ -208,38 +208,37 @@
 
                     if (item.imgid === 0) {
 
-                        var $li = $('<li>'),
-                        $i = $('<i class="fa fa-question-circle" aria-hidden="true"></i>');
+                        var $li = $('<li>');
 
+                        var $div;
+                        if (item.email == "") {
+                            $div =
+                                $('<label class="autoLabel"><div class="row"><div class="col-md-3"><i class="fa fa-question-circle autoQuestionChild" aria-hidden="true"></i></div><div class="col-md-9">' + item.label + '</div></div></label>');
 
-                        $i.css({
-                            "width": 40,
-                            "margin-right": 4,
-                            "padding-left": 13
-                        });
+                        } else {
+                            $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><i class="fa fa-question-circle autoQuestion" aria-hidden="true"></i></div><div class="col-md-9">' + item.label + '<br><span class="autoEmailStyle">' + item.email + '</span></div></div></label>');
+
+                        }
 
                         $li.attr('data-value', item.label);
-                        $li.append('<a href="#">');
-                        $li.find('a').append($i).append(item.label);
+                        $li.append('<a>');
+                        $li.find('a').append($div);
 
                         return $li.appendTo(ul);
                     }
-                    var $li = $('<li>'),
-                        $img = $('<img class="thumbnailShow">');
+                    var $li = $('<li>');
 
+                    var $div;
+                    if (item.email == "") {
+                        $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><img src="../FileAdmin?id=' + item.imgid + '" class="thumbnailShow"></div><div class="col-md-9">' + item.label + '</div></div></label>');
+                    } else {
+                        $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><img src="../FileAdmin?id=' + item.imgid + '" class="thumbnailShow"></div><div class="col-md-9">' + item.label + '<br><span class="autoEmailStyle">' + item.email + '</span></div></div></label>');
 
-                    $img.attr({
-                        src: '../FileAdmin?id=' + item.imgid
-
-                    });
-                    $img.css({
-                        "width": 40,
-                        "margin-right": 4
-                    });
+                    }
 
                     $li.attr('data-value', item.label);
-                    $li.append('<a href="#">');
-                    $li.find('a').append($img).append(item.label);
+                    $li.append('<a>');
+                    $li.find('a').append($div);
 
                     return $li.appendTo(ul);
 

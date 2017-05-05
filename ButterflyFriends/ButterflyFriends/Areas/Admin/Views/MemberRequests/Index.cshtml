@@ -6,7 +6,21 @@
 }
 
 <br/>
+@if (Model.Any())
+{
+    <div class="searchFilter">
+        <div class="input-group" id="Search">
+            <input type="text" id="searchField" class="form-control max_width" placeholder="Søk etter forespørsel..." />
+            <div class="input-group-btn">
+                <div class="btn-group" role="group">
+                    <button type="button" id="searchBtn" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                </div>
+            </div>
+        </div>
 
+    </div>
+
+}
 <div id="updateAccordion">
     @if (!Model.Any() && Model.PageCount == 0)
     {
@@ -21,6 +35,7 @@
     }
     <input id="page" value="@ViewBag.page" hidden />
     <br />
+    
     <div class="panel panel-default panel-table">
         <div class="panel-heading">
             <div class="row">
@@ -216,10 +231,53 @@
 
     }
 
+    $("#searchBtn").on('click', function () {
+        filter();
+        return false;
+    });
+    $("#searchField").on('keydown', function () {
+        if (event.keyCode == 13) {
+            filter();
+            return false;
+        }
+    });
+    function filter() {
+        var formData = new FormData();
+
+        formData.append('search', $('#searchField').val());
+
+        $.ajax({
+            url: '/Admin/MemberRequests/Filter',
+            type: 'POST',
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (result) {
+                $('#updateAccordion').html(result);
+
+                $("#accordion").accordion({
+                    collapsible: true,
+                    active: false,
+                    heightStyle: "content"
+                });
+            },
+            error: function (err) {
+                $("#error").text("Error: " + err.statusText);
+            }
+        });
+    
+    }
     $(document).on("click", "#Pager a[href]", function () {
+        var formData = new FormData();
+        formData.append('search', $('#searchField').val());
         $.ajax({
             url: $(this).attr("href"),
-            type: 'GET',
+            type: 'POST',
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formData,
             cache: false,
             success: function (result) {
                 $('#updateAccordion').html(result);
@@ -230,11 +288,12 @@
                     heightStyle: "content"
                 });
             },
-            error:function(err) {
+            error: function (err) {
                 $("#error").text("Error: " + err.statusText);
-                console.log(err);
             }
         });
         return false;
     });
+
+
 </script>

@@ -20,6 +20,7 @@ using SendGrid.Helpers.Mail;
 
 namespace ButterflyFriends.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Eier, Admin, Ansatt")]
     public class MemberRequestsController : Controller
     {
         ApplicationDbContext _context = new ApplicationDbContext();
@@ -84,8 +85,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 Fname = req.Fname,
                 Lname = req.Lname,
                 Phone = req.Phone,
-                RoleNr = 0,
-                AccessLvL = "Sponsor",
+                RoleNr = 3,
                 IsEnabeled = true
             };
             var adress = new DbTables.Adresses
@@ -100,7 +100,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var result = await userManager.CreateAsync(newUser);
             if (result.Succeeded)
             {
-                userManager.AddToRole(newUser.Id, newUser.AccessLvL);
+                userManager.AddToRole(newUser.Id, ResolveUserRole(newUser.RoleNr));
 
                 var provider = new DpapiDataProtectionProvider("ButterflyFriends");
                 userManager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(provider.Create("Passwordresetting"));
@@ -185,17 +185,65 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         public ActionResult RequestList(int? page)
         {
-            var requests = from s in _context.MembershipRequests
+            var search = Request.Form["search"];
+            int pageNumber = (page ?? 1);
+            ViewBag.page = (page ?? 1);
+            if (!string.IsNullOrEmpty(search))
+            {
+                var requests = from s in _context.MembershipRequests
+                               where s.Fname.Contains(search) ||
+                                     s.Lname.Contains(search)||
+                                     s.City.Contains(search) ||
+                                     s.Description.Contains(search)||
+                                     s.Email.Contains(search) ||
+                                     s.Phone.Contains(search)||
+                                     s.PostCode.ToString().Contains(search)||
+                                     s.StreetAdress.Contains(search)||
+                                     s.State.Contains(search)
+                               orderby s.Lname
+                               select s;
+
+                return PartialView("_AccordionPartial", requests.ToPagedList(pageNumber, pageSize));
+
+            }
+
+            var requestsNoSearch = from s in _context.MembershipRequests
                 orderby s.Lname
                 select s;
 
-            int pageNumber = (page ?? 1);
-            ViewBag.page = (page ?? 1);
+           
 
-            return PartialView("_AccordionPartial", requests.ToPagedList(pageNumber, pageSize));
+            return PartialView("_AccordionPartial", requestsNoSearch.ToPagedList(pageNumber, pageSize));
 
         }
+        public ActionResult Filter()
+        {
+            int pageNumber = 1;
+            ViewBag.page = 1;
+            var search = Request.Form["search"];
+            if (!string.IsNullOrEmpty(search))
+            {
+                var requests = from s in _context.MembershipRequests
+                               where s.Fname.Contains(search) ||
+                                     s.Lname.Contains(search) ||
+                                     s.City.Contains(search) ||
+                                     s.Description.Contains(search) ||
+                                     s.Email.Contains(search) ||
+                                     s.Phone.Contains(search) ||
+                                     s.PostCode.ToString().Contains(search) ||
+                                     s.StreetAdress.Contains(search) ||
+                                     s.State.Contains(search)
+                               orderby s.Lname
+                               select s;
 
+                return PartialView("_AccordionPartial", requests.ToPagedList(pageNumber, pageSize));
+            }
+            var requestsNoSearch = from s in _context.MembershipRequests
+                                   orderby s.Lname
+                                   select s;
+
+            return PartialView("_AccordionPartial", requestsNoSearch.ToPagedList(pageNumber, pageSize));
+        }
         public DbTables.Adresses AdressExist(DbTables.Adresses adress)
         {
             var adresses = _context.Set<DbTables.Adresses>();
@@ -270,9 +318,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 }
                 // Init SmtpClient and send
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                    var SendGridAPI = _context.SendGridAPI.First();
+
                     System.Net.NetworkCredential credentials =
-                        new System.Net.NetworkCredential("azure_37743dcaeaf80d7f3e17e3f077a91b20@azure.com",
-                            "MJK67pm30g");
+                        new System.Net.NetworkCredential(SendGridAPI.UserName,
+                            SendGridAPI.PassWord);
                     smtpClient.Credentials = credentials;
 
                     smtpClient.Send(mailMsg);
@@ -283,6 +333,24 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     return false;
                 }
             return true;
+        }
+
+        public string ResolveUserRole(int roleNr)
+        {
+            if (roleNr == 3)
+            {
+                return "Fadder";
+            }
+            if (roleNr == 2)
+            {
+                return "Ansatt";
+            }
+            if (roleNr == 1)
+            {
+                return "Admin";
+            }
+
+            return "Eier";
         }
     }
 }

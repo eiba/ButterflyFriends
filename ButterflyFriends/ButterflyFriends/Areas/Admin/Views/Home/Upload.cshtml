@@ -19,7 +19,7 @@
         var inside = false;
         var n = 0;
         var tagObj = {};
-        function handleFileSelect(evt) {
+function handleFileSelect(evt) {
             var files = evt.target.files; // FileList object
 
             var list = document.getElementById("list");
@@ -283,7 +283,6 @@
                     var scaleY = displayedHeight / originalHeight;
                     var scaleX = displayedWidth / originalWidth;
                     
-                    //console.log("X "+scaleX + "Y "+ScaleY);
                     var boxesList = [];
                     $('#'+id+'s').children('div').each(function () {
                         var boxId = this.getAttribute("id");

@@ -1,6 +1,9 @@
 ﻿@using ButterflyFriends.Areas.Admin.Models.HRmanagementModels
 @using PagedList.Mvc
 @model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.SponsorModel
+    @{
+        var count = 0;
+    }
 <div class="row">
 
     <div class="col-md-12">
@@ -48,7 +51,7 @@
 
                         @foreach (var sponsor in Model.Sponsors)
                         {
-
+                            
                             var fullname = sponsor.Fname + " " + sponsor.Lname;
                             var rowClass = "";
                             if (ViewBag.Success != null && sponsor.Id == ViewBag.Id)
@@ -65,7 +68,7 @@
                                     <div class="row">
                                         <div class="col-md-offset-2">
                                             <div class="col-md-3">
-                                                @using (Ajax.BeginForm("showSponsorDetails", "HRManagement", new { id = @sponsor.Id }, new AjaxOptions
+                                                @using (Ajax.BeginForm("showSponsorDetails", "HRManagement", new { id = @sponsor.Id, sponsorPage = ViewBag.sponsorPage }, new AjaxOptions
                                                 {
                                                     UpdateTargetId = "Modal",
                                                     InsertionMode = InsertionMode.Replace,
@@ -98,12 +101,12 @@
                                                     {
                                                         UpdateTargetId = "updateSponsors",
                                                         InsertionMode = InsertionMode.Replace,
-                                                        HttpMethod = "GET",
+                                                        HttpMethod = "POST",
 
 
-                                                    }, new { @class = "form-horizontal" }))
+                                                    }, new { @class = "form-horizontal" ,id=count+"sd"}))
                                                     {
-                                                        <button class="btn btn-danger"><em class="fa fa-lock"></em></button>
+                                                        <button class="btn btn-danger" onclick="appendFilterSponsor(event,this)"><em class="fa fa-lock"></em></button>
 
                                                     }
                                                 }
@@ -113,12 +116,12 @@
                                                     {
                                                         UpdateTargetId = "updateSponsors",
                                                         InsertionMode = InsertionMode.Replace,
-                                                        HttpMethod = "GET",
+                                                        HttpMethod = "POST",
 
 
-                                                    }, new { @class = "form-horizontal" }))
+                                                    }, new { @class = "form-horizontal",id=count+"sa"}))
                                                     {
-                                                        <button class="btn btn-success"><em class="fa fa-unlock"></em></button>
+                                                        <button class="btn btn-success" onclick="appendFilterSponsor(event,this)"><em class="fa fa-unlock"></em></button>
                                                     }
                                                 }
                                             </div>
@@ -129,6 +132,7 @@
                                 <td>@fullname</td>
                                 <td>@sponsor.Email</td>
                             </tr>
+                            count += 1;
                         }
 
                     </tbody>
@@ -138,7 +142,14 @@
             <div class="panel-footer">
                 <div class="row">
                     <div class="col col-xs-4">
-                        Side @Model.Sponsors.PageNumber av @Model.Sponsors.PageCount
+                        @if (@Model.Sponsors.PageCount != 0)
+                        {
+                            <span>Side @Model.Sponsors.PageNumber av @Model.Sponsors.PageCount</span>
+                        }
+                        else
+                        {
+                            <span>Ingen Resultater</span>
+                        }
                     </div>
                     <div class="col col-xs-8">
 
@@ -156,5 +167,55 @@
 </div>
 
 <script>
-    $(".loader-mask").hide();
+    function appendFilterSponsor(e,b) {
+        e.preventDefault();
+        var formId = b.parentNode.id;
+
+        $('<input />').attr('type', 'hidden')
+         .attr('name', "search")
+         .attr('value', $('#SponsorsearchField').val())
+         .appendTo('#'+formId);
+
+        $('<input />').attr('type', 'hidden')
+        .attr('name', "active")
+        .attr('value', $('#SponsorActive input:radio:checked').val())
+        .appendTo('#'+formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'order')
+       .attr('value', $('#SponsorOrderFilter input:radio:checked').val())
+       .appendTo('#'+formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'filter')
+       .attr('value', $("#SponsorSelected option:selected").val())
+       .appendTo('#'+formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'SponsorPhone')
+       .attr('value', $('#SponsorPhone').val())
+       .appendTo('#'+formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'SponsorStreetadress')
+       .attr('value', $('#SponsorStreetadress').val())
+       .appendTo('#'+formId);
+
+        $('<input />').attr('type', 'hidden')
+                   .attr('name', 'SponsorZip')
+                   .attr('value', $('#SponsorZip').val())
+                   .appendTo('#'+formId);
+
+        $('<input />').attr('type', 'hidden')
+                   .attr('name', 'SponsorCounty')
+                   .attr('value', $('#SponsorCounty').val())
+                   .appendTo('#'+formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'SponsorCity')
+       .attr('value', $('#SponsorCity').val())
+       .appendTo('#'+formId);
+
+        $("form#" + formId).submit();
+    }
 </script>

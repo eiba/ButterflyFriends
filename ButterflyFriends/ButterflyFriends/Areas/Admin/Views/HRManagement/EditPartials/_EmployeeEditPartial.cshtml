@@ -1,4 +1,7 @@
-﻿@model ButterflyFriends.Areas.Admin.Models.changeUserInfo
+﻿@using ButterflyFriends.Areas.Admin.Controllers
+@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity.EntityFramework
+@model ButterflyFriends.Areas.Admin.Models.changeUserInfo
 @{
 
     var formId = "profileForm";
@@ -24,7 +27,7 @@
                 <div class="form-horizontal">
                     @Html.ValidationSummary(true)
                     @Html.HiddenFor(model => model.Id)
-                    
+
                     <div class="form-group">
                         @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
@@ -47,6 +50,33 @@
                             @Html.ValidationMessageFor(model => model.Lname)
                         </div>
                     </div>
+                    @{
+                        var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+                        ApplicationUser user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
+                        var roleNr = user.RoleNr;
+                        HRManagementController HR = new HRManagementController();
+
+                    }
+                    @if (user.Id != Model.Id && user.RoleNr < Model.RoleNr) { 
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="RoleNr">Brukerrolle</label>
+                            <div class="col-md-10">
+                                <select name="RoleNr" class="form-control">
+
+                                    <option value="@Model.RoleNr" selected>@HR.ResolveUserRole(Model.RoleNr)</option>
+
+                                    @for (int i = 2; i > roleNr; i--)
+                                    {
+                                        if (i != Model.RoleNr)
+                                        {
+                                        <option value="@i">@HR.ResolveUserRole(i)</option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(model => model.RoleNr)
+                            </div>
+                        </div>
+                    }
                     <div class="form-group">
                         @Html.LabelFor(model => model.StreetAdress, new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
@@ -82,35 +112,35 @@
                             @Html.ValidationMessageFor(model => model.Phone)
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        <input name="Position" value="@Model.Position" class="form-control">
-                        @Html.ValidationMessageFor(model => model.Position)
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            <input name="Position" value="@Model.Position" class="form-control">
+                            @Html.ValidationMessageFor(model => model.Position)
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.AccountNumber, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        <input name="AccountNumber" value ="@Model.AccountNumber" class="form-control">
-                        @Html.ValidationMessageFor(model => model.AccountNumber)
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.AccountNumber, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            <input name="AccountNumber" value="@Model.AccountNumber" class="form-control">
+                            @Html.ValidationMessageFor(model => model.AccountNumber)
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        <input name="Password" value="" class="form-control" type="password">
-                        @Html.ValidationMessageFor(model => model.Password)
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            <input name="Password" value="" class="form-control" type="password">
+                            @Html.ValidationMessageFor(model => model.Password)
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        <input name="ConfirmPassword" value="" class="form-control" type="password">
-                        @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            <input name="ConfirmPassword" value="" class="form-control" type="password">
+                            @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                        </div>
                     </div>
                 </div>
 
@@ -162,12 +192,68 @@
         methods: {
             close: function() {
                 this.show = false;
-                $(".loader-mask").hide();
             },
-            closeButton: function() {
+            closeButton: function () {
+
+                $('<input />').attr('type', 'hidden')
+                .attr('name', "search")
+                .attr('value', $('#EmployeesearchField').val())
+                .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                .attr('name', "active")
+                .attr('value', $('#employeeActive input:radio:checked').val())
+                .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'order')
+               .attr('value', $('#EmployeeOrderFilter input:radio:checked').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'filter')
+               .attr('value', $("#EmployeeSelected option:selected").val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'employeePhone')
+               .attr('value', $('#employeePhone').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'EmployeeStreetadress')
+               .attr('value', $('#EmployeeStreetadress').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                           .attr('name', 'EmployeeZip')
+                           .attr('value', $('#EmployeeZip').val())
+                           .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                           .attr('name', 'EmployeeCounty')
+                           .attr('value', $('#EmployeeCounty').val())
+                           .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'EmployeeCity')
+               .attr('value', $('#EmployeeCity').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'EmployeePosition')
+               .attr('value', $('#EmployeePosition').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'employeeAccountNumber')
+               .attr('value', $('#employeeAccountNumber').val())
+               .appendTo('#@formId');
+
+
+
                 $("form#@formId").submit();
                 this.show = false;
-                $(".loader-mask").hide();
 
             }
         },

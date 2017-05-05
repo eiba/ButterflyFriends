@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ButterflyFriends.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Owner, Admin")]
+    [Authorize(Roles = "Eier,Ansatt,Admin")]
     public class HomeController : Controller
     {
         ApplicationDbContext _context = new ApplicationDbContext();
@@ -61,7 +61,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             foreach (var user in users)
             {
-                var imgId = 0;
+                var imgId = 1;
                 if (user.Thumbnail != null)
                 {
                     imgId = user.Thumbnail.ThumbNailId;
@@ -70,7 +70,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
             foreach (var child in children)
             {
-                var imgId = 0;
+                var imgId = 1;
                 if (child.Thumbnail != null)
                 {
                     imgId = child.Thumbnail.ThumbNailId;

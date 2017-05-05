@@ -1,4 +1,7 @@
-﻿@model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.EmployeeDetailsModel
+﻿@using ButterflyFriends.Areas.Admin.Controllers
+@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity.EntityFramework
+@model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.EmployeeDetailsModel
 
 
 @{
@@ -6,6 +9,12 @@
     var fullname = Model.User.Fname + " " + Model.User.Lname;
     var mailto = "mailto:" + Model.User.Email;
     var ModalId = Model.User.Id + "s";
+    var formId = "deleteSponsorShowForm";
+    HRManagementController HR = new HRManagementController();
+    var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+    ApplicationUser user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
+    var currentUserRoleNr = user.RoleNr;
+    var RoleNr = Model.User.RoleNr;
 }
 
 <script type="x/template" id="@ModalId">
@@ -39,7 +48,37 @@
 <div id="Box">
 
     <modal :show.sync="showModal">
-        <h3 slot="header">@fullname</h3>
+        <h3 slot="header">
+            @if (currentUserRoleNr < RoleNr)
+            {
+                using (Ajax.BeginForm("showSponsorDelete", "HRManagement", new { id = Model.User.Id, sponsorPage = ViewBag.sponsorPage }, new AjaxOptions
+                {
+                    UpdateTargetId = "DeleteModal",
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "GET",
+
+
+                }, new { @class = "form-horizontal", id = formId }))
+                {
+                }
+                <div class="row">
+                    <div calss="col-md-11" style="float: right">
+                        <button class="btn btn-danger" onclick="submitForm()"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+
+                    </div>
+                    <div calss="col-md-1">
+                        @fullname
+                    </div>
+                    <h5 id="roleError" class="text-danger" style="text-align: center;"></h5>
+
+
+                </div>
+            }
+            else
+            {
+                <span style="text-align: center">@fullname</span>
+            }
+        </h3>
         <h5 slot="body">
             <div id="profilePicture">
                 @Html.Partial("UploadImagePartials/_ProfileImagePartial", Model.File)
@@ -88,9 +127,17 @@
                     Brukerolle:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(modelItem => Model.User.AccessLvL)
+                    @HR.ResolveUserRole(Model.User.RoleNr)
                 </dd>
-
+                @if (Model.User.InactiveSince != null)
+                {
+                    <dt>
+                        Tid siden sist aktiv:
+                    </dt>
+                    <dd>
+                        @Convert.ToInt32(DateTime.Now.Subtract(Model.User.InactiveSince.Value).TotalDays) dag(er)
+                    </dd>
+                }
             </dl>
             <hr />
             <p>Velg et nytt profilbilde</p>
@@ -134,7 +181,7 @@
                                     });
                                 }
                             });
-                            new Vue({
+    var vueSponsorDetails =  new Vue({
                                 el: '#Box',
                                 data: {
                                     showModal: false
@@ -257,6 +304,14 @@
                                     //update progressbar percent complete
                                     $('#' + id + "t").text(percentage + '%');
                                     $('#' + id + "p").css("width", percentage + '%');
+                                }
+                            }
+
+                            function submitForm() {
+                                if (parseInt("@RoleNr") > parseInt("@currentUserRoleNr")) {
+                                    $("form#@formId").submit();
+                                } else {
+                                    $("#roleError").text("Du kan ikke slette en med høyere eller samme brukernivå som deg.");
                                 }
                             }
 </script>

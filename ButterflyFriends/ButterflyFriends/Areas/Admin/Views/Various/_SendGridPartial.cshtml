@@ -1,0 +1,39 @@
+﻿@model DbTables.SendGridAPI
+<div class="row">
+    <h5 id="SendgridError" class="text-danger">@ViewBag.Error</h5>
+    <h5 id="SendgridSuccess" class="text-success">@ViewBag.Success</h5>
+    <div class="col-md-2">
+        <h4>Sendgrid API</h4>
+    </div>
+    <div class="col-md-10">
+        <button class="btn btn-primary" onclick="showSendGrid()" style="float: right;">Rediger <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Brukernavn</th>
+            <th>Passord</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        @if (string.IsNullOrWhiteSpace(Model.UserName))
+        {
+            <td>Ingen brukernavn funnet</td>
+        }
+        else { 
+            <td>@Model.UserName</td>
+        }
+        @if (string.IsNullOrWhiteSpace(Model.PassWord))
+        {
+            <td>Ingen passord funnet</td>
+
+        }
+        else
+        {
+            <td>@Model.PassWord</td>
+        }
+    </tr>
+    </tbody>
+</table>

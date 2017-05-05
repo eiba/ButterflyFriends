@@ -2,40 +2,105 @@
 @{
     ViewBag.Title = "Index";
 }
-<h2>Index of admin</h2>
+<h2 style="text-align: center">Admin meny</h2>
+<div class="row">
+    <div class="col-md-6 article-column">
+        <a class="btn btn-lg btn-primary center-block home-button-link"
+           href='@Url.Action("Upload", "Home")'
+           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           v-on:mouseover="upload"
+           v-on:mouseleave="MouseLeave">
+            Last opp bilder
+        </a>
+        <a class="btn btn-lg btn-primary center-block home-button-link"
+           href='@Url.Action("Images", "Home")'
+           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           v-on:mouseover="images"
+           v-on:mouseleave="MouseLeave">
+            Bilder
+        </a>
+        <a class="btn btn-lg btn-primary center-block home-button-link"
+           href='@Url.Action("Index", "HRManagement")'
+           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           v-on:mouseover="hrmanagement"
+           v-on:mouseleave="MouseLeave">
+            Brukereadministrasjon
+        </a>
+        <a class="btn btn-lg btn-primary center-block home-button-link"
+           href='@Url.Action("Index", "PR")'
+           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           v-on:mouseover="pr"
+           v-on:mouseleave="MouseLeave">
+            PR
+        </a>
+        <a class="btn btn-lg btn-primary center-block home-button-link"
+           href='@Url.Action("Index", "MemberRequests")'
+           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           v-on:mouseover="requests"
+           v-on:mouseleave="MouseLeave">
+            Medlemskapsforespørsler
+        </a>
+        <a class="btn btn-lg btn-primary center-block home-button-link"
+           href='@Url.Action("Index", "Various")'
+           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           v-on:mouseover="various"
+           v-on:mouseleave="MouseLeave">
+            Diverse
+        </a>
+    </div>
+    <div class="col-md-6 separate" style="padding-top: 15%;">
+        <span id="desc-text">{{ description }}</span>
+    </div>
+</div>
 
-<a class="btn btn-lg btn-primary center-block home-button-link"
-   href='@Url.Action("Upload", "Home")'
-   style="width:14em; margin-top:1em; margin-bottom:1em;"
-   v-on:mouseover="hrMouseOver"
-   v-on:mouseleave="MouseLeave">
-    Last opp bilder
-</a>
-<a class="btn btn-lg btn-primary center-block home-button-link"
-   href='@Url.Action("Images", "Home")'
-   style="width:14em; margin-top:1em; margin-bottom:1em;"
-   v-on:mouseover="hrMouseOver"
-   v-on:mouseleave="MouseLeave">
-    Bilder
-</a>
-<a class="btn btn-lg btn-primary center-block home-button-link"
-   href='@Url.Action("Index", "HRManagement")'
-   style="width:14em; margin-top:1em; margin-bottom:1em;"
-   v-on:mouseover="hrMouseOver"
-   v-on:mouseleave="MouseLeave">
-    Brukere
-</a>
-<a class="btn btn-lg btn-primary center-block home-button-link"
-   href='@Url.Action("Index", "PR")'
-   style="width:14em; margin-top:1em; margin-bottom:1em;"
-   v-on:mouseover="hrMouseOver"
-   v-on:mouseleave="MouseLeave">
-    Skriv
-</a>
-<a class="btn btn-lg btn-primary center-block home-button-link"
-   href='@Url.Action("Index", "MemberRequests")'
-   style="width:14em; margin-top:1em; margin-bottom:1em;"
-   v-on:mouseover="hrMouseOver"
-   v-on:mouseleave="MouseLeave">
-    Medlemskapsforespørsler
-</a>
+<script>
+    new Vue({
+        el: 'body',
+
+        data: {
+            description: ""
+        },
+
+        methods: {
+            various: function () {
+                this
+                    .description =
+                    "Håndter diverse og sett sosiale medier og API nøkler";
+            },
+
+            MouseLeave: function () {
+                this.description = "";
+            },
+
+            requests: function () {
+                this
+                    .description =
+                    "Søk i, slett og aksepter forespørsler om medlemskap";
+            },
+
+            pr: function () {
+                this
+                    .description =
+                    "Skriv, rediger og håndter blogginlegg og skriv email til ansatte og faddere";
+            },
+
+            hrmanagement: function () {
+                this
+                    .description =
+                    "Rediger, legg til og se infomasjon om ansatte, fadder og fadderbarn";
+            },
+
+            images: function () {
+                this
+                    .description =
+                    "Se og rediger bilder";
+            },
+
+            upload: function () {
+                this
+                    .description =
+                    "Last opp og tagg bilder med brukere og fadderbarn";
+            }
+        }
+    });
+</script>

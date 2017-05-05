@@ -5,6 +5,7 @@
     function success() {
         if ("@ViewBag.Reset" == "true") {
             $('#form').trigger("reset");
+            grecaptcha.reset();
         }
     }
 </script>

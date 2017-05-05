@@ -1,6 +1,9 @@
 ﻿@using ButterflyFriends.Areas.Admin.Models.HRmanagementModels
 @using PagedList.Mvc
 @model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.EmployeeModel
+    @{
+        var count = 0;
+    }
     <div class="row">
 
         <div class="col-md-12">
@@ -66,7 +69,7 @@
                                     <div class="row">
                                         <div class="col-md-offset-2">
                                             <div class="col-md-3">
-                                                @using (Ajax.BeginForm("showEmployeeDetails", "HRManagement", new {id = @employee.Id }, new AjaxOptions
+                                                @using (Ajax.BeginForm("showEmployeeDetails", "HRManagement", new {id = @employee.Id , employeePage = ViewBag.employeePage }, new AjaxOptions
                                                 {
                                                     UpdateTargetId = "Modal",
                                                     InsertionMode = InsertionMode.Replace,
@@ -99,12 +102,13 @@
                                                     {
                                                         UpdateTargetId = "updateEmployees",
                                                         InsertionMode = InsertionMode.Replace,
-                                                        HttpMethod = "GET",
+                                                        HttpMethod = "POST",
+                                                        
 
 
-                                                    }, new {@class = "form-horizontal"}))
+                                                    }, new {@class = "form-horizontal", id=count + "ed" }))
                                                     {
-                                                        <button class="btn btn-danger"><em class="fa fa-lock"></em></button>
+                                                        <button class="btn btn-danger" onclick="appendFilter(event,this)"><em class="fa fa-lock"></em></button>
 
                                                     }
                                                 }
@@ -114,12 +118,12 @@
                                                     {
                                                         UpdateTargetId = "updateEmployees",
                                                         InsertionMode = InsertionMode.Replace,
-                                                        HttpMethod = "GET",
+                                                        HttpMethod = "POST",
 
 
-                                                    }, new {@class = "form-horizontal"}))
+                                                    }, new {@class = "form-horizontal", id=count +"ea"}))
                                                     {
-                                                        <button class="btn btn-success"><em class="fa fa-unlock"></em></button>
+                                                        <button class="btn btn-success" onclick="appendFilter(event,this)"><em class="fa fa-unlock"></em></button>
                                                     }
                                                 }
                                             </div>
@@ -130,6 +134,7 @@
                                 <td>@fullname</td>
                                 <td>@employee.Email</td>
                             </tr>
+                            count += 1;
                         }
 
                         </tbody>
@@ -139,7 +144,14 @@
                 <div class="panel-footer">
                     <div class="row">
                         <div class="col col-xs-4">
-                            Side @Model.Employees.PageNumber av @Model.Employees.PageCount
+                            @if (@Model.Employees.PageCount != 0)
+                            {
+                                <span>Side @Model.Employees.PageNumber av @Model.Employees.PageCount</span>
+                            }
+                            else
+                            {
+                                <span>Ingen Resultater</span>
+                            }
                         </div>
                         <div class="col col-xs-8">
                            
@@ -157,5 +169,65 @@
     </div>
 
 <script>
-    $(".loader-mask").hide();
+    function appendFilter(e,b) {
+        e.preventDefault();
+        var formId = b.parentNode.id;
+        
+        $('<input />').attr('type', 'hidden')
+                .attr('name', "search")
+                .attr('value', $('#EmployeesearchField').val())
+                .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+        .attr('name', "active")
+        .attr('value', $('#employeeActive input:radio:checked').val())
+        .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'order')
+       .attr('value', $('#EmployeeOrderFilter input:radio:checked').val())
+       .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'filter')
+       .attr('value', $("#EmployeeSelected option:selected").val())
+       .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'employeePhone')
+       .attr('value', $('#employeePhone').val())
+       .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'EmployeeStreetadress')
+       .attr('value', $('#EmployeeStreetadress').val())
+       .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+                   .attr('name', 'EmployeeZip')
+                   .attr('value', $('#EmployeeZip').val())
+                   .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+                   .attr('name', 'EmployeeCounty')
+                   .attr('value', $('#EmployeeCounty').val())
+                   .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'EmployeeCity')
+       .attr('value', $('#EmployeeCity').val())
+       .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'EmployeePosition')
+       .attr('value', $('#EmployeePosition').val())
+       .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'employeeAccountNumber')
+       .attr('value', $('#employeeAccountNumber').val())
+       .appendTo('#' + formId);
+
+        $("form#" + formId).submit();
+    }
 </script>

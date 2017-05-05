@@ -1,0 +1,42 @@
+﻿@model DbTables.GoogleCaptchaAPI
+<div class="row">
+    <h5 id="RecaptchaError" class="text-danger">@ViewBag.Error</h5>
+    <h5 id="RecaptchaSuccess" class="text-success">@ViewBag.Success</h5>
+    <div class="col-md-2">
+        <h4>Google ReCaptcha</h4>
+    </div>
+    <div class="col-md-10">
+        <button class="btn btn-primary" onclick="showRecaptcha()" style="float: right;">Rediger <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>SiteKey</th>
+            <th>Secret</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <tr>
+            @if (string.IsNullOrWhiteSpace(Model.SiteKey))
+            {
+                <td>Ingen SiteKey funnet</td>
+            }
+            else
+            {
+                <td>@Model.SiteKey</td>
+            }
+            @if (string.IsNullOrWhiteSpace(Model.Secret))
+            {
+                <td>Ingen Secret funnet</td>
+
+            }
+            else
+            {
+                <td>@Model.Secret</td>
+            }
+        </tr>
+    </tr>
+    </tbody>
+</table>

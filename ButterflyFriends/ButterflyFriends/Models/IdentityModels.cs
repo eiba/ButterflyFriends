@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -28,7 +29,7 @@ namespace ButterflyFriends.Models
         public int EmployeeId { get; set; }
         [Display(Name = "Tlf")]
         public string Phone { get; set; }
-        public string AccessLvL { get; set; }
+        public DateTime? InactiveSince { get; set; }
         [DefaultValue(true)]
         public bool IsEnabeled { get; set; }
         public int RoleNr { get; set; }
@@ -71,6 +72,10 @@ namespace ButterflyFriends.Models
         public DbSet<DbTables.ThumbNail> ThumbNails { get; set; }
         public DbSet<DbTables.Article> Articles { get; set; }
         public DbSet<DbTables.MembershipRequest> MembershipRequests { get; set; }
+        public DbSet<DbTables.SendGridAPI> SendGridAPI { get; set; }
+        public DbSet<DbTables.GoogleCaptchaAPI> GoogleCaptchaAPI { get; set; }
+
+
 
         /// <summary>
         /// Creates the database

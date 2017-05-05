@@ -1,6 +1,8 @@
 ﻿@using PagedList.Mvc
 @model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.ChildrenModel
-
+@{
+    var count = 0;
+}
 <div class="row">
 
     <div class="col-md-12">
@@ -56,7 +58,7 @@
                                 <div class="row">
                                     <div class="col-md-offset-2">
                                         <div class="col-md-3">
-                                            @using (Ajax.BeginForm("showChildDetails", "HRManagement", new { id = @child.Id}, new AjaxOptions
+                                            @using (Ajax.BeginForm("showChildDetails", "HRManagement", new { id = @child.Id, childrenPage = ViewBag.childrenPage }, new AjaxOptions
                                             {
                                                 UpdateTargetId = "Modal",
                                                 InsertionMode = InsertionMode.Replace,
@@ -89,10 +91,10 @@
                                                 {
                                                     UpdateTargetId = "updateChildren",
                                                     InsertionMode = InsertionMode.Replace,
-                                                    HttpMethod = "GET",
+                                                    HttpMethod = "POST",
 
 
-                                                }, new { @class = "form-horizontal" }))
+                                                }, new { @class = "form-horizontal", id=count +"cd" }))
                                                 {
                                                     <button class="btn btn-danger"><em class="fa fa-lock"></em></button>
 
@@ -104,10 +106,10 @@
                                                 {
                                                     UpdateTargetId = "updateChildren",
                                                     InsertionMode = InsertionMode.Replace,
-                                                    HttpMethod = "GET",
+                                                    HttpMethod = "POST",
 
 
-                                                }, new { @class = "form-horizontal" }))
+                                                }, new { @class = "form-horizontal",id=count +"ca" }))
                                                 {
                                                     <button class="btn btn-success"><em class="fa fa-unlock"></em></button>
                                                 }
@@ -120,6 +122,7 @@
                             <td>@fullName</td>
                             <td>@child.DoB.ToString("dd/MM/yyyy")</td>
                         </tr>
+                        count += 1;
                     }
                     </tbody>
                 </table>
@@ -128,7 +131,14 @@
             <div class="panel-footer">
                 <div class="row">
                     <div class="col col-xs-4">
-                        Side @Model.Children.PageNumber av @Model.Children.PageCount
+                        @if (@Model.Children.PageCount != 0)
+                        {
+                            <span>Side @Model.Children.PageNumber av @Model.Children.PageCount</span>
+                        }
+                        else
+                        {
+                            <span>Ingen Resultater</span>
+                        }
                     </div>
                     <div class="col col-xs-8">
 
@@ -144,7 +154,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(".loader-mask").hide();
-</script>

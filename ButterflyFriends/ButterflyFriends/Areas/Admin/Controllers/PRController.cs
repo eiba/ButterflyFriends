@@ -25,6 +25,7 @@ using Attachment = System.Net.Mail.Attachment;
 
 namespace ButterflyFriends.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Eier, Admin, Ansatt")]
     public class PRController : Controller
     {
         ApplicationDbContext _context = new ApplicationDbContext();
@@ -136,9 +137,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 
                 // Init SmtpClient and send
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials =
-                    new System.Net.NetworkCredential("azure_37743dcaeaf80d7f3e17e3f077a91b20@azure.com",
-                        "MJK67pm30g");
+                    var SendGridAPI = _context.SendGridAPI.First();
+                    System.Net.NetworkCredential credentials =
+                    new System.Net.NetworkCredential(SendGridAPI.UserName,
+                        SendGridAPI.PassWord);
                 smtpClient.Credentials = credentials;
 
                 smtpClient.Send(mailMsg);

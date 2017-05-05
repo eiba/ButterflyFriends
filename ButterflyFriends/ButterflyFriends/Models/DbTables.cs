@@ -80,6 +80,7 @@ namespace ButterflyFriends.Models
             [DataType(DataType.DateTime)]
             [Display(Name = "Fødselsdato")]
             public DateTime DoB { get; set; }
+            public DateTime? InactiveSince { get; set; }
             [ForeignKey("User")]
             public string SponsorId { get; set; }
             public bool isActive { get; set; }
@@ -200,9 +201,29 @@ namespace ButterflyFriends.Models
 
 
         }
+
+        public class SendGridAPI
+        {
+            [Key]
+            public int Id { get; set; }
+            [Display(Name = "Brukernavn")]
+            public string UserName { get; set; }
+            [Display(Name = "Passord")]
+            public string PassWord { get; set; }
+        }
+        public class GoogleCaptchaAPI
+        {
+            [Key]
+            public int Id { get; set; }
+
+            [Display(Name = "SiteKey")]
+            public string SiteKey { get; set; }
+            [Display(Name = "Secret")]
+            public string Secret { get; set; }
+        }
         public enum FileType
         {
-            Picture = 1,Profile,Thumbnail,ArticleImage
+            Picture = 1,Profile,Thumbnail,ArticleImage,PDF
         }
     }
 }

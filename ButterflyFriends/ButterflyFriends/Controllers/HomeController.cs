@@ -18,6 +18,7 @@ namespace ButterflyFriends.Controllers
         public ActionResult Index()
         {
             return View(new FrontPageModel { Articles = _context.Articles.Where(s => s.Published).ToList()});
+
         }
 
         [HttpGet]
@@ -53,12 +54,26 @@ namespace ButterflyFriends.Controllers
         public ActionResult RequestMembership()
         {
             ViewBag.Message = "Forespør Medlemskap.";
-
-            return View(new DbTables.MembershipRequest());
+            
+            var GoogleCaptcha = _context.GoogleCaptchaAPI.First();
+            var model = new RequestModel
+            {
+                MembershipRequest = new DbTables.MembershipRequest(),
+                SiteKey = GoogleCaptcha.SiteKey
+            };
+            var terms = (from s in _context.Files
+                           where
+                           s.FileType == DbTables.FileType.PDF
+                           select s);
+            if (terms.Any())
+            {
+                model.TermsID = terms.First().FileId;
+            }
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult RequestMembership(DbTables.MembershipRequest model)
+        public ActionResult RequestMembership(RequestModel model)
         {
             
             if (ModelState.IsValid) {
@@ -74,7 +89,7 @@ namespace ButterflyFriends.Controllers
                 }
                 try
             {
-                _context.MembershipRequests.Add(model);
+                _context.MembershipRequests.Add(model.MembershipRequest);
                 _context.SaveChanges();
                 ViewBag.Success = "Din forespørsel ble suksessfult motatt, vi kontakter deg så snart vi kan";
                 ViewBag.Reset = "true";
@@ -99,15 +114,17 @@ namespace ButterflyFriends.Controllers
     }
     public class ReCaptcha
     {
+
         public bool Success { get; set; }
         public List<string> ErrorCodes { get; set; }
-
+        
         public static bool Validate(string encodedResponse)
         {
             if (string.IsNullOrEmpty(encodedResponse)) return false;
-
+            ApplicationDbContext _context = new ApplicationDbContext();
             var client = new System.Net.WebClient();
-            var secret = "6LdechwUAAAAAMgUKGwZntwpCT8PksWPETIBvyCi";
+            var GoogleCaptcha = _context.GoogleCaptchaAPI.First();
+            var secret = GoogleCaptcha.Secret;
 
             if (string.IsNullOrEmpty(secret)) return false;
 

@@ -1,0 +1,344 @@
+﻿@model ButterflyFriends.Areas.Admin.Models.VariousModel
+@{
+    ViewBag.Title = "Diverse";
+}
+<div class="loader" style="top: 50% !important;" hidden></div>
+<br/>
+<div class="solidBorder">
+    <h3 style="text-align: center">API nøkler</h3>
+    <div id="upadteSendGrid">
+        @Html.Partial("_SendGridPartial", Model.SendGridAPI)
+    </div>
+
+    <br />
+    <hr style="border: 1px solid black;"/>
+    <br/>
+    <div id="updateRecaptcha">
+        @Html.Partial("_RecaptchaPartial", Model.GoogleCaptchaAPI)
+    </div>
+    <br />
+</div>
+
+<br/>
+<div class="solidBorder">
+
+    <h3 style="text-align: center">Brukervilkår</h3>
+    <div id="TermsOfUserUpdate">
+        @Html.Partial("_TermsOfUserPartial", Model.File)
+    </div>
+</div>
+
+    @*Sendgrid*@
+    <script type="x/template" id="SendGridTemplate">
+        <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
+            <div class="modal-wrapper">
+                <div class="modal-container" v-on:click.stop>
+
+                    <div class="modal-header">
+                        <slot name="header">
+                        </slot>
+                    </div>
+
+                    <div class="modal-body">
+                        <slot name="body">
+
+                        </slot>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <slot name="footer">
+                            <button class="btn btn-primary btn-primary" id="knapp" v-on:click="closeButton">Lagre <span class="glyphicon glyphicon-floppy-save"></span></button>
+
+                        </slot>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <div id="SendGrid">
+
+        <modal :show.sync="showModal">
+
+            <h3 slot="header" style="text-align: center;">Sendgrid API</h3>
+            <h5 slot="body">
+                @using (Ajax.BeginForm("EditSendGrid", "Various", new AjaxOptions
+            {
+
+                UpdateTargetId = "upadteSendGrid",
+                InsertionMode = InsertionMode.Replace,
+                HttpMethod = "POST",
+
+            }, new { @class = "form-horizontal", role = "form", id = "SendGridForm" }))
+            {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true)
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SendGridAPI.UserName, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <input name="UserName" value="@Model.SendGridAPI.UserName" class="form-control" id="model" required>
+                                @Html.ValidationMessageFor(model => model.SendGridAPI.UserName)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SendGridAPI.PassWord, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <input name="PassWord" value="@Model.SendGridAPI.PassWord" class="form-control" id="model" required>
+                                @Html.ValidationMessageFor(model => model.SendGridAPI.PassWord)
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </h5>
+        </modal>
+    </div>
+    @*Google recaptcha*@
+    <div id="Recaptcha">
+
+        <modal :show.sync="showModal">
+
+            <h3 slot="header" style="text-align: center;">Google ReCaptcha API</h3>
+            <h5 slot="body">
+                @using (Ajax.BeginForm("EditRecaptcha", "Various", new AjaxOptions
+            {
+
+                UpdateTargetId = "updateRecaptcha",
+                InsertionMode = InsertionMode.Replace,
+                HttpMethod = "POST",
+
+            }, new { @class = "form-horizontal", role = "form", id = "RecaptchaForm" }))
+            {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true)
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.GoogleCaptchaAPI.SiteKey, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <input name="SiteKey" value="@Model.GoogleCaptchaAPI.SiteKey" class="form-control" id="model" required>
+                                @Html.ValidationMessageFor(model => model.GoogleCaptchaAPI.SiteKey)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.GoogleCaptchaAPI.Secret, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <input name="Secret" value="@Model.GoogleCaptchaAPI.Secret" class="form-control" id="model" required>
+                                @Html.ValidationMessageFor(model => model.GoogleCaptchaAPI.Secret)
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </h5>
+        </modal>
+    </div>
+    <script type="x/template" id="RecaptchaTemplate">
+        <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
+            <div class="modal-wrapper">
+                <div class="modal-container" v-on:click.stop>
+
+                    <div class="modal-header">
+                        <slot name="header">
+                        </slot>
+                    </div>
+
+                    <div class="modal-body">
+                        <slot name="body">
+
+                        </slot>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <slot name="footer">
+                            <button class="btn btn-primary btn-primary" id="knapp" v-on:click="closeButton">Lagre <span class="glyphicon glyphicon-floppy-save"></span></button>
+
+                        </slot>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            $(document).ajaxStart(function () {
+                $(".loader").show();
+            }).ajaxStop(function () {
+                $(".loader").hide();
+            });
+        });
+        //sendgrid
+        Vue.component('modal', {
+            template: '#SendGridTemplate',
+            props: {
+                show: {
+                    type: Boolean,
+                    required: true,
+                    twoWay: true
+
+                }
+            },
+            methods: {
+                close: function () {
+                    this.show = false;
+                },
+                closeButton: function () {
+                    $("form#SendGridForm").submit();
+                    this.show = false;
+
+                }
+            },
+            ready: function () {
+                document.addEventListener("keydown", (e) => {
+                    if (this.show && e.keyCode == 27) {
+                        this.close();
+                    } else if (this.show && e.keyCode == 13) {
+                        e.preventDefault();
+                        this.closeButton();
+                    }
+                });
+            }
+        });
+
+        var sendGridVue = new Vue({
+            el: '#SendGrid',
+            data: {
+                showModal: false,
+            }
+        });
+
+        //google recaptcha
+        Vue.component('modal', {
+            template: '#RecaptchaTemplate',
+            props: {
+                show: {
+                    type: Boolean,
+                    required: true,
+                    twoWay: true
+
+                }
+            },
+            methods: {
+                close: function () {
+                    this.show = false;
+                },
+                closeButton: function () {
+                    $("form#RecaptchaForm").submit();
+                    this.show = false;
+
+                }
+            },
+            ready: function () {
+                document.addEventListener("keydown", (e) => {
+                    if (this.show && e.keyCode == 27) {
+                        this.close();
+                    } else if (this.show && e.keyCode == 13) {
+                        e.preventDefault();
+                        this.closeButton();
+                    }
+                });
+            }
+        });
+        var recaptchaVue = new Vue({
+            el: '#Recaptcha',
+            data: {
+                showModal: false,
+            }
+        });
+
+        function showSendGrid() {
+            sendGridVue.showModal = true;
+        }
+
+        function showRecaptcha() {
+            recaptchaVue.showModal = true;
+        }
+
+        document.getElementById('file').addEventListener('change', handleFileSelect, false);
+
+        function handleFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+            $('#bar').text('0%');
+            $('#bar').css("width", '0%');
+            $("#prog").hide();
+            $("#TermsSuccess").text("");
+            for (var i = 0, f; f = files[i]; i++) {
+                if (!f.type.match('pdf.*')) {
+                    $("#TermsError").text("Filen må være et pdf dokument");
+                    document.getElementById("file").value = "";
+                    continue;
+                }
+                $("#TermsError").text("");
+
+
+            }
+        }
+
+        function uploadPDF() {
+            var formData = new FormData();
+
+            var fileUpload = $("#file").get(0);
+            var file = fileUpload.files;
+            if (file.length === 0) {
+                $("#TermsError").text("Du må velge en fil først");
+                return;
+            }
+
+            for (var i = 0, f; f = file[i]; i++) {
+                if (!f.type.match('pdf.*')) {
+                    $("#TermsError").text("Filen må være et pdf dokument");
+                    document.getElementById("file").value = "";
+                    return;
+                }
+                $("#TermsError").text("");
+                $("#TermsSuccess").text("");
+            }
+            $("#prog").show();
+            formData.append(file[0].name, file[0]);
+
+            $.ajax({
+                url: '/Admin/Various/TermsUpload',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                xhr: function () {  // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) { // Check if upload property exists
+
+                        // For handling the progress of the upload
+                        myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+                            
+                    }
+                    return myXhr;
+                },
+                success: function (result) {
+                    $('#TermsOfUserUpdate').html(result);
+                    document.getElementById('file').addEventListener('change', handleFileSelect, false);
+
+                },
+                error: function (err) {
+                    $("#TermsError").text(err.statusText);
+                    $("#TermsSuccess").text("");
+                }
+            });
+        }
+
+        function progressHandlingFunction(e) {
+            if (e.lengthComputable) {
+                var percentage = Math.floor((e.loaded / e.total) * 100);
+                //update progressbar percent complete
+                $('#bar').text(percentage + '%');
+                $('#bar').css("width", percentage + '%');
+            }
+        }
+    </script>

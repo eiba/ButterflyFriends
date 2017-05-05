@@ -147,10 +147,56 @@
                 this.show = false;
                 $(".loader-mask").hide();
             },
-            closeButton: function() {
+            closeButton: function () {
+                
+                $('<input />').attr('type', 'hidden')
+                .attr('name', "search")
+                .attr('value', $('#SponsorsearchField').val())
+                .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                .attr('name', "active")
+                .attr('value', $('#SponsorActive input:radio:checked').val())
+                .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'order')
+               .attr('value', $('#SponsorOrderFilter input:radio:checked').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'filter')
+               .attr('value', $("#SponsorSelected option:selected").val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'SponsorPhone')
+               .attr('value', $('#SponsorPhone').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'SponsorStreetadress')
+               .attr('value', $('#SponsorStreetadress').val())
+               .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                           .attr('name', 'SponsorZip')
+                           .attr('value', $('#SponsorZip').val())
+                           .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+                           .attr('name', 'SponsorCounty')
+                           .attr('value', $('#SponsorCounty').val())
+                           .appendTo('#@formId');
+
+                $('<input />').attr('type', 'hidden')
+               .attr('name', 'SponsorCity')
+               .attr('value', $('#SponsorCity').val())
+               .appendTo('#@formId');
+
+
                 $("form#@formId").submit();
                 this.show = false;
-                $(".loader-mask").hide();
 
             }
         },
