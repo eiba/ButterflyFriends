@@ -1,0 +1,141 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<ButterflyFriends.Models.DbTables.File>
+ 
+@{
+    ViewBag.Title = "Mine bilder";
+
+    var k = 0;
+    var imgId = 0;
+    var modalId = 0 + "m";
+    var divId = 0 + "d";
+    var leftId = 0 + "l";
+    var rightId = 0 + "r";
+    var closeId = 0 + "c";
+    var thumbId = 0 + "t";
+    var captionId = 0 + "cp";
+    var txtAreaId = 0 + "ta";
+
+}
+<script>
+    imgCount = 0;
+</script>
+<h5 style="text-align: center;" id="error" class="text-danger">@ViewBag.Error</h5>
+<h5 style="text-align: center;" id="success" class="text-success">@ViewBag.Success</h5>
+<input id="page" value="@ViewBag.page" hidden />
+
+@foreach (var item in Model)
+{
+
+    <img src="~/File?id=@item.FileId" class="ModalImg" id="@thumbId" onload="addHandelers(this)" width="250" imgnm="@imgId" />
+
+    <div id="@modalId" class="modal" style="z-index: 9">
+        <span class="close" id="@closeId">&times;</span>
+
+        <i class="fa fa-chevron-left fa-5x leftArrow" id="@leftId" aria-hidden="true"></i>
+
+        <i class="fa fa-chevron-right fa-5x rightArrow" id="@rightId" aria-hidden="true"></i>
+
+        <div id="@divId" class="modal-content" style="position: relative;">
+            <img src="~/File?id=@item.FileId" class="" id="@imgId" onload="addHandeler(@imgId)" onclick="event.stopPropagation()" style="position: relative; max-width: 1400px;" />
+
+            @foreach (var tagBox in item.Tags)
+            {
+               
+                var width = @tagBox.width + "px";
+                var height = @tagBox.height + "px";
+                var x = @tagBox.x + "px";
+                var y = @tagBox.y + "px";
+                var id = imgId + "" + k;
+                var inputId = imgId + "" + k + "p";
+
+
+                    <div class="box" id="@id" title="@tagBox.Name" name="@tagBox.Name" nameid="@tagBox.Id" type="@tagBox.type" style="width: @width; height: @height; left: @x; top: @y;">
+                        <span onclick="func(this)" class="glyphicon glyphicon-remove-circle" onload="alert('loaded')"></span>
+                        <input class="inp tagInput" id="@inputId" value="@tagBox.Name"/>
+                    </div>
+                <script>
+                    handleBoxes(@imgId,@k);
+                </script>
+                k += 1;
+            }
+
+        </div>
+
+        <div id="@captionId" class="caption captionArea" onclick="event.stopPropagation();">
+            <div class="row">
+                <div class="col-md-6">
+                    @item.FileName -
+                    @if (item.UploadDate != null)
+                    {
+                        @item.UploadDate.Value.ToString("dd/MM/yyyy")
+                    }
+                </div>
+                <div class="col-md-6">
+                    @if (item.Published)
+                    {
+                        <button class="btn btn-warning" onclick="imagePublish(@item.FileId)"><em class="fa fa-lock"></em></button>
+
+
+                    }
+                    else
+                    {
+                        <button class="btn btn-success" onclick="imagePublish(@item.FileId)"><em class="fa fa-unlock"></em></button>
+                    }
+                    <button class="btn btn-danger" onclick="deletePrompt(@item.FileId)"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                    <button class="btn btn-primary" onclick="imageUpdate(@item.FileId,@imgId)"><i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-12">
+                    @if (item.Caption != null)
+                    {
+                        <textarea id="@txtAreaId" class="form-control">@item.Caption</textarea>
+
+
+                    }
+                    else
+                    {
+                        <textarea id="@txtAreaId" class="form-control"></textarea>
+                    }
+                </div>
+                </div>
+        </div>
+    </div>
+
+
+    imgId += 1;
+    divId = imgId + "d";
+    modalId = imgId + "m";
+    closeId = imgId + "c";
+    leftId = imgId + "l";
+    rightId = imgId + "r";
+    thumbId = imgId + "t";
+    captionId = imgId + "cp";
+    txtAreaId = imgId + "ta";
+    k = 0;
+
+}
+<hr />
+<div class="row">
+    <div class="col col-xs-4">
+        @if (@Model.PageCount != 0)
+        {
+            <span>Side @Model.PageNumber av @Model.PageCount</span>
+        }
+        else
+        {
+            <span>Ingen Resultater</span>
+        }
+    </div>
+    <div class="col col-xs-8">
+
+        <div id="Pager">
+            <ul class="pagination hidden-xs pull-right">
+                @Html.PagedListPager(Model, page => Url.Action("GetImages", "Home", new { page }))
+            </ul>
+        </div>
+
+    </div>
+</div>

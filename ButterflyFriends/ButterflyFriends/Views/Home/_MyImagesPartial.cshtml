@@ -1,0 +1,73 @@
+﻿@model ButterflyFriends.Models.MyImagesModel
+@{
+    ViewBag.Title = "Mine bilder";
+
+    var k = Model.StartId;
+    var imgId = Model.StartId;
+    var modalId = Model.StartId + "m";
+    var divId = Model.StartId + "d";
+    var leftId = Model.StartId + "l";
+    var rightId = Model.StartId + "r";
+    var closeId = Model.StartId + "c";
+    var thumbId = Model.StartId + "t";
+    var captionId = Model.StartId + "cp";
+
+    if (Model.Images == null)
+    {
+        return;
+    }
+}
+
+@foreach (var item in Model.Images)
+{
+    <img src="~/File?id=@item.FileId" class="ModalImg" id="@thumbId" onload="addHandelers(this)" width="300" imgnm="@imgId" />
+
+    <div id="@modalId" class="modal">
+        <span class="close" id="@closeId">&times;</span>
+
+            <i class="fa fa-chevron-left fa-5x leftArrow" id="@leftId" aria-hidden="true"></i>
+
+            <i class="fa fa-chevron-right fa-5x rightArrow" id="@rightId" aria-hidden="true"></i>
+        
+        <div id="@divId" class="modal-content" style="position: relative;">
+            <img src="~/File?id=@item.FileId" class="" id="@imgId" onclick="event.stopPropagation();" style="position: relative; max-width: 1400px;" />
+
+            @foreach (var tagBox in item.Tags)
+                {
+                    var width = @tagBox.width + "px";
+                    var height = @tagBox.height + "px";
+                    var x = @tagBox.x + "px";
+                    var y = @tagBox.y + "px";
+                    var id = "box" + k;
+                <div class="showBox" title="@tagBox.Name" onclick="event.stopPropagation();" style="width: @width; height: @height; left: @x; top: @y; z-index: 9999;">
+                    <input class="tagInput" value="@tagBox.Name" disabled />
+                </div>
+            }
+
+        </div>
+
+        <div id="@captionId" class="caption" onclick="event.stopPropagation();">
+            @if(item.UploadDate != null){
+                @item.UploadDate.Value.ToString("dd/MM/yyyy")
+            }
+            @if (item.Caption != null)
+            {
+                <br/>
+                @item.Caption
+
+            }
+        </div>
+    </div>
+
+
+    imgId += 1;
+    divId = imgId + "d";
+    modalId = imgId + "m";
+    k += 1;
+    closeId = imgId + "c";
+    leftId = imgId + "l";
+    rightId = imgId + "r";
+    thumbId = imgId + "t";
+    captionId = imgId + "cp";
+
+}

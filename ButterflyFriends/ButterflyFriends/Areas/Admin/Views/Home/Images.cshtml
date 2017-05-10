@@ -1,56 +1,142 @@
-﻿@model IList<ButterflyFriends.Models.DbTables.File>
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<ButterflyFriends.Models.DbTables.File>
 @{
-    ViewBag.Title = "Images";
-    var k = 0;
-
-    var imgId = 0;
-    var divId = 0 + "d";
+    ViewBag.Title = "Bilder";
 }
-
-<h2>Images</h2>
-@if (Model.Count == 0)
-{
-    return;
-}
-<p>Images: @Model.Count</p>
-<hr/>
-@foreach (var item in Model)
-{ 
-    <div id="@divId" style="position: relative;">
-        <img src="~/File?id=@item.FileId" onload="imgFunc(this)" id="@imgId" style="position: relative; width: 750px;" />
-        
-        @foreach (var tagBox in item.Tags)
-        {
-            var width = @tagBox.width+"px";
-            var height = @tagBox.height + "px";
-            var x = @tagBox.x + "px";
-            var y = @tagBox.y + "px";
-            var id = "test" + k;
-            <div class="showBox" style="width: @width; height: @height; left: @x; top: @y">
-                <input class="tagInput" value="@tagBox.Name" disabled/>
-            </div>
-        }
-        @{
-            imgId += 1;
-            divId = imgId +"d";
-
-        }
-    </div>
-
-    
-}
-
 <script>
-    function imgFunc(img) {
-        
-        var originalHeight = $(img).get(0).naturalHeight;
-        var originalWidth = $(img).get(0).naturalWidth;
-        var displayedWidth = parseInt($(img).css("width"), 10);
-        var displayedHeight = parseInt($(img).css("height"), 10);
+    var openModal = false;
+    var currentImage = 0;
+    var imgCount = 0;
+    var n = 0;
+
+    function handleBoxes(id,count) {
+        if (parseInt(count) >= n) {
+            n += 1;
+        }
+
+        $("#" + id + "" + count).draggable({
+            cursor: "crosshair",
+            containment: "#" + id
+        });
+        $("#" + id + "" + count).resizable({
+            containment: "#" + id
+        });
+        $("#" + id + "" + count)
+                .on('click',
+                    function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    });
+
+        $("#" + id + "" + count + "p").on('input', function () {
+            if (!($(this).val())) {
+                return;
+            }
+            var text = $("#" + id + "" + count + "p").val();
+            $.ajax({
+                url: '/Admin/Home/GetUsers',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                dataType: "json",
+                data: text,
+                success: function (result) {
+
+                    var tags = [];
+                    for (var i = 0; i < result.length; i++) {
+                        var obj = { label: result[i].Name, id: result[i].Id, imgid: result[i].imgId, type: result[i].type, email: result[i].email }
+                        tags.push(obj);
+
+                    }
+                    $("#" + id + "" + count + "p").autocomplete({
+                        source: tags,
+                        select: function (event, ui) {
+                            $("#" + id + "" + count).attr("name", ui.item.label);
+                            $("#" + id + "" + count).attr("nameid", ui.item.id);
+                            $("#" + id + "" + count).attr("type", ui.item.type);
+                            event.preventDefault();
+
+                        }, focus: function (event, ui) {
+                            $("#" + id + "" + count + "p").val(ui.item.label);
+                            $("#" + id + "" + count).attr("name", ui.item.label);
+                            $("#" + id + "" + count).attr("nameid", ui.item.id);
+                            $("#" + id + "" + count).attr("type", ui.item.type);
+                            return false;
+                        }
+                    });
+                    $("#" + id + "" + count + "p").data("ui-autocomplete")._renderItem = function (ul, item) {
+
+                        if (item.imgid === 0) {
+
+                            var $li = $('<li>');
+
+                            var $div;
+                            if (item.email == "") {
+                                $div =
+                                    $('<label class="autoLabel"><div class="row"><div class="col-md-3"><i class="fa fa-question-circle autoQuestionChild" aria-hidden="true"></i></div><div class="col-md-9">' + item.label + '</div></div></label>');
+
+                            } else {
+                                $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><i class="fa fa-question-circle autoQuestion" aria-hidden="true"></i></div><div class="col-md-9">' + item.label + '<br><span class="autoEmailStyle">' + item.email + '</span></div></div></label>');
+
+                            }
+
+                            $li.attr('data-value', item.label);
+                            $li.append('<a>');
+                            $li.find('a').append($div);
+
+                            return $li.appendTo(ul);
+                        }
+                        var $li = $('<li>');
+
+                        var $div;
+                        if (item.email == "") {
+                            $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><img src="../FileAdmin?id=' + item.imgid + '" class="thumbnailShow"></div><div class="col-md-9">' + item.label + '</div></div></label>');
+                        } else {
+                            $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><img src="../FileAdmin?id=' + item.imgid + '" class="thumbnailShow"></div><div class="col-md-9">' + item.label + '<br><span class="autoEmailStyle">' + item.email + '</span></div></div></label>');
+
+                        }
+
+                        $li.attr('data-value', item.label);
+                        $li.append('<a>');
+                        $li.find('a').append($div);
+
+                        return $li.appendTo(ul);
+
+                    };
+                    $("#" + id + "" + count + "p").autocomplete("search", text);
+
+
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                    console.log(err);
+                }
+            });
+        });
+    }
+
+    function displayImage(img) {
+        var image = document.getElementById(img);
+        var originalHeight = $(image).get(0).naturalHeight;
+        var originalWidth = $(image).get(0).naturalWidth;
+        var displayedWidth = parseInt($(image).css("width"), 10);
+        var displayedHeight = parseInt($(image).css("height"), 10);
         var scaleY = displayedHeight / originalHeight;
         var scaleX = displayedWidth / originalWidth;
-        var id = img.id;
-        $('#' + id + 'd').children('div').each(function () {           
+        var id = img;
+        $('#' + id + 'd')
+            .css({
+                "width": $(image).css("width")
+
+            });
+        $('#' + id + 'cp')
+            .css({
+                "width": $(image).css("width")
+
+            });
+
+        $('#' + id + 'd').children('div').each(function () {
             var width = parseInt($(this).css("width"));
             var height = parseInt($(this).css("height"));
             var x = parseInt($(this).css("left"));
@@ -59,14 +145,643 @@
             var newWidth = width * scaleX;
             var newHeight = height * scaleY;
             var newX = x * scaleX;
-            var newY = (y * scaleY)-10;
+            var newY = (y * scaleY) - 10;
             $(this).css("width", newWidth);
             $(this).css("height", newHeight);
             $(this).css("top", newY);
             $(this).css("left", newX);
         });
     }
-    $(document).ready(function () {
+
+    function addHandelers(image) {
+        imgCount += 1;
+        var id = $(image).attr('imgnm');
+        var modal = document.getElementById(id + "m");
+        var span = document.getElementById(id + "c");
+        var handeled = false;
+        var leftArrow = document.getElementById(id + "l");
+        var rightArrow = document.getElementById(id + "r");
+        var nextLeft;
+        var nextRight;
+
+        image.onclick = function () {
+            openModal = true;
+            if (imgCount - 1 == id) {
+                rightArrow.style.display = "none";
+            } else {
+                rightArrow.style.display = "block";
+            }
+            if (id == 0) {
+                leftArrow.style.display = "none";
+            } else {
+                leftArrow.style.display = "block";
+            }
+            modal.style.display = "block";
+            currentImage =parseInt(id);
+            if(handeled === false){ //calcualte boxes if first time
+                displayImage(id);
+                handeled = true;
+            }
+        }
+
+        span.onclick = function () {
+            modal.style.display = "none";
+            openModal = false;
+        }
+
+        leftArrow.onclick = function () {
+            event.stopPropagation();
+            if (currentImage > 0) {
+                currentImage -= 1;
+                nextLeft = document.getElementById((parseInt(currentImage)) + "t");
+                modal.style.display = "none";
+                nextLeft.click();
+            }
+        }
+        rightArrow.onclick = function () {
+            event.stopPropagation();
+            if (currentImage < imgCount-1) {
+                currentImage += 1;
+                nextRight = document.getElementById((parseInt(currentImage)) + "t");
+                modal.style.display = "none";
+                nextRight.click();
+            }
+        }
+
+        modal.onclick = function () {
+            modal.style.display = "none";
+            openModal = false;
+        }
+
+    }
+    $(document).keydown(function (event) {
+        if (event.which == 39 && openModal == true && currentImage < imgCount-1) { //right arrow is pressed and there is an image open
+
+            document.getElementById(currentImage + "m").style.display="none";  //closes currently open modal
+            currentImage += 1;
+            document.getElementById(currentImage+ "t").click();
+
+        }
+        else if (event.which == 37 && openModal == true && currentImage > 0) { //the left arrow is pressed and an image is open, do same as above just decrease and show previous image
+
+            document.getElementById(currentImage + "m").style.display = "none";  //closes currently open modal
+            currentImage -= 1;
+            document.getElementById(currentImage + "t").click();
+        }
+
+        if (event.which == 27 && openModal == true) {
+            openModal = false;
+            document.getElementById(currentImage + "m").style.display = "none";
+        }
     });
 
+    function addHandeler(id) {
+        $("#" + id + 'd').dblclick(function (e) {
+            n += 1;
+            var parentOffset = $("#"+id).parent().offset();
+            console.log(parentOffset);
+            var x = (e.pageX - parentOffset.left) -75 - 15;
+            var y = (e.pageY - parentOffset.top) - 75;
+            var width = 150;
+            var height = 150;
+            if (x + width > $("#" + id + "d").width()) {            //width of box is too much, move inside image
+                var overflowX = x + width - ($("#" + id +"d").width());
+                x -= overflowX;
+            }
+            if (y + height > $("#" + id + "d").height()) {          //height of tagbox is too much, move inside image
+                var overflowY = y + height - ($("#" + id + "d").height());
+                y -= overflowY;
+            }
+            if (x < 0) {
+                x = 0;
+            }
+            if (y < 0) {   //if coordinates is below 0 set to 0
+                y = 0;
+            }
+
+            createTag(id, n, x, y, width, height);
+
+        });
+
+    }
+
+    function createTag(id, n, x, y, width, height) {
+
+        var div = $('<div class="box" id="' + id + '' + n + '"><span onclick="func(this)" class="glyphicon glyphicon-remove-circle"></span></div>').css({
+            "left": x + 'px',
+            "top": y + 'px',
+            "width": width,
+            "height": height
+        });
+
+        var input = $('<input id="' + id + '' + n + 'p' + '" class="inp tagInput">');
+        $("#" + id + 'd').append(div);
+        div.append(input);
+
+        $("#" + id + "" + n).draggable({    //making it draggable
+            cursor: "crosshair",
+            containment: "#" + id + "d"
+        });
+        $("#" + id + "" + n).resizable({    //making it resizable
+            containment: "#" + id + "d"
+        });
+
+        $("#" + id + "" + n)        //stop other events from hapening when clicking the tag box
+               .on('click',
+                   function (e) {
+                       e.stopPropagation();
+                       e.preventDefault();
+                   });
+
+        $("#" + id + "" + n + "p").on('input', function () {
+            if (!($(this).val())) { //inpus has no value, just return
+                return;
+            }
+            var text = $("#" + id + "" + n + "p").val();
+            $.ajax({
+                url: '/Admin/Home/GetUsers',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                dataType: "json",
+                data: text,
+                success: function (result) {
+
+                    var tags = [];
+                    for (var i = 0; i < result.length; i++) {
+                        var obj = { label: result[i].Name, id: result[i].Id, imgid: result[i].imgId, type: result[i].type, email: result[i].email }
+                        tags.push(obj);
+
+                    }
+                    $("#" + id + "" + n + "p").autocomplete({
+                        source: tags,
+                        select: function (event, ui) {
+                            console.log(ui);
+                            $("#" + id + "" + n).attr("name", ui.item.label);
+                            $("#" + id + "" + n).attr("nameid", ui.item.id);
+                            $("#" + id + "" + n).attr("type", ui.item.type);
+                            event.preventDefault();
+
+                        }, focus: function (event, ui) {
+                            $("#" + id + "" + n + "p").val(ui.item.label);
+                            $("#" + id + "" + n).attr("name", ui.item.label);
+                            $("#" + id + "" + n).attr("nameid", ui.item.id);
+                            $("#" + id + "" + n).attr("type", ui.item.type);
+                            return false;
+                        }
+                    });
+                    $("#" + id + "" + n + "p").data("ui-autocomplete")._renderItem = function (ul, item) {
+
+                        if (item.imgid === 0) {
+
+                            var $li = $('<li>');
+
+                            var $div;
+                            if (item.email == "") {
+                                $div =
+                                    $('<label class="autoLabel"><div class="row"><div class="col-md-3"><i class="fa fa-question-circle autoQuestionChild" aria-hidden="true"></i></div><div class="col-md-9">' + item.label + '</div></div></label>');
+
+                            } else {
+                                $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><i class="fa fa-question-circle autoQuestion" aria-hidden="true"></i></div><div class="col-md-9">' + item.label + '<br><span class="autoEmailStyle">' + item.email + '</span></div></div></label>');
+
+                            }
+
+                            $li.attr('data-value', item.label);
+                            $li.append('<a>');
+                            $li.find('a').append($div);
+
+                            return $li.appendTo(ul);
+                        }
+                        var $li = $('<li>');
+
+                        var $div;
+                        if (item.email == "") {
+                            $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><img src="../FileAdmin?id=' + item.imgid + '" class="thumbnailShow"></div><div class="col-md-9">' + item.label + '</div></div></label>');
+                        } else {
+                            $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><img src="../FileAdmin?id=' + item.imgid + '" class="thumbnailShow"></div><div class="col-md-9">' + item.label + '<br><span class="autoEmailStyle">' + item.email + '</span></div></div></label>');
+
+                        }
+
+                        $li.attr('data-value', item.label);
+                        $li.append('<a>');
+                        $li.find('a').append($div);
+
+                        return $li.appendTo(ul);
+
+                    };
+                    $("#" + id + "" + n + "p").autocomplete("search", text);
+
+
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                    console.log(err);
+                }
+            });
+        });
+    }
+
+    function func(item) {                                           //remove tagbox
+        item.parentNode.parentNode.removeChild(item.parentNode);
+    }
+
+    
 </script>
+
+<div class="loader" style="position: fixed;" hidden></div>
+
+<h2 style="text-align: center;">Bilder</h2>
+
+<hr />
+
+
+@if (!Model.Any())
+{
+    <p>Ingen bilder å vise ennå</p>
+    return;
+}
+<input id="deleteId" hidden />
+
+<div class="searchFilter">
+    <div class="input-group Search">
+        <input type="text" id="searchField" class="form-control max_width" placeholder="Søk etter bildetekst..." />
+        <div class="input-group-btn">
+            <div class="btn-group" role="group">
+                <div class="dropdown dropdown-lg" id="#dropDown">
+                    <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+                    <div class="dropdown-menu dropdown-menu-right" role="menu">
+
+                        <form class="form-horizontal" role="form">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>Sorter etter</label>
+                                        <select class="form-control max_width" id="Selected">
+                                            <option id="Default" value="0" selected>Dato</option>
+                                            <option value="1">Bildetekst</option>
+                                            <option value="2">Filnavn</option>
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4" style="padding-top: 2%">
+                                    <div id="OrderFilter">
+                                        <label class="radio-inline"><input type="radio" name="opt" value="ascending">Stigende</label>
+                                        <br />
+                                        <label class="radio-inline"><input type="radio" id="OrderDefault" name="opt" value="descending" checked>Synkende</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Dato</label>
+                                <input id="Date" class="form-control max_width" type="text" />
+                            </div>
+                            <div class="form-group">
+                                <label>Fadder/ansatt</label>
+                                <input id="Sponsor" class="form-control max_width" type="text" />
+                            </div>
+                            <div class="form-group">
+                                <label>Fadderbarn</label>
+                                <input id="Child" class="form-control max_width" type="text" />
+                            </div>
+                            <div class="form-group">
+                                <label>Filnavn</label>
+                                <input id="Filename" class="form-control max_width" type="text" />
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    Publisert
+                                    <div id="Active">
+                                        <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
+                                        <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
+                                        <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="DefaultRadio" checked>Uvesentlig</label>
+                                    </div>
+                                </label>
+                            </div>
+
+                        </form>
+                        <button id="Reset" class="btn btn-primary" style="float: right">Reset</button>
+                    </div>
+                </div>
+                <button type="button" onclick="filterImages()" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </div>
+        </div>
+    </div>
+
+</div>
+<hr/>
+<div id="images">
+    @Html.Partial("_ImagesPartial", Model)
+</div>
+<script type="x/template" id="DeleteModal">
+    <div class="modal-mask" v-on:click="close" v-show="show" transition="modal" >
+        <div class="modal-wrapper">
+            <div class="modal-container" v-on:click.stop >
+
+                <div class="modal-header">
+                    <slot name="header">
+                    </slot>
+                </div>
+
+                <div class="modal-body">
+                    <slot name="body">
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+
+                                <button class="btn btn-success" v-on:click="submit">Ja <i class="fa fa-check-square" aria-hidden="true"></i></button>
+
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-danger" v-on:click="close">Nei <i class="fa fa-minus-square" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<div id="deletePrompt" >
+    <modal :show.sync="showModal" >
+
+        <h5 slot="header" style="text-align: center;">
+            Er du sikker på at du vil slette dette bildet?
+            <br /><b>Dette kan ikke angres.</b>
+        </h5>
+
+    </modal>
+</div>
+<script>
+    Vue.component('modal',
+   {
+       template: '#DeleteModal',
+       props: {
+           show: {
+               type: Boolean,
+               required: true,
+               twoWay: true
+           }
+       },
+       methods: {
+           close: function () {
+               this.show = false;
+           },
+           submit: function () {
+               deleteImage($("#deleteId").val());
+               this.show = false;
+           }
+       }
+       ,
+       ready: function () {
+           document.addEventListener("keydown", (e) => {
+               if (this.show && e.keyCode == 27) {
+
+                   this.close();
+               }
+               else if (this.show && e.keyCode == 13) {
+                   this.submit();
+               }
+
+
+           });
+       }
+   });
+
+    var deleteV = new Vue({
+        el: '#deletePrompt',
+        data: {
+            showModal: false
+        }
+    });
+
+    function filterImages() {
+        var formData = new FormData();
+        formData.append('search', $('#searchField').val());
+        formData.append('active', $('#Active input:radio:checked').val());
+        formData.append('order', $('#OrderFilter input:radio:checked').val());
+        formData.append('filter', $("#Selected option:selected").val());
+        formData.append('filename', $("#Filename").val());
+
+        formData.append('date', $('#Date').val());
+        formData.append('user', $('#Sponsor').val());
+        formData.append('child', $('#Child').val());
+
+
+        $.ajax({
+            url: '/Admin/Home/FilterImages',
+            type: 'POST',
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (result) {
+                $('#images').html(result);
+            },
+            error: function (err) {
+                $("#error").text(err.statusMessage);
+            }
+        });
+    }
+    $("#Reset").on('click', function () {
+        event.stopPropagation();
+        $('#searchField').val('');
+
+        $('#Date').val('');
+        $('#Sponsor').val('');
+        $('#Child').val('');
+
+        document.getElementById("Default").selected = "true";
+        $("#OrderDefault").prop("checked", true);
+        $("#DefaultRadio").prop("checked", true);
+    });
+
+    $("#searchField").on('keydown', function () {
+        if (event.keyCode == 13) {
+            filterImages();
+            return false;
+        }
+    });
+    $(document).ready(function () {
+
+        $(document).ajaxStart(function () {
+            $(".loader").show();
+        }).ajaxStop(function () {
+            $(".loader").hide();
+        });
+    });
+
+    $(document).on("click", "#Pager a[href]", function () {
+        var formData = new FormData();
+        formData.append('search', $('#searchField').val());
+        formData.append('active', $('#Active input:radio:checked').val());
+        formData.append('order', $('#OrderFilter input:radio:checked').val());
+        formData.append('filter', $("#Selected option:selected").val());
+        formData.append('filename', $("#Filename").val());
+
+        formData.append('date', $('#Date').val());
+        formData.append('user', $('#Sponsor').val());
+        formData.append('child', $('#Child').val());
+        $.ajax({
+            url: $(this).attr("href"),
+            type: 'POST',
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formData,
+            cache: false,
+            success: function (result) {
+                $('#images').html(result);
+            },
+            error:function(err) {
+                $("#error").text(err.statusMessage);
+            }
+        });
+        return false;
+    });
+    $(function () {
+        $("#Date").datepicker({
+            dateFormat: "dd.mm.yy"
+        });
+    });
+
+    function imagePublish(id) {
+        var formData = new FormData();
+        formData.append("id", id);
+        formData.append('search', $('#searchField').val());
+        formData.append('active', $('#Active input:radio:checked').val());
+        formData.append('order', $('#OrderFilter input:radio:checked').val());
+        formData.append('filter', $("#Selected option:selected").val());
+
+        formData.append('date', $('#Date').val());
+        formData.append('user', $('#Sponsor').val());
+        formData.append('child', $('#Child').val());
+        formData.append('page', $("#page").val());
+        formData.append('filename', $("#Filename").val());
+        $.ajax({
+            url: '/Admin/Home/PublishImage',
+            type: 'POST',
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (result) {
+                $('#images').html(result);
+            },
+            error: function(err) {
+                $("#error").text(err.statusMessage);
+            }
+        });
+    }
+
+    function deleteImage(id) {
+        var formData = new FormData();
+        formData.append("id", id);
+        formData.append('search', $('#searchField').val());
+        formData.append('active', $('#Active input:radio:checked').val());
+        formData.append('order', $('#OrderFilter input:radio:checked').val());
+        formData.append('filter', $("#Selected option:selected").val());
+
+        formData.append('date', $('#Date').val());
+        formData.append('user', $('#Sponsor').val());
+        formData.append('child', $('#Child').val());
+        formData.append('page', $("#page").val());
+        formData.append('filename', $("#Filename").val());
+        $.ajax({
+            url: '/Admin/Home/DeleteImage',
+            type: 'POST',
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (result) {
+                $('#images').html(result);
+            },
+            error: function (err) {
+                $("#error").text(err.statusMessage);
+            }
+        });
+    }
+
+    function deletePrompt(id) {
+        $("#deleteId").val(id);
+        deleteV.showModal = true;
+
+    }
+
+    function imageUpdate(id,imgId) {
+        var formData = new FormData();
+        formData.append("id", id);
+        formData.append('search', $('#searchField').val());
+        formData.append('active', $('#Active input:radio:checked').val());
+        formData.append('order', $('#OrderFilter input:radio:checked').val());
+        formData.append('filter', $("#Selected option:selected").val());
+
+        formData.append('date', $('#Date').val());
+        formData.append('user', $('#Sponsor').val());
+        formData.append('child', $('#Child').val());
+        formData.append('page', $("#page").val());
+        formData.append('filename', $("#Filename").val());
+        formData.append('caption', $("#" + imgId + "ta").val());
+
+        var originalHeight = $("#" + imgId).get(0).naturalHeight;
+        var originalWidth = $("#" + imgId).get(0).naturalWidth;
+        var displayedWidth = parseInt($("#" + imgId).css("width"), 10);
+        var displayedHeight = parseInt($("#" + imgId).css("height"), 10);
+        var scaleY = displayedHeight / originalHeight;
+        var scaleX = displayedWidth / originalWidth;
+
+        var boxesList = [];
+        $('#' + imgId + 'd').children('div').each(function () {
+            var boxId = this.getAttribute("id");
+
+            if ($('#' + boxId + "p").val() !== "") {
+                var div = $('#' + boxId);
+                var obj = {
+                    "id": this.getAttribute("nameid"),
+                    "name": this.getAttribute("name"),
+                    "type": this.getAttribute("type"),
+                    "x": parseInt(parseFloat(div.css("left")) / scaleX),
+                    "y": parseInt(parseFloat(div.css("top")) / scaleY),
+                    "height": parseInt(parseFloat(div.css("height")) / scaleY),
+                    "width": parseInt(parseFloat(div.css("width")) / scaleX)
+                };
+                /*if (originalHeight < 500) {
+                    obj.height += 30;
+                }*/
+                if (obj.name !== $('#' + boxId + "p").val()) {
+                    obj.name = $('#' + boxId + "p").val();
+                    obj.id = undefined;
+                }
+
+                boxesList.push(obj);
+            }
+        });
+        boxesList = JSON.stringify(boxesList);
+        formData.append('tags', boxesList);
+
+        $.ajax({
+            url: '/Admin/Home/EditImage',
+            type: 'POST',
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (result) {
+                $('#images').html(result);
+            },
+            error: function (err) {
+                $("#error").text(err.statusMessage);
+            }
+        });
+    }
+
+</script>
+
+
+
+
+
+

@@ -102,7 +102,9 @@ namespace ButterflyFriends.Models
             public byte[] Content { get; set; }
             public FileType FileType { get; set; }
             public bool Temporary { get; set; }
+            public string Caption { get; set; }
             public DateTime? UploadDate { get; set; }
+            public bool Published { get; set; }
 
             public virtual IList<TagBox> Tags { get; set; }
             public virtual IList<Child> Children { get; set; }

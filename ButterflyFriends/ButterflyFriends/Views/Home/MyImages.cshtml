@@ -1,0 +1,189 @@
+﻿@model  ButterflyFriends.Models.MyImagesModel
+@{
+    ViewBag.Title = "Mine bilder";
+
+}
+<script>
+    var openModal = false;
+    var currentImage = 0;
+    var imgCount = 0;
+    var inProgress = false;
+    function displayImage(img) {
+        var image = document.getElementById(img);
+        var originalHeight = $(image).get(0).naturalHeight;
+        var originalWidth = $(image).get(0).naturalWidth;
+        var displayedWidth = parseInt($(image).css("width"), 10);
+        var displayedHeight = parseInt($(image).css("height"), 10);
+        var scaleY = displayedHeight / originalHeight;
+        var scaleX = displayedWidth / originalWidth;
+        var id = img;
+        $('#' + id + 'd')
+            .css({
+                "width": $(image).css("width")
+
+            });
+        $('#' + id + 'cp')
+            .css({
+                "width": $(image).css("width")
+
+            });
+
+        $('#' + id + 'd').children('div').each(function () {
+            var width = parseInt($(this).css("width"));
+            var height = parseInt($(this).css("height"));
+            var x = parseInt($(this).css("left"));
+            var y = parseInt($(this).css("top"));
+
+            var newWidth = width * scaleX;
+            var newHeight = height * scaleY;
+            var newX = x * scaleX;
+            var newY = (y * scaleY) - 10;
+            $(this).css("width", newWidth);
+            $(this).css("height", newHeight);
+            $(this).css("top", newY);
+            $(this).css("left", newX);
+        });
+    }
+
+    function addHandelers(image) {
+        imgCount += 1;
+        var id = $(image).attr('imgnm');
+        var modal = document.getElementById(id + "m");
+        var span = document.getElementById(id + "c");
+        var handeled = false;
+        var leftArrow = document.getElementById(id + "l");
+        var rightArrow = document.getElementById(id + "r");
+        var nextLeft;
+        var nextRight;
+        
+        image.onclick = function () {
+            openModal = true;
+            if (imgCount - 1 == id) {
+                rightArrow.style.display = "none";
+            } else {
+                rightArrow.style.display = "block";
+            }
+            if (id == 0) {
+                leftArrow.style.display = "none";
+            } else {
+                leftArrow.style.display = "block";
+            }
+            modal.style.display = "block";
+            currentImage =parseInt(id);
+            if(handeled === false){ //calcualte boxes if first time
+                displayImage(id);
+                handeled = true;
+            }
+        }
+
+        span.onclick = function () {
+            modal.style.display = "none";
+            openModal = false;
+        }
+
+            leftArrow.onclick = function () {
+                event.stopPropagation();
+           if (currentImage > 0) {
+               currentImage -= 1;
+               nextLeft = document.getElementById((parseInt(currentImage)) + "t");
+               modal.style.display = "none";
+               nextLeft.click();
+           }
+        }
+            rightArrow.onclick = function () {
+                event.stopPropagation();
+            if (currentImage < imgCount-1) {
+                currentImage += 1;
+                nextRight = document.getElementById((parseInt(currentImage)) + "t");
+                modal.style.display = "none";
+                nextRight.click();
+            }
+        }
+
+        modal.onclick = function () {
+            modal.style.display = "none";
+            openModal = false;
+        }
+
+    }
+    $(document).keydown(function (event) {
+        if (event.which == 39 && openModal == true && currentImage < imgCount-1) { //right arrow is pressed and there is an image open
+
+            document.getElementById(currentImage + "m").style.display="none";  //closes currently open modal
+            currentImage += 1;
+            document.getElementById(currentImage+ "t").click();
+
+        }
+        else if (event.which == 37 && openModal == true && currentImage > 0) { //the left arrow is pressed and an image is open, do same as above just decrease and show previous image
+
+            document.getElementById(currentImage + "m").style.display = "none";  //closes currently open modal
+            currentImage -= 1;
+            document.getElementById(currentImage + "t").click();
+        }
+
+        if (event.which == 27 && openModal == true) {
+            openModal = false;
+            document.getElementById(currentImage + "m").style.display = "none";
+        }
+    });
+
+    $(document).ready(function () {
+        var waypoints = $('#waypoint')
+        .waypoint({
+            handler: function (direction) {
+                if (direction == 'down') {
+                    if (!inProgress) {
+                        inProgress = true;
+                    var formData = new FormData();
+                    formData.append("startid", imgCount);
+                    $.ajax({
+                        url: '/Home/GetImages',
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        data: formData
+                    ,
+                        success: function (result) {
+                            console.log("success");
+                            $("#images").append(result);
+                            inProgress = false;
+
+                        },
+                        error: function (err) {
+                            $('#error').text(err.statusText);
+                            inProgress = false;
+                        }
+                    });
+                }
+            }
+            },
+            offset: '85%'
+        });
+
+        $(document).ajaxStart(function () {
+            $(".loader").show();
+        }).ajaxStop(function () {
+            $(".loader").hide();
+        });
+    });
+
+</script>
+
+<div class="loader" style="position: fixed;" hidden></div>
+
+<h2 style="text-align: center;">Mine bilder</h2>
+<hr />
+<h5 style="text-align: center;" id="error" class="text-danger"></h5>
+@if (Model.Images != null && !Model.Images.Any())
+{
+    <p>Ingen bilder å vise ennå</p>
+    return;
+}
+<div id="images">
+    @Html.Partial("_MyImagesPartial",Model)
+</div>
+
+<div id="waypoint">
+</div>
+
+

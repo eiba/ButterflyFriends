@@ -296,15 +296,18 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         public ActionResult ChildrenList(int? childrenPage)
         {
-            var children = from s in _context.Children
-                        orderby s.Lname
-                        select s;
 
+            var search = Request.Form["search"];
+            var active = Request.Form["active"];
+            var order = Request.Form["order"];
+            var filter = Request.Form["filter"];
+            var ChildDoB = (Request.Form["ChildDoB"]);
+            var ChildSponsor = Request.Form["ChildSponsor"];
             int pageNumber = (childrenPage ?? 1);
             ViewBag.childrenPage = (childrenPage ?? 1);
 
-            return PartialView("ListPartials/_ChildrenPartial",
-                new ChildrenModel { Children = children.ToPagedList(pageNumber, pageSize) });
+            return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
+
         }
 
         public ActionResult SponsorList(int? sponsorPage)
@@ -516,6 +519,15 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         public ActionResult ChildEdit(ChildCreateModel model, int? childrenPage)
         {
             ViewBag.childrenPage = (childrenPage ?? 1);
+            var search = Request.Form["search"];
+            var active = Request.Form["active"];
+            var order = Request.Form["order"];
+            var filter = Request.Form["filter"];
+            var ChildDoB = (Request.Form["ChildDoB"]);
+            var ChildSponsor = Request.Form["ChildSponsor"];
+
+            int pageNumber = (childrenPage ?? 1);
+
             if (ModelState.IsValid)
             {
                 var sponsormsg = "";
@@ -530,12 +542,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 }
                 if (model.Child.DoB > DateTime.Now)
                 {
-                    var dateErrorChildren = from s in _context.Children
-                                        orderby s.Lname
-                                        select s;
                     ViewBag.Error = "Barnet kan ikke være født i fremtiden!";
 
-                    return PartialView("ListPartials/_ChildrenPartial", new ChildrenModel { Children = dateErrorChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+                    return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
                 }
 
                 child.DoB = model.Child.DoB;
@@ -570,36 +579,25 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     _context.Entry(child).State = EntityState.Modified;
                     _context.SaveChanges();
 
-                    var successChildren = from s in _context.Children
-                                          orderby s.Lname
-                                          select s;
-
                     ViewBag.Success = "Fadderbarnet " + model.Child.Fname + " " + model.Child.Lname + " ble oppdatert" +sponsormsg;
                     ViewBag.Id = model.Child.Id;
-                    return PartialView("ListPartials/_ChildrenPartial",
-                        new ChildrenModel { Children = successChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+                    return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
                 }
                 catch (EntityException ex)
                 {
-                    var entityErrorChildren = from s in _context.Children
-                                        orderby s.Lname
-                                        select s;
 
                     ViewBag.Error = "Error: "+ex.Message;
                     ViewBag.Id = model.Child.Id;
 
-                    return PartialView("ListPartials/_ChildrenPartial", new ChildrenModel { Children = entityErrorChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+                    return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
                 }
 
             }
-            var errorChildren = from s in _context.Children
-                                orderby s.Lname
-                                select s;
 
             ViewBag.Error = "Oops! Ugyldige verdier";
             ViewBag.Id = model.Child.Id;
 
-            return PartialView("ListPartials/_ChildrenPartial",new ChildrenModel { Children = errorChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+            return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
         }
         [HttpGet]
         public ActionResult showEmployeeCreate(int? employeePage)
@@ -742,14 +740,25 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         public ActionResult childDeactivate(int id, int? childrenPage)
         {
             ViewBag.childrenPage = (childrenPage ?? 1);
+            var search = Request.Form["search"];
+            var active = Request.Form["active"];
+            var order = Request.Form["order"];
+            var filter = Request.Form["filter"];
+            var ChildDoB = (Request.Form["ChildDoB"]);
+            var ChildSponsor = Request.Form["ChildSponsor"];
+
+            int pageNumber = (childrenPage ?? 1);
+
             if (id == 0)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewBag.Error = "Ingen id";
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
             }
             DbTables.Child child = _context.Children.Find(id);
             if (child == null)
             {
-                return HttpNotFound();
+                ViewBag.Error = "Ingen bruker funnet";
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
             }
             child.isActive = false;
             child.InactiveSince = DateTime.Now;
@@ -758,24 +767,16 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             _context.Entry(child).State = EntityState.Modified;
             _context.SaveChanges();
 
-                var children = from s in _context.Children
-                            orderby s.Lname
-                            select s;
                 ViewBag.Success = "Barnet " + child.Fname +" "+child.Lname+ " har blitt deaktivert.";
                 ViewBag.Id = child.Id;
-                return PartialView("ListPartials/_ChildrenPartial",
-                    new ChildrenModel {Children = children.ToPagedList((childrenPage ?? 1), pageSize)});
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
             }
             catch (EntityException ex)
             {
-                var children = from s in _context.Children
-                               orderby s.Lname
-                               select s;
 
                 ViewBag.Error = "Noe gikk galt "+ex.Message;
                 ViewBag.Id = child.Id;
-                return PartialView("ListPartials/_ChildrenPartial",
-                    new ChildrenModel { Children = children.ToPagedList((childrenPage ?? 1), pageSize) });
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
             }
             
         }
@@ -902,14 +903,25 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         public async Task<ActionResult> childActivate(int id, int? childrenPage)
         {
             ViewBag.childrenPage = (childrenPage ?? 1);
+            var search = Request.Form["search"];
+            var active = Request.Form["active"];
+            var order = Request.Form["order"];
+            var filter = Request.Form["filter"];
+            var ChildDoB = (Request.Form["ChildDoB"]);
+            var ChildSponsor = Request.Form["ChildSponsor"];
+
+            int pageNumber = (childrenPage ?? 1);
+
             if (id == 0)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewBag.Error = "Ingen id";
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
             }
             DbTables.Child child = _context.Children.Find(id);
             if (child == null)
             {
-                return HttpNotFound();
+                ViewBag.Error = "Ingen barn funnet";
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
             }
             child.isActive = true;
             child.InactiveSince = null;
@@ -918,24 +930,18 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 _context.Entry(child).State = EntityState.Modified;
                 _context.SaveChanges();
 
-                var children = from s in _context.Children
-                               orderby s.Lname
-                               select s;
                 ViewBag.Success = "Barnet " + child.Fname + " " + child.Lname + " har blitt aktivert.";
                 ViewBag.Id = child.Id;
-                return PartialView("ListPartials/_ChildrenPartial",
-                    new ChildrenModel { Children = children.ToPagedList((childrenPage ?? 1), pageSize) });
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
+
             }
             catch (EntityException ex)
             {
-                var children = from s in _context.Children
-                               orderby s.Lname
-                               select s;
 
                 ViewBag.Error = "Noe gikk galt " + ex.Message;
                 ViewBag.Id = child.Id;
-                return PartialView("ListPartials/_ChildrenPartial",
-                    new ChildrenModel { Children = children.ToPagedList((childrenPage ?? 1), pageSize) });
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
+
             }
         }
 
@@ -1448,6 +1454,15 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         public ActionResult CreateChild(ChildCreateModel model, int? childrenPage)
         {
             ViewBag.childrenPage = (childrenPage ?? 1);
+            var search = Request.Form["search"];
+            var active = Request.Form["active"];
+            var order = Request.Form["order"];
+            var filter = Request.Form["filter"];
+            var ChildDoB = (Request.Form["ChildDoB"]);
+            var ChildSponsor = Request.Form["ChildSponsor"];
+
+            int pageNumber = (childrenPage ?? 1);
+
             if (ModelState.IsValid)
             {
                 var sponsormsg = "";
@@ -1469,42 +1484,27 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 model.Child.isActive = true;
                 if (model.Child.DoB > DateTime.Now)
                 {
-                    var errorChildren = from s in _context.Children
-                                   orderby s.Lname
-                                   select s;
                     ViewBag.Error = "Barnet kan ikke være født i fremtiden!";
 
-                    return PartialView("ListPartials/_ChildrenPartial", new ChildrenModel { Children = errorChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+                    return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
                 }
                 try
                 {
                     _context.Children.Add(model.Child);
                     _context.SaveChanges();
 
-                    var successChildren = from s in _context.Children
-                        orderby s.Lname
-                        select s;
-
                     ViewBag.Success = "Fadderbarnet " + model.Child.Fname + " " + model.Child.Lname + " ble lagt til i databasen"+sponsormsg;
                     ViewBag.Id = model.Child.Id;
-                    return PartialView("ListPartials/_ChildrenPartial",
-                        new ChildrenModel {Children = successChildren.ToPagedList((childrenPage ?? 1), pageSize)});
+                    return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
                 }
                 catch (EntityException ex)
                 {
                     ViewBag.Error = "Error: "+ex.Message;
-                    var errorChildren = from s in _context.Children
-                                          orderby s.Lname
-                                          select s;
 
-                    return PartialView("ListPartials/_ChildrenPartial",
-                        new ChildrenModel { Children = errorChildren.ToPagedList((childrenPage ?? 1), pageSize) });
+                    return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
                 }
             }
 
-            var children = from s in _context.Children
-                           orderby s.Lname
-                           select s;
             var errormsg = "";
             foreach (ModelState modelState in ViewData.ModelState.Values)
             {
@@ -1516,7 +1516,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             ViewBag.Error = "Noe gikk galt: " + errormsg;
 
-            return PartialView("ListPartials/_ChildrenPartial", new ChildrenModel { Children = children.ToPagedList((childrenPage ?? 1), pageSize) });
+            return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
         }
 
         public ActionResult showEmployeeDelete(string id, int? employeePage)
@@ -1796,24 +1796,25 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         public ActionResult ChildDelete(int id, int? childrenPage)
         {
             ViewBag.childrenPage = (childrenPage ?? 1);
+            var search = Request.Form["search"];
+            var active = Request.Form["active"];
+            var order = Request.Form["order"];
+            var filter = Request.Form["filter"];
+            var ChildDoB = (Request.Form["ChildDoB"]);
+            var ChildSponsor = Request.Form["ChildSponsor"];
+
+            int pageNumber = (childrenPage ?? 1);
+
             if (id == 0)
             {
-                var error = from s in _context.Children
-                            orderby s.Lname
-                            select s;
                 ViewBag.Error = "Ingen id funnet";
-                return PartialView("ListPartials/_ChildrenPartial",
-                           new ChildrenModel { Children = error.ToPagedList((childrenPage ?? 1), pageSize) });
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
             }
             DbTables.Child child = _context.Children.Find(id);
             if (child == null)
             {
-                var error = from s in _context.Children
-                            orderby s.Lname
-                            select s;
                 ViewBag.Error = "Barnet ble ikke funnet";
-                return PartialView("ListPartials/_ChildrenPartial",
-                           new ChildrenModel { Children = error.ToPagedList((childrenPage ?? 1), pageSize) });
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
             }
 
             try
@@ -1848,37 +1849,18 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
                 _context.SaveChanges();
 
-                var success = from s in _context.Children
-                              orderby s.Lname
-                              select s;
 
                 ViewBag.Success = "Brukeren " + name + " ble suksessfult slettet";
 
-                     if ((childrenPage ?? 1) != 1 && childrenPage != null)
-                        {
-                    if (success.Count() <= pageSize * (childrenPage - 1))
-                    {
-                        ViewBag.childrenPage = childrenPage - 1;
-                        return PartialView("ListPartials/_ChildrenPartial",
-                              new ChildrenModel { Children = success.ToPagedList((childrenPage ?? 1) - 1, pageSize) });
-                    }
-                    }
-                return PartialView("ListPartials/_ChildrenPartial",
-                                          new ChildrenModel { Children = success.ToPagedList((childrenPage ?? 1), pageSize) });
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
 
             }
             catch (EntityException ex)
             {
-                var error = from s in _context.Children
-                            orderby s.Lname
-                            select s;
                 ViewBag.Error = "Error: " + ex.Message;
                 ViewBag.id = id;
-                return PartialView("ListPartials/_ChildrenPartial",
-                                          new ChildrenModel { Children = error.ToPagedList((childrenPage ?? 1), pageSize) });
+                return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
             }
-
-
         }
 
         public ActionResult FilterEmployees()
@@ -1938,14 +1920,24 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         }
         public PartialViewResult FilterResultChildren(string search, string active, string order, string filter, string dob, string sponsor,int pageNumber)
         {
-            DateTime DoB = DateTime.Parse(dob);
+            DateTime? DoB = new DateTime();
+            if (!string.IsNullOrEmpty(dob))
+            {
+                DoB = DateTime.Parse(dob);
+            }
+            else
+            {
+                DoB = null;
+            }
             var children = from s in _context.Children
                             where 
                             (s.Fname +" "+ s.Lname).Contains(search) &&
-                            (s.User.Fname+" "+s.User.Lname).Contains(sponsor)&&
-                            s.DoB.Equals(DoB) 
+                            (s.User.Fname+" "+s.User.Lname).Contains(sponsor)
                             select s;
-
+            if (DoB.HasValue)
+            {
+                children = children.Where(s => s.DoB.Equals(DoB.Value));
+            }
             if (active == "yes")
             {
                 children = children.Where(s => s.isActive);

@@ -5,7 +5,7 @@
 <div id="Modal"></div>
 <div id="DeleteModal"></div>
 
-<h3>Brukeradministrasjon</h3>
+<h3 style="text-align: center;">Brukeradministrasjon</h3>
 
 <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#Employees" class="Employees"><b>Ansatte</b></a></li>
@@ -277,9 +277,20 @@
         });
 
         $(document).on("click", "#childrenPager a[href]", function () {
+            var formData = new FormData();
+            formData.append('search', $('#ChildsearchField').val());
+            formData.append('active', $('#ChildActive input:radio:checked').val());
+            formData.append('order', $('#ChildOrderFilter input:radio:checked').val());
+            formData.append('filter', $("#ChildSelected option:selected").val());
+            formData.append('ChildDoB', $('#ChildDoB').val());
+            formData.append('ChildSponsor', $('#ChildSponsor').val());
             $.ajax({
                 url: $(this).attr("href"),
-                type: 'GET',
+                type: 'POST',
+                async: true,
+                contentType: false,
+                processData: false,
+                data: formData,
                 cache: false,
                 success: function (result) {
                     $('#updateChildren').html(result);

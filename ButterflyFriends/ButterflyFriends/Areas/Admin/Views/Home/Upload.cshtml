@@ -47,7 +47,7 @@ function handleFileSelect(evt) {
                         imgNum = theFile.num;
                         span.addClass = "imageDiv";
                         span.innerHTML = ['<div class="row"><div class="col-md-8"><div tags="0" class="imgSpan" id="', imgNum + "s", '"><img class="imageShow" id="', imgNum, '" src="', e.target.result,
-                            '" title="', escape(theFile.name), '"/></div></div><div class="col-md-4 rightImageDiv"><btn id="', imgNum + "b", '" class="btn btn-primary"><span class="glyphicon glyphicon-open"></span> Last opp</btn><br/><br/><div class="statustxt" id="', imgNum + "t", '">0%</div><div class="progress"><div id="', imgNum + 'p', '" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div></div><span id="', imgNum + "st", '"></span><br/><btn id="', imgNum + "bf", '" class="btn btn-primary">Detekt ansikter</btn><btn id="', imgNum + "bd", '" class="btn btn-primary" style="margin-left:30px;">Fjern alle tags</btn></div></div>'].join('');
+                            '" title="', escape(theFile.name), '"/></div><textarea class="form-control" id="', imgNum + "ta", '" placeholder="Skriv litt om bildet..."></textarea></div><div class="col-md-4 rightImageDiv"><btn id="', imgNum + "b", '" class="btn btn-primary"><span class="glyphicon glyphicon-open"></span> Last opp</btn><br/><br/><div class="statustxt" id="', imgNum + "t", '">0%</div><div class="progress"><div id="', imgNum + 'p', '" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div></div><span id="', imgNum + "st", '"></span><br/><btn id="', imgNum + "bf", '" class="btn btn-primary">Detekt ansikter</btn><btn id="', imgNum + "bd", '" class="btn btn-primary" style="margin-left:30px;">Fjern alle tags</btn></div></div><hr>'].join('');
                         document.getElementById('list').insertBefore(span, null);
 
                         addHandeler(imgNum);
@@ -72,16 +72,24 @@ function handleFileSelect(evt) {
                 var parentOffset = $(this).parent().offset();
 
                     var x = (e.pageX - parentOffset.left -15)-75;
-                    var y = (e.pageY - parentOffset.top)-75;
+                    var y = (e.pageY - parentOffset.top) - 75;
+                    var width = 150;
+                    var height = 150;
+                    if (x + width > $("#" + id).width()) {            //width of box is too much, move inside image
+                        var overflowX = x + width - ($("#" + id).width());
+                        x -= overflowX;
+                    }
+                    if (y + height > $("#" + id).height()) {          //height of tagbox is too much, move inside image
+                        var overflowY = y + height - ($("#" + id).height());
+                        y -= overflowY;
+                    }
                     if (x < 0) {
                         x = 0;
                     }
-                    else if (y <0) {
+                    if (y <0) {
                         y = 0;
                     }
                     
-                    var width = 150;
-                    var height = 150;
 
                 createTag(id,n,x,y,width,height);
 
@@ -106,7 +114,6 @@ function handleFileSelect(evt) {
                                         
                                         if (faces.length === 0) {
                                             $("#" + id + "st").text("Fant ingen ansikter");
-                                            //alert("Fant ingen ansikter");
                                         };
                                         for (var i = 0; i < faces.length; i++) {
                                             var x = (faces[i].x * faces[i].scaleX);
@@ -298,6 +305,9 @@ function handleFileSelect(evt) {
                             "height": parseInt(parseFloat(div.css("height")) / scaleY),
                             "width":parseInt(parseFloat(div.css("width"))/scaleX)
                         };
+                        if (originalHeight < 500) {
+                            obj.height += 30;
+                        }
                         if (obj.name !== $('#' + boxId+"p").val()) {
                             obj.name = $('#' + boxId + "p").val();
                             obj.id = undefined;
@@ -307,7 +317,8 @@ function handleFileSelect(evt) {
                         }
                     });
                     boxesList = JSON.stringify(boxesList);
-                    fileData.append('tags',boxesList);  
+                    fileData.append('tags', boxesList);
+                    fileData.append("caption",$("#"+id+"ta").val());
 
                 $.ajax({
                     url: '/Admin/Home/UploadFiles',

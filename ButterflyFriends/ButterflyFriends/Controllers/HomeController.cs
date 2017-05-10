@@ -7,14 +7,17 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ButterflyFriends.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Newtonsoft.Json;
+using PagedList;
 
 namespace ButterflyFriends.Controllers
 {
     public class HomeController : Controller
     {
         ApplicationDbContext _context = new ApplicationDbContext();
-
+        public int imageNum = 10;
         public ActionResult Index()
         {
             return View(new FrontPageModel { Articles = _context.Articles.Where(s => s.Published).ToList()});
@@ -110,8 +113,90 @@ namespace ButterflyFriends.Controllers
             ViewBag.Error = "Ugyldige verdier: " + messages;
             ViewBag.Reset = "false";
             return PartialView("_statusPartial");
+
+        }
+
+        [Authorize(Roles = "Eier, Admin, Ansatt, Fadder")]
+        public ActionResult MyImages()
+        {
+            var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+            ApplicationUser currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;
+            if (currentUser == null)
+            {
+                return HttpNotFound();
+            }
+            var startId = 0;                                //id of first image i client
+            var images = filterImages(currentUser, startId,imageNum);
+
+            return View(new MyImagesModel
+            {
+                Images = images,
+                StartId = 0
+            });
+        }
+
+        public IList<DbTables.File> filterImages(ApplicationUser User,int startId, int imageNum)
+        {
+            List<DbTables.File> images = new List<DbTables.File>();
+            IList<int> ids = new List<int>();
+            if (User.Pictures.Any())
+            {
+                foreach (var picture in User.Pictures)
+                {
+                    if (picture.Published) { 
+                    images.Add(picture);
+                    ids.Add(picture.FileId);
+                    }
+                }
+            }
+
+            foreach (var child in User.Children)
+            {
+                foreach (var picture in child.Pictures)
+                {
+                    if (!ids.Contains(picture.FileId) && picture.Published)
+                    {
+                        images.Add(picture);
+                        ids.Add(picture.FileId);
+                    }
+                }
+            }
+            images = images.OrderByDescending(s => s.UploadDate.Value).ThenByDescending(s => s.FileId).ToList();
+            if (startId+imageNum < images.Count)    //check if there's enough images to take from
+            {
+                images = images.GetRange(startId, imageNum);
+
+            }
+            else if (startId +1 >= images.Count) //return nothing as startid is as great as there are elements in image list
+            {
+                images = null;
+            }
+            else if(imageNum >= images.Count)
+            {
+                //do nothing
+                //images = images.GetRange(0, images.Count);
+            }
+            else
+            {
+                images = images.GetRange(startId, (startId + imageNum) - images.Count);
+            }
+            return images;
+        }
+        [HttpPost]
+        public ActionResult GetImages()
+        {
+            var startId = int.Parse(Request.Form["startid"]);
+            if(startId < imageNum) { 
+            return null;
+            }
+            var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+            ApplicationUser currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;
+            var images = filterImages(currentUser, startId, imageNum);
+
+            return PartialView("_MyImagesPartial", new MyImagesModel {Images = images,StartId = startId});
         }
     }
+
     public class ReCaptcha
     {
 

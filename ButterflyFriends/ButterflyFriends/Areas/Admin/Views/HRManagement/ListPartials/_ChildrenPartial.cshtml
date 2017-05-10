@@ -96,7 +96,7 @@
 
                                                 }, new { @class = "form-horizontal", id=count +"cd" }))
                                                 {
-                                                    <button class="btn btn-danger"><em class="fa fa-lock"></em></button>
+                                                    <button class="btn btn-danger" onclick="appendFilterChildren(event, this)"><em class="fa fa-lock"></em></button>
 
                                                 }
                                             }
@@ -111,7 +111,7 @@
 
                                                 }, new { @class = "form-horizontal",id=count +"ca" }))
                                                 {
-                                                    <button class="btn btn-success"><em class="fa fa-unlock"></em></button>
+                                                    <button class="btn btn-success" onclick="appendFilterChildren(event, this)"><em class="fa fa-unlock"></em></button>
                                                 }
                                             }
                                         </div>
@@ -154,3 +154,44 @@
         </div>
     </div>
 </div>
+
+<script>
+    function appendFilterChildren(e, b) {
+
+        e.preventDefault();
+        var formId = b.parentNode.id;
+
+        $('<input />').attr('type', 'hidden')
+          .attr('name', "search")
+          .attr('value', $('#ChildsearchField').val())
+          .appendTo('#'+formId);
+
+        $('<input />').attr('type', 'hidden')
+        .attr('name', "active")
+        .attr('value', $('#ChildActive input:radio:checked').val())
+        .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'order')
+       .attr('value', $('#ChildOrderFilter input:radio:checked').val())
+       .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'filter')
+       .attr('value', $("#ChildSelected option:selected").val())
+       .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'ChildDoB')
+       .attr('value', $('#ChildDoB').val())
+       .appendTo('#' + formId);
+
+        $('<input />').attr('type', 'hidden')
+       .attr('name', 'ChildSponsor')
+       .attr('value', $('#ChildSponsor').val())
+       .appendTo('#' + formId);
+
+        $("form#" + formId).submit();
+
+    }
+</script>

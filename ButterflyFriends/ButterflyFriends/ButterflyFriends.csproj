@@ -253,6 +253,7 @@
     <Compile Include="Models\FrontPageModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\MyImagesModel.cs" />
     <Compile Include="Models\ProfileViewModel.cs" />
     <Compile Include="Models\RequestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -459,6 +460,7 @@
     <Content Include="Areas\Admin\Views\HRManagement\DeletePartials\_DeleteEmployeePartial.cshtml" />
     <Content Include="Areas\Admin\Views\HRManagement\DeletePartials\_DeleteSponsorPartial.cshtml" />
     <Content Include="Areas\Admin\Views\HRManagement\DeletePartials\_DeleteChildPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\_ImagesPartial.cshtml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -524,6 +526,8 @@
     <Content Include="Scripts\Trumbowyg\dist\plugins\colors\ui\sass\trumbowyg.colors.scss" />
     <Content Include="Scripts\Trumbowyg\dist\ui\sass\trumbowyg.scss" />
     <Content Include="Views\Home\Article.cshtml" />
+    <Content Include="Views\Home\MyImages.cshtml" />
+    <Content Include="Views\Home\_MyImagesPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

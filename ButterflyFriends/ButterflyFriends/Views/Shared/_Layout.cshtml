@@ -49,6 +49,14 @@
                 @{
                     if (User.Identity.GetUserId() != null)
                     {
+                        {
+                            <li>
+                                <a href="@Url.Action("MyImages", "Home", new {area = ""})">
+                                    Mine bilder
+                                </a>
+                            </li>
+                        }
+                    
                         var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
                         ApplicationUser currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;
                         if (currentUser != null)
@@ -60,8 +68,9 @@
                                         Admin
                                     </a>
                                 </li>
+                                }
                             }
-                        }
+                        
                     }
                 }
             </ul>
