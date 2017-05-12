@@ -402,6 +402,19 @@
     <Content Include="Scripts\Trumbowyg\dist\ui\icons.svg" />
     <Content Include="Scripts\Trumbowyg\dist\ui\trumbowyg.css" />
     <Content Include="Scripts\Trumbowyg\dist\ui\trumbowyg.min.css" />
+    <Content Include="Scripts\Vegas\overlays\01.png" />
+    <Content Include="Scripts\Vegas\overlays\02.png" />
+    <Content Include="Scripts\Vegas\overlays\03.png" />
+    <Content Include="Scripts\Vegas\overlays\04.png" />
+    <Content Include="Scripts\Vegas\overlays\05.png" />
+    <Content Include="Scripts\Vegas\overlays\06.png" />
+    <Content Include="Scripts\Vegas\overlays\07.png" />
+    <Content Include="Scripts\Vegas\overlays\08.png" />
+    <Content Include="Scripts\Vegas\overlays\09.png" />
+    <Content Include="Scripts\Vegas\vegas.css" />
+    <Content Include="Scripts\Vegas\vegas.js" />
+    <Content Include="Scripts\Vegas\vegas.min.css" />
+    <Content Include="Scripts\Vegas\vegas.min.js" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\vue.min.js" />
     <Content Include="wallpaper.jpg" />
@@ -461,6 +474,7 @@
     <Content Include="Areas\Admin\Views\HRManagement\DeletePartials\_DeleteSponsorPartial.cshtml" />
     <Content Include="Areas\Admin\Views\HRManagement\DeletePartials\_DeleteChildPartial.cshtml" />
     <Content Include="Areas\Admin\Views\Home\_ImagesPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Various\_ImageCarouselPartial.cshtml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -528,6 +542,10 @@
     <Content Include="Views\Home\Article.cshtml" />
     <Content Include="Views\Home\MyImages.cshtml" />
     <Content Include="Views\Home\_MyImagesPartial.cshtml" />
+    <Content Include="Views\Shared\_LayoutFrontPage.cshtml" />
+    <Content Include="Scripts\Vegas\vegas.min.js.map" />
+    <Content Include="Scripts\Vegas\vegas.min.css.map" />
+    <Content Include="Views\Home\_ArticlesPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

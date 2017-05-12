@@ -46,7 +46,7 @@
     }
 
     function addHandelers(image) {
-        imgCount += 1;
+        //imgCount += 1;
         var id = $(image).attr('imgnm');
         var modal = document.getElementById(id + "m");
         var span = document.getElementById(id + "c");
@@ -128,38 +128,8 @@
     });
 
     $(document).ready(function () {
-        var waypoints = $('#waypoint')
-        .waypoint({
-            handler: function (direction) {
-                if (direction == 'down') {
-                    if (!inProgress) {
-                        inProgress = true;
-                    var formData = new FormData();
-                    formData.append("startid", imgCount);
-                    $.ajax({
-                        url: '/Home/GetImages',
-                        type: "POST",
-                        contentType: false, // Not to set any content header
-                        processData: false, // Not to process data
-                        data: formData
-                    ,
-                        success: function (result) {
-                            console.log("success");
-                            $("#images").append(result);
-                            inProgress = false;
 
-                        },
-                        error: function (err) {
-                            $('#error').text(err.statusText);
-                            inProgress = false;
-                        }
-                    });
-                }
-            }
-            },
-            offset: '85%'
-        });
-
+        wayPoint();
         $(document).ajaxStart(function () {
             $(".loader").show();
         }).ajaxStop(function () {
@@ -167,6 +137,43 @@
         });
     });
 
+    function wayPoint() {
+        Waypoint.destroyAll();
+        var waypoints = $('#waypoint')
+        .waypoint({
+            handler: function (direction) {
+                if (direction == 'down') {
+                    if (!inProgress) {
+                        inProgress = true;
+                        var formData = new FormData();
+                        formData.append("startid", imgCount);
+                        $.ajax({
+                            url: '/Home/GetImages',
+                            type: "POST",
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            data: formData
+                        ,
+                            success: function (result) {
+                                $("#images").append(result);
+                                inProgress = false;
+
+                            },
+                            error: function (err) {
+                                $('#error').text(err.statusText);
+                                inProgress = false;
+                            }
+                        });
+                    }
+                }
+            },
+            offset: '90%'
+});
+    }
+
+    function ImageCount(num) {
+        imgCount += parseInt(num);
+    }
 </script>
 
 <div class="loader" style="position: fixed;" hidden></div>

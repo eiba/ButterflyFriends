@@ -38,8 +38,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 ViewBag.Message = message;
             }
             var articles = from s in _context.Articles
+                           orderby s.LastSavedDateTime descending 
+                           orderby s.Id descending 
                            select s;
-            articles = articles.OrderByDescending(s => s.LastSavedDateTime.Year).ThenByDescending(s => s.LastSavedDateTime.Day);
             ViewBag.page = 1;
             return View(articles.ToPagedList(1, pageSize));
         }
@@ -233,6 +234,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             try
             {
                 var message = "Artikkelen " + article.Name + " ble slettet";
+                _context.Files.RemoveRange(article.Images);
                 _context.Articles.Remove(article);
                 _context.SaveChanges();
 
@@ -286,9 +288,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             ApplicationUser currentUser = manager.FindById(User.Identity.GetUserId());
             var content = Request.Unvalidated.Form["article"];
             var title = Request.Unvalidated.Form["article-title"];
+            var preamble = Request.Unvalidated.Form["article-preamble"];
+            var preambleNoHTML = Request.Unvalidated.Form["preamble"];
             var titleNoHTML = Request.Unvalidated.Form["title"];
             var id = Request.Form["articleid"];
-            var articleName = Request.Form["articlenName"];
+            var articleName = Request.Unvalidated.Form["articlenName"];
+            var TitleInner = Request.Unvalidated.Form["title-inner"];
+            var PreambleInner = Request.Unvalidated.Form["preamble-inner"];
             List<DbTables.File> imagesList = new List<DbTables.File>();
             if (Request.Form["images"] != "none")
             {
@@ -300,6 +306,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 title = "";
                 titleNoHTML = "";
+                TitleInner = "";
+            }
+            if (preamble == null)
+            {
+                preamble = "";
+                preambleNoHTML = "";
+                PreambleInner = "";
             }
             if (content == null)
             {
@@ -324,7 +337,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                     Title = titleNoHTML,
                                     Name = articleName,
                                     LastSavedDateTime = DateTime.Now,
-                                    Images = imagesList
+                                    Images = imagesList,
+                                    Preamble = preamble,
+                                    PreambleNoHTML = preambleNoHTML,
+                                    TitleInner = TitleInner,
+                                    PreambleInner = PreambleInner
                         };
                                 foreach (var image in imagesList)
                                 {
@@ -386,7 +403,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                 bool newAuthor = true;
                                 foreach (var employee in article.Employees)
                                 {
-                                    if (employee == currentUser.Employee)
+                                    if (employee.User.Id == currentUser.Id)
                                     {
                                         newAuthor = false;
                                     }
@@ -400,6 +417,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                 article.Content = content;
                                 article.Name = articleName;
                                 article.Images = imagesList;
+                                article.Preamble = preamble;
+                                article.PreambleNoHTML = preambleNoHTML;
+                                article.TitleInner = TitleInner;
+                                article.PreambleInner = PreambleInner;
 
 
                                 article.LastSavedDateTime = DateTime.Now;
@@ -455,7 +476,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         {
             HttpFileCollectionBase files = Request.Files;
             HttpPostedFileBase file = files[0];
-
+            var maxWidth = 800;
             var picture = new DbTables.File
             {
                 FileName = Path.GetFileName(file.FileName),
@@ -465,18 +486,37 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 UploadDate = DateTime.Now
 
             };
-
-            using (var reader = new BinaryReader(file.InputStream))
+            /*using (var reader = new BinaryReader(file.InputStream))
             {
 
                 picture.Content = reader.ReadBytes(file.ContentLength);
+            }*/
+
+            byte[] content;
+            using (var reader = new BinaryReader(file.InputStream))
+            {
+
+                content = reader.ReadBytes(file.ContentLength);
             }
 
             Bitmap bmp;
-            using (var ms = new MemoryStream(picture.Content))
+            using (var ms = new MemoryStream(content))
             {
                 bmp = new Bitmap(ms);
             }
+
+            if (bmp.Width > maxWidth) {
+                double ratio = (double)((double)bmp.Width / (double)bmp.Height);
+                int height = (int)((double)maxWidth / ratio);
+                bmp = ResizeImage(bmp, maxWidth, height);
+
+                using (var stream = new MemoryStream())
+                {
+                    bmp.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                    content = stream.ToArray();
+                }
+            }
+            picture.Content = content;
 
             try
             {
@@ -488,7 +528,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         new
                         {
                             size = bmp.Width + "," + bmp.Height,
-                            url = "/File?id=" + picture.FileId,
+                            url = "/File/ArticleImage?id=" + picture.FileId,
                             id = picture.FileId
                         });
             }
@@ -542,7 +582,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             new
                             {
                                 size = bmp.Width + "," + bmp.Height,
-                                url = "/File?id=" + picture.FileId,
+                                url = "/File/ArticleImage?id=" + picture.FileId,
                                 id = picture.FileId
                             });
                 }
@@ -568,7 +608,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     _context.Entry(picture).State = EntityState.Modified;
                     _context.SaveChanges();
-                    return Json(new { size = bmp.Width + "," + bmp.Height, url = "/File?id=" + picture.FileId, id = picture.FileId });
+                    return Json(new { size = bmp.Width + "," + bmp.Height, url = "/File/ArticleImage?id=" + picture.FileId, id = picture.FileId });
 
                 }
                 catch (EntityException ex)
@@ -652,7 +692,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             {
                                 size = width + "," + height,
                                 cemax = CroppedImage.Width,
-                                url = "/File?id=" + picture.FileId,
+                                url = "/File/ArticleImage?id=" + picture.FileId,
                                 id = picture.FileId,
                                 alt = picture.FileName
                             });
@@ -678,7 +718,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                            {
                                size = width + "," + Height,
                                cemax = bmp.Width,
-                               url = "/File/?id=" + picture.FileId,
+                               url = "/File/ArticleImage?id=" + picture.FileId,
                                id = picture.FileId,
                                alt = picture.FileName
                            });
@@ -742,7 +782,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             int pageNumber = (page ?? 1);
             ViewBag.page = pageNumber;
 
-            return FilterResult(published, search, content, filter, pageNumber,order);
+            return FilterResult(published, search, content, filter, pageNumber,order,author);
         }
 
         public ActionResult Filter()
@@ -759,12 +799,16 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             ViewBag.page = 1;
 
 
-            return FilterResult(published, search, content, filter, pageNumber,order);
+            return FilterResult(published, search, content, filter, pageNumber,order,author);
         }
 
-        public PartialViewResult FilterResult(string published, string search, string content, string filter, int pageNumber,string order)
+        public PartialViewResult FilterResult(string published, string search, string content, string filter, int pageNumber,string order,string author)
         {
             var articles = from s in _context.Articles
+                           where (s.Name.Contains(search)||
+                           s.Title.Contains(search)) &&
+                           (s.Content.Contains(content) ||
+                           s.PreambleNoHTML.Contains(content))
                            select s;
 
             if (published == "yes")
@@ -777,13 +821,23 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 articles = articles.Where(s => !s.Published);
 
             }
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(author))
             {
-                articles = articles.Where(s => s.Name.Contains(search) || s.Title.Contains(search));
-            }
-            if (!string.IsNullOrEmpty(content))
-            {
-                articles = articles.Where(s => s.Content.Contains(content));
+                IList<DbTables.Article> Articles = new List<DbTables.Article>();
+                foreach (var article in articles.ToList())
+                {
+                    foreach (var articleAuthor in article.Employees.ToList())
+                    {
+                        var user = articleAuthor.User;
+                        var name = user.Fname + " " + user.Lname;
+                        if (name.ToLower().Contains(author.ToLower()))
+                        {
+                            Articles.Add(article);
+                            break;
+                        }
+                    }
+                }
+                articles = Articles.AsQueryable();
             }
             if (order == "descending")
             {
@@ -791,8 +845,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     case "1":
                         articles =
-                            articles.OrderByDescending(s => s.FirstPublisheDateTime.Value.Year)
-                                .ThenByDescending(s => s.FirstPublisheDateTime.Value.Day);
+                            articles.OrderByDescending(s => s.FirstPublisheDateTime.Value)
+                                .ThenByDescending(s => s.Id);
                         break;
                     case "2":
                         articles = articles.OrderByDescending(s => s.Title);
@@ -802,8 +856,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         break;
                     default:
                         articles =
-                            articles.OrderByDescending(s => s.LastSavedDateTime.Year)
-                                .ThenByDescending(s => s.LastSavedDateTime.Day);
+                            articles.OrderByDescending(s => s.LastSavedDateTime)
+                                .ThenByDescending(s => s.Id);
                         break;
                 }
             }
@@ -813,8 +867,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     case "1":
                         articles =
-                            articles.OrderBy(s => s.FirstPublisheDateTime.Value.Year)
-                                .ThenBy(s => s.FirstPublisheDateTime.Value.Day);
+                            articles.OrderBy(s => s.FirstPublisheDateTime.Value)
+                                .ThenBy(s => s.Id);
                         break;
                     case "2":
                         articles = articles.OrderBy(s => s.Title);
@@ -824,27 +878,14 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         break;
                     default:
                         articles =
-                            articles.OrderBy(s => s.LastSavedDateTime.Year)
-                                .ThenBy(s => s.LastSavedDateTime.Day);
+                            articles.OrderBy(s => s.LastSavedDateTime)
+                                .ThenBy(s => s.Id);
                         break;
                 }
             }
-            /*foreach (var article in articles)
-            {
-                foreach (var articleAuthor in article.Employees)
-                {
-                    var user = articleAuthor.User;
-                    var name = user.Fname + user.Lname;
-                    if (!name.Contains(author))
-                    {
-                        articles = articles.Where(s => s.Name.Contains(content));
-                    }
-                }
-            }*/
 
             return PartialView("_ArticleListPartial", articles.ToPagedList(pageNumber, pageSize));
         }
-        /*
         private static Bitmap ResizeImage(Bitmap image, int width, int height)
         {
             Bitmap resizedImage = new Bitmap(width, height);
@@ -854,6 +895,6 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
             }
             return resizedImage;
-        }*/
+        }
     }
 }

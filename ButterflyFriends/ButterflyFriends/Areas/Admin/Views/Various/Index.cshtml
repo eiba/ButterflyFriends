@@ -25,12 +25,23 @@
 <div class="solidBorder">
 
     <h3 style="text-align: center">Brukervilkår</h3>
+    <p style="text-align: center">Last upp sidens brukervillkår i pdf format</p>
+
     <div id="TermsOfUserUpdate">
         @Html.Partial("_TermsOfUserPartial", Model.File)
     </div>
 </div>
+<br/>
+<div class="solidBorder">
+    <h3 style="text-align: center">Bildekarusell</h3>
+    <p style="text-align: center">Last upp bilder og videoer som vises på forsiden</p>
 
-    @*Sendgrid*@
+    <div id="CarouselUpdate">
+        @Html.Partial("_ImageCarouselPartial", Model.Carousel)
+    </div>
+</div>
+
+@*Sendgrid*@
     <script type="x/template" id="SendGridTemplate">
         <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
             <div class="modal-wrapper">
@@ -265,6 +276,7 @@
         }
 
         document.getElementById('file').addEventListener('change', handleFileSelect, false);
+        document.getElementById('carouselFile').addEventListener('change', handleCarouselFileSelect, false);
 
         function handleFileSelect(evt) {
             var files = evt.target.files; // FileList object
@@ -279,6 +291,22 @@
                     continue;
                 }
                 $("#TermsError").text("");
+
+
+            }
+        }
+        function handleCarouselFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+            $('#carouselBar').text('0%');
+            $('#carouselBar').css("width", '0%');
+            $("#carouselProg").hide();
+            $("#CarouselSuccess").text("");
+            for (var i = 0, f; f = files[i]; i++) {
+                if (!f.type.match('image.*') && !f.type.match('video.*')) {
+                    $("#CarouselError").text("Filene må være bilder eller videoer");
+                    continue;
+                }
+                $("#CarouselError").text("");
 
 
             }
@@ -335,6 +363,59 @@
             });
         }
 
+        function uploadCarousel() {
+            var formData = new FormData();
+
+            var fileUpload = $("#carouselFile").get(0);
+            var file = fileUpload.files;
+            if (file.length === 0) {
+                $("#CarouselError").text("Du må velge en fil først");
+                return;
+            }
+
+            for (var i = 0, f; f = file[i]; i++) {
+                if (!f.type.match('image.*') && !f.type.match('video.*')) {
+                    $("#CarouselError").text("Filene må være bilder og videoer");
+                    document.getElementById("carouselFile").value = "";
+                    return;
+                }
+                $("#CarouselError").text("");
+                $("#CarouselSuccess").text("");
+                formData.append(file[i].name, file[i]);
+                console.log(file[i]);
+
+            }
+            $("#carouselProg").show();
+
+            $.ajax({
+                url: '/Admin/Various/CarouselUpload',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                xhr: function () {  // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) { // Check if upload property exists
+
+                        // For handling the progress of the upload
+                        myXhr.upload.addEventListener('progress', carouselProgressHandlingFunction, false);
+
+                    }
+                    return myXhr;
+                },
+                success: function (result) {
+                    $('#CarouselUpdate').html(result);
+                    document.getElementById('carouselFile').addEventListener('progress', handleFileSelect, false);
+
+                },
+                error: function (err) {
+                    $("#CarouselError").text(err.statusText);
+                    $("#CarouselSuccess").text("");
+                }
+            });
+        }
+
         function progressHandlingFunction(e) {
             if (e.lengthComputable) {
                 var percentage = Math.floor((e.loaded / e.total) * 100);
@@ -342,5 +423,35 @@
                 $('#bar').text(percentage + '%');
                 $('#bar').css("width", percentage + '%');
             }
+        }
+
+
+        function carouselProgressHandlingFunction(e) {
+            if (e.lengthComputable) {
+                var percentage = Math.floor((e.loaded / e.total) * 100);
+                //update progressbar percent complete
+                $('#carouselBar').text(percentage + '%');
+                $('#carouselBar').css("width", percentage + '%');
+            }
+        }
+
+        function enableCarousel(enable) {
+            var formData = new FormData();
+            formData.append('enable',enable);
+            $.ajax({
+                url: '/Admin/Various/EnableCarousel',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                success: function (result) {
+                    $('#CarouselUpdate').html(result);
+                },
+                error: function (err) {
+                    $("#CarouselError").text(err.statusText);
+                    $("#CarouselSuccess").text("");
+                }
+            });
         }
     </script>

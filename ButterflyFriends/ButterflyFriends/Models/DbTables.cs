@@ -153,6 +153,10 @@ namespace ButterflyFriends.Models
             public bool Published { get; set; }
             public string Title { get; set; }
             public string Name { get; set; }
+            public string Preamble { get; set; }
+            public string PreambleNoHTML { get; set; }
+            public string TitleInner { get; set; }
+            public string PreambleInner { get; set; }
             public DateTime LastSavedDateTime { get; set; }
             public DateTime? FirstPublisheDateTime { get; set; }
             public virtual IList<Employees> Employees { get; set; }
@@ -204,6 +208,15 @@ namespace ButterflyFriends.Models
 
         }
 
+        public class Carousel
+        {
+            [Key]
+            public int Id { get; set; }
+            public bool Enabeled { get; set; }
+            public virtual IList<File> CarouselItems { get; set; }
+
+
+        }
         public class SendGridAPI
         {
             [Key]
@@ -225,7 +238,7 @@ namespace ButterflyFriends.Models
         }
         public enum FileType
         {
-            Picture = 1,Profile,Thumbnail,ArticleImage,PDF
+            Picture = 1,Profile,Thumbnail,ArticleImage,PDF,CarouselVideo, CarouselImage
         }
     }
 }

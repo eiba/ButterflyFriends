@@ -30,6 +30,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return View();
         }
 
+
         public ActionResult Images()
         {
             ViewBag.page = 1;

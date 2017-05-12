@@ -65,4 +65,5 @@
 /// <reference path="trumbowyg/dist/plugins/template/trumbowyg.template.js" />
 /// <reference path="trumbowyg/dist/plugins/upload/trumbowyg.upload.js" />
 /// <reference path="trumbowyg/dist/trumbowyg.js" />
+/// <reference path="vegas/vegas.min.js" />
 /// <reference path="vue.min.js" />

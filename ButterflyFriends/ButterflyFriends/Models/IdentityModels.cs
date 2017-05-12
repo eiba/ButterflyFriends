@@ -74,6 +74,7 @@ namespace ButterflyFriends.Models
         public DbSet<DbTables.MembershipRequest> MembershipRequests { get; set; }
         public DbSet<DbTables.SendGridAPI> SendGridAPI { get; set; }
         public DbSet<DbTables.GoogleCaptchaAPI> GoogleCaptchaAPI { get; set; }
+        public DbSet<DbTables.Carousel> Carousel { get; set; }
 
 
 

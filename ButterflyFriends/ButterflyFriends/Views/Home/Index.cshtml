@@ -1,24 +1,108 @@
 ﻿@model ButterflyFriends.Models.FrontPageModel
 @{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Hjem";
+    var carousel = 0;
+    var imageCount = 0;
+    if(Model.Carousel != null && Model.Carousel.Any())
+    {
+        imageCount = Model.Carousel.Count;
+    }
 }
+<script>
+    var articleCount = 0;
+    var inProgress = false;
+    $(document)
+        .ready(function () {
+            wayPoint();
 
-@if (!Model.Articles.Any())
-{
-    return;
-}
- 
-@foreach (var article in Model.Articles)
-{
+        });
+
+    function wayPoint() {
+        var waypoints = $('#waypoint')
+    .waypoint({
+        handler: function (direction) {
+            if (direction == 'down') {
+                if (!inProgress) {
+                    inProgress = true;
+                    var formData = new FormData();
+                    formData.append("startid", articleCount);
+                    $.ajax({
+                        url: '/Home/GetArticles',
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        data: formData,
+                        success: function (result) {
+                            $("#articleContainer").append(result);
+                            inProgress = false;
+
+                        },
+                        error: function (err) {
+                            console.log(err.statusText);
+                            inProgress = false;
+                        }
+                    });
+                }
+            }
+        },
+        offset: '90%'
+    });
+    }
+
+    $(document).ajaxStart(function () {
+        $(".loader").show();
+    }).ajaxStop(function () {
+        $(".loader").hide();
+    });
     
-    <div>
-        
-        <h3>
-            <a href="@Url.Action("Article", "Home", new {id = article.Id, area = ""})">
-                @Html.Raw(article.Header)
-            </a>
-        </h3>
-    </div>
-
-    <br/>
+    function countArticles(num) {
+        articleCount += parseInt(num);
+    }
+</script>
+<div class="loader" style="position: fixed;" hidden></div>
+@if (Model.Carousel != null) { 
+foreach (var carouselFile in Model.Carousel)
+{
+    <input id="@carousel" value="@carouselFile.id" type="@carouselFile.type" hidden />
+    carousel += 1;
 }
+}
+<div id="articleContainer" style="margin-top: 900px;">
+    @if (Model.Articles != null) { 
+    @Html.Partial("_ArticlesPartial", Model.Articles)
+    }
+
+</div>
+
+<div id="waypoint">
+</div>
+
+<script>
+
+    var imageNumber = "@imageCount";
+    var n = parseInt(imageNumber);
+    var slides = [];
+    var video = [];
+    if (n > 0) {
+        for (i = 0; i < n; i++) {
+            if ($('#' + i).attr("type") == "image") {
+                slides.push({ src: '/File/Carousel?id=' + $('#' + i).val() });
+            } else {
+                video.push('/File/Carousel?id=' + $('#' + i).val());
+            }
+        }
+        if(video.length > 0) {
+            slides.push({ video: {src:video},delay:90000 });
+        }
+    }
+    
+        $(function () {
+            $('body').vegas({
+                delay: 20000,
+                animation: 'random',
+                shuffle:true,
+                slides: slides
+            });
+        });
+    
+</script>

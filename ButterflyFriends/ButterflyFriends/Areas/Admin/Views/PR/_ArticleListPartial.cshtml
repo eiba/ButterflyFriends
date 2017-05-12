@@ -15,7 +15,7 @@
             </a>
             @if (!string.IsNullOrEmpty(article.Title))
             {
-                <span>- @article.Title </span>
+                <span>- @article.Title</span>
             }
         </h3>
         <p>Sist lagret: @lastSave</p>
@@ -46,7 +46,14 @@
 @if (Model.PageCount > 0) { 
     <div class="row">
         <div class="col col-xs-4">
-            Side @Model.PageNumber av @Model.PageCount
+            @if (@Model.PageCount != 0)
+            {
+                <p>Side @Model.PageNumber av @Model.PageCount</p>
+            }
+            else
+            {
+                <p>Ingen Resultater</p>
+            }
         </div>
         <div class="col col-xs-8">
 

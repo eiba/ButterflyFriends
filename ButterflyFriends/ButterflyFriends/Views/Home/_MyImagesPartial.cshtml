@@ -47,15 +47,18 @@
         </div>
 
         <div id="@captionId" class="caption" onclick="event.stopPropagation();">
-            @if(item.UploadDate != null){
-                @item.UploadDate.Value.ToString("dd/MM/yyyy")
-            }
-            @if (item.Caption != null)
-            {
-                <br/>
-                @item.Caption
+            <p>
+                @if (item.UploadDate != null)
+                {
+                    @item.UploadDate.Value.ToString("dd/MM/yyyy")
+                }
+                @if (item.Caption != null)
+                {
+                    <br />
+                    @item.Caption
 
-            }
+                }
+            </p>
         </div>
     </div>
 
@@ -71,3 +74,7 @@
     captionId = imgId + "cp";
 
 }
+<script>
+    ImageCount(@Model.Images.Count);
+    wayPoint();
+</script>

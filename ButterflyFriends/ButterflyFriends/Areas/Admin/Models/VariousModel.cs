@@ -12,6 +12,9 @@ namespace ButterflyFriends.Areas.Admin.Models
         public DbTables.SendGridAPI SendGridAPI { get; set; }
 
         public DbTables.File File { get; set; }
+        public DbTables.Carousel Carousel { get; set; }
+
 
     }
+    
 }

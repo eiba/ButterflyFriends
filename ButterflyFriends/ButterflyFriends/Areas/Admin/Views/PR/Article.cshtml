@@ -19,6 +19,15 @@
     {
         headerClass = "text-right";
     }
+    var preambleClass = "";
+    if (Model.Preamble.Contains("text-center"))
+    {
+        preambleClass = "text-center";
+    }
+    else if (Model.Preamble.Contains("text-right"))
+    {
+        preambleClass = "text-right";
+    }
     ViewBag.Title = @Model.Name;
 
     }
@@ -46,11 +55,14 @@
 
 <article class="article" style="border: 1px solid #888888;">
     <section class="article__content">
-        <h1 data-fixture data-name="article-title" class="@headerClass" id="header">
-            @Model.Title
+        <h1 data-fixture data-name="article-title" class="@headerClass" id="header" data-ce-placeholder="Tittel...">
+            @Html.Raw(Model.TitleInner)
         </h1>
+        <h4 id="preamble" data-fixture data-name="article-preamble" class="@preambleClass" data-ce-placeholder="Ingress...">
+            @Html.Raw(Model.PreambleInner)
+        </h4>
 
-        <div data-editable data-name="article" id ="content">
+        <div data-editable data-name="article" id ="content" data-ce-placeholder="Tekst...">
             @Html.Raw(Model.Content)
         </div>
     </section>
@@ -321,7 +333,8 @@
             for (name in regions) {
                 if (regions.hasOwnProperty(name)) {
                     if (name == "article-title") {
-                        payload.append("title", regions[name]);
+                        payload.append("title", $("#header").text());
+                        payload.append("title-inner", regions[name]);
                         var classList = document.getElementById('header').className.split(/\s+/);
                         var found = false;
                         for (var i = 0; i < classList.length; i++) {
@@ -336,7 +349,25 @@
                         if (!found) {
                             payload.append(name, "<h1>" + regions[name] + "</h1>");
                         }
-                    } else {
+                    } else if (name == "article-preamble") {
+                        payload.append("preamble", $("#preamble").text());
+                        payload.append("preamble-inner", regions[name]);
+                        var classList = document.getElementById('preamble').className.split(/\s+/);
+                        var found = false;
+                        for (var i = 0; i < classList.length; i++) {
+                            if (classList[i] === 'text-center' ||
+                                classList[i] === 'text-left' ||
+                                classList[i] === 'text-right') {
+                                payload.append(name, "<h4 class=" + classList[i] + ">" + regions[name] + "</h4>");
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            payload.append(name, "<h4>" + regions[name] + "</h4>");
+                        }
+                    }
+                    else {
                         payload.append(name, regions[name]);
                     }
                 }

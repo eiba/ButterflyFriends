@@ -17,10 +17,39 @@ namespace ButterflyFriends.Controllers
     public class HomeController : Controller
     {
         ApplicationDbContext _context = new ApplicationDbContext();
-        public int imageNum = 10;
+        public int imageNum = 3;
+        public int articleNum = 3;
         public ActionResult Index()
         {
-            return View(new FrontPageModel { Articles = _context.Articles.Where(s => s.Published).ToList()});
+            var articles = filterArticles(0, articleNum);
+            var carousel = _context.Carousel.ToList();
+            IList<CarouselObject> carouselList = new List<CarouselObject>();
+            if (carousel.Any() && carousel.First().Enabeled)
+            {
+                foreach (var file in carousel.First().CarouselItems)
+                {
+                    if (file.FileType == DbTables.FileType.CarouselImage)
+                    {
+                        carouselList.Add(new CarouselObject { id = file.FileId, type = "image" });
+                    }
+                    else
+                    {
+                        carouselList.Add(new CarouselObject { id = file.FileId, type = "video" });
+
+                    }
+                }
+            }
+            else
+            {
+                carouselList = null;
+            }
+            
+            var model = new FrontPageModel
+            {
+                Articles = articles,
+                Carousel = carouselList
+            };
+            return View(model);
 
         }
 
@@ -162,25 +191,47 @@ namespace ButterflyFriends.Controllers
                 }
             }
             images = images.OrderByDescending(s => s.UploadDate.Value).ThenByDescending(s => s.FileId).ToList();
-            if (startId+imageNum < images.Count)    //check if there's enough images to take from
+            if (startId+imageNum <= images.Count)    //check if there's enough images to take from
             {
                 images = images.GetRange(startId, imageNum);
 
             }
-            else if (startId +1 >= images.Count) //return nothing as startid is as great as there are elements in image list
+            else if (startId +1 > images.Count) //return nothing as startid is as great as there are elements in image list
             {
                 images = null;
             }
             else if(imageNum >= images.Count)
             {
                 //do nothing
-                //images = images.GetRange(0, images.Count);
             }
             else
             {
-                images = images.GetRange(startId, (startId + imageNum) - images.Count);
+                images = images.GetRange(startId, images.Count -startId);
             }
             return images;
+        }
+
+        public IList<DbTables.Article> filterArticles(int startId, int articleNum)
+        {
+            var articles = _context.Articles.Where(s => s.Published).OrderByDescending(s => s.FirstPublisheDateTime).ThenByDescending(s => s.Id).ToList();
+            if (startId + articleNum <= articles.Count)    //check if there's enough images to take from
+            {
+                articles = articles.GetRange(startId, articleNum);
+
+            }
+            else if (startId +1  > articles.Count) //return nothing as startid is as great as there are elements in image list
+            {
+                articles = null;
+            }
+            else if (articleNum >= articles.Count)  //return whole list as there are as many articles as there is articles on one page
+            {
+                //do nothing
+            }
+            else
+            {
+                articles = articles.GetRange(startId, articles.Count - startId);
+            }
+            return articles;
         }
         [HttpPost]
         public ActionResult GetImages()
@@ -194,6 +245,20 @@ namespace ButterflyFriends.Controllers
             var images = filterImages(currentUser, startId, imageNum);
 
             return PartialView("_MyImagesPartial", new MyImagesModel {Images = images,StartId = startId});
+        }
+
+        [HttpPost]
+        public ActionResult GetArticles()
+        {
+            var startId = int.Parse(Request.Form["startid"]);
+            if (startId < articleNum)
+            {
+                return null;
+            }
+            
+            var articles = filterArticles(startId, articleNum);
+
+            return PartialView("_ArticlesPartial", articles);
         }
     }
 

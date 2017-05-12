@@ -20,9 +20,15 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         public ActionResult Index()
         {
             var terms = (from s in _context.Files
-                         where
-                         s.FileType == DbTables.FileType.PDF
-                         select s);
+                where
+                s.FileType == DbTables.FileType.PDF
+                select s);
+            var carouselObj = new DbTables.Carousel();
+            var carousel = _context.Carousel.ToList();
+            if (carousel.Any())
+            {
+                carouselObj = carousel.First();
+            }
             var pdf = new DbTables.File();
             if (terms.Any())
             {
@@ -32,11 +38,40 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 GoogleCaptchaAPI = _context.GoogleCaptchaAPI.First(),
                 SendGridAPI = _context.SendGridAPI.First(),
-                File = pdf
+                File = pdf,
+                Carousel = carouselObj
             };
             return View(model);
         }
 
+        public ActionResult EnableCarousel()
+        {
+            var enable = Request.Form["enable"];
+            try
+            {
+                var carousel = _context.Carousel.ToList().First();
+
+                carousel.Enabeled = !carousel.Enabeled;
+                _context.SaveChanges();
+                if (enable == "true")
+                {
+                    ViewBag.Success = "Funksjonen ble slått på";
+                }
+                else
+                {
+                    ViewBag.Success = "Funksjonen ble slått av";
+
+                }
+                return PartialView("_ImageCarouselPartial", _context.Carousel.ToList().First());
+            }
+            catch (Exception ex)
+            {
+
+                ViewBag.Error = "Error: " + ex.Message;
+                return PartialView("_ImageCarouselPartial", _context.Carousel.ToList().First());
+            }
+
+        }
         [HttpPost]
         public ActionResult EditSendGrid(DbTables.SendGridAPI model)
         {
@@ -107,7 +142,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             {
                                 FileName = Path.GetFileName(file.FileName),
                                 FileType = DbTables.FileType.PDF,
-                                ContentType = file.ContentType
+                                ContentType = file.ContentType,
+                                Temporary = false
                             };
 
                             using (var reader = new BinaryReader(file.InputStream))
@@ -164,6 +200,107 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 File = pdfFile.First();
             }
             return PartialView("_TermsOfUserPartial", File);
+        }
+
+        public ActionResult CarouselUpload()
+        {
+            if (Request.Files.Count > 0)
+            {
+                try
+                {
+                    var carouselObj = new DbTables.Carousel();
+                    var carousel = _context.Carousel.ToList();
+                    if (carousel.Any())
+                    {
+                        carouselObj = carousel.First();
+                        carouselObj.CarouselItems.Clear();
+                        var deleteCarousel =
+                            _context.Files.Where(
+                                s =>
+                                    s.FileType == DbTables.FileType.CarouselImage ||
+                                    s.FileType == DbTables.FileType.CarouselVideo);
+                        if (deleteCarousel.Any())
+                        {
+                            _context.Files.RemoveRange(deleteCarousel);
+                        }
+                    }
+                    else
+                    {
+                        carouselObj = new DbTables.Carousel
+                        {
+                            Enabeled = true,
+                            CarouselItems = new List<DbTables.File>()
+                        };
+                        _context.Carousel.Add(carouselObj);
+
+                    }
+
+
+                    //  Get all files from Request object  
+                    HttpFileCollectionBase files = Request.Files;
+                    for (int i = 0; i < files.Count; i++)
+                    {
+
+                        HttpPostedFileBase file = files[i];
+
+                        var fileUpload = new DbTables.File
+                        {
+                            FileName = Path.GetFileName(file.FileName),
+                            ContentType = file.ContentType,
+                            Temporary = false
+                        };
+
+
+                        using (var reader = new BinaryReader(file.InputStream))
+                        {
+
+                            fileUpload.Content = reader.ReadBytes(file.ContentLength);
+                        }
+
+                        if (file.ContentType.Contains("video"))
+                        {
+                            fileUpload.FileType = DbTables.FileType.CarouselVideo;
+                        }
+                        else
+                        {
+                            fileUpload.FileType = DbTables.FileType.CarouselImage;
+
+                        }
+                        _context.Files.Add(fileUpload);
+                        carouselObj.CarouselItems.Add(fileUpload);
+
+
+
+                    }
+                    _context.SaveChanges();
+
+                    ViewBag.Success = "Filen(e) ble sukksessfult lastet opp";
+                    return PartialView("_ImageCarouselPartial",carouselObj);
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Error = "Error: " + ex.Message;
+                    var carouselErr = new DbTables.Carousel();
+                    var carousell = _context.Carousel.ToList();
+                    if (carousell.Any())
+                    {
+                        carouselErr = carousell.First();
+                    }
+
+                    return PartialView("_ImageCarouselPartial", carouselErr);
+
+                }
+            }
+            ViewBag.Error = "Ingen fil valgt";
+            var carouselError = new DbTables.Carousel();
+            var carouselL = _context.Carousel.ToList();
+            if (carouselL.Any())
+            {
+                carouselError = carouselL.First();
+            }
+
+            return PartialView("_ImageCarouselPartial", carouselError);
+
         }
     }
 }

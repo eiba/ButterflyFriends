@@ -55,6 +55,7 @@
                             $("#" + id + "" + count).attr("name", ui.item.label);
                             $("#" + id + "" + count).attr("nameid", ui.item.id);
                             $("#" + id + "" + count).attr("type", ui.item.type);
+                            $("#" + id + "" + count).attr("title", ui.item.label);
                             event.preventDefault();
 
                         }, focus: function (event, ui) {
@@ -321,6 +322,7 @@
                             $("#" + id + "" + n).attr("name", ui.item.label);
                             $("#" + id + "" + n).attr("nameid", ui.item.id);
                             $("#" + id + "" + n).attr("type", ui.item.type);
+                            $("#" + id + "" + n).attr("title", ui.item.label);
                             event.preventDefault();
 
                         }, focus: function (event, ui) {
