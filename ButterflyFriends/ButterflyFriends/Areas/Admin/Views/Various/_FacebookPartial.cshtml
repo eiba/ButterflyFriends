@@ -1,45 +1,48 @@
-﻿@model DbTables.SendGridAPI
+﻿@model DbTables.Facebook
 <div class="row">
-    <h5 id="SendgridError" class="text-danger" style="margin-left: 20px">@ViewBag.Error</h5>
-    <h5 id="SendgridSuccess" class="text-success" style="margin-left: 20px">@ViewBag.Success</h5>
+    <h5 id="FacebookError" class="text-danger" style="margin-left: 20px">@ViewBag.Error</h5>
+    <h5 id="FacebookSuccess" class="text-success" style="margin-left: 20px">@ViewBag.Success</h5>
+    @if (Model.Id != 0)
+    {
+        if (Model.Enabeled)
+        {
+            <button class="btn btn-danger" onclick="enableFacebook(true)" style="float: right;  margin-right: 20px; margin-bottom: 5px;">Slå av <i class="fa fa-stop" aria-hidden="true"></i></button>
+        }
+        else
+        {
+            <button class="btn btn-success" onclick="enableFacebook(false)" style="float: right; margin-right: 20px; margin-bottom: 5px;">Slå på <i class="fa fa-play" aria-hidden="true"></i></button>
+        }
+    }
     <div class="col-md-2">
-        <h4>Sendgrid API</h4>
+        <h4>Facebook</h4>
     </div>
     <div class="col-md-10">
-        <button class="btn btn-primary" onclick="showSendGrid()" style="float: right;">Rediger <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+        <button class="btn btn-primary" onclick="showFacebook()" style="float: right;">Rediger <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
     </div>
 </div>
 <table class="table">
     <thead>
         <tr>
-            <th>Brukernavn</th>
-            <th>Passord</th>
+            <th>Url</th>
         </tr>
     </thead>
     <tbody>
-    <tr>
-        @if (string.IsNullOrWhiteSpace(Model.UserName))
-        {
-            <td>Ingen brukernavn funnet</td>
-        }
-        else { 
-            <td>@Model.UserName</td>
-        }
-        @if (string.IsNullOrWhiteSpace(Model.PassWord))
-        {
-            <td>Ingen passord funnet</td>
-
-        }
-        else
-        {
-            <td>@Model.PassWord</td>
-        }
-    </tr>
+        <tr>
+            @if (string.IsNullOrWhiteSpace(Model.Url))
+            {
+                <td>Ingen url funnet</td>
+            }
+            else
+            {
+                <td>@Model.Url</td>
+            }
+           
+        </tr>
     </tbody>
 </table>
 
 @*Sendgrid*@
-<script type="x/template" id="SendGridTemplate">
+<script type="x/template" id="FacebookTemplate">
     <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
         <div class="modal-wrapper">
             <div class="modal-container" v-on:click.stop>
@@ -67,20 +70,20 @@
     </div>
 </script>
 
-<div id="SendGrid">
+<div id="Facebook">
 
     <modal :show.sync="showModal">
 
-        <h3 slot="header" style="text-align: center;">Sendgrid API</h3>
+        <h3 slot="header" style="text-align: center;">Facebook</h3>
         <h5 slot="body">
-            @using (Ajax.BeginForm("EditSendGrid", "Various", new AjaxOptions
+            @using (Ajax.BeginForm("EditFacebook", "Various", new AjaxOptions
             {
 
-                UpdateTargetId = "upadteSendGrid",
+                UpdateTargetId = "updateFacebook",
                 InsertionMode = InsertionMode.Replace,
                 HttpMethod = "POST",
 
-            }, new { @class = "form-horizontal", role = "form", id = "SendGridForm" }))
+            }, new { @class = "form-horizontal", role = "form", id = "FacebookForm" }))
             {
                 @Html.AntiForgeryToken()
 
@@ -88,19 +91,13 @@
                     @Html.ValidationSummary(true)
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.UserName, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.Url, new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            <input name="UserName" value="@Model.UserName" class="form-control" id="model">
-                            @Html.ValidationMessageFor(model => model.UserName)
+                            <input name="Url" value="@Model.Url" class="form-control" id="model">
+                            @Html.ValidationMessageFor(model => model.Url)
                         </div>
                     </div>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.PassWord, new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            <input name="PassWord" value="@Model.PassWord" class="form-control" id="model">
-                            @Html.ValidationMessageFor(model => model.PassWord)
-                        </div>
-                    </div>
+
                 </div>
 
             }
@@ -110,7 +107,7 @@
 <script>
     //sendgrid
     Vue.component('modal', {
-        template: '#SendGridTemplate',
+        template: '#FacebookTemplate',
         props: {
             show: {
                 type: Boolean,
@@ -124,7 +121,7 @@
                 this.show = false;
             },
             closeButton: function () {
-                $("form#SendGridForm").submit();
+                $("form#FacebookForm").submit();
                 this.show = false;
 
             }
@@ -141,10 +138,11 @@
         }
     });
 
-    var sendGridVue = new Vue({
-        el: '#SendGrid',
+    var facebookVue = new Vue({
+        el: '#Facebook',
         data: {
             showModal: false,
         }
     });
 </script>
+

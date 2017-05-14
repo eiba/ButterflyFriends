@@ -1,4 +1,5 @@
-﻿@model ButterflyFriends.Models.FrontPageModel
+﻿@using Microsoft.AspNet.Identity
+@model ButterflyFriends.Models.FrontPageModel
 @{
     ViewBag.Title = "Hjem";
     var carousel = 0;
@@ -60,6 +61,47 @@
     }
 </script>
 <div class="loader" style="position: fixed;" hidden></div>
+<div class="row">
+    @if (User.Identity.GetUserId() == null)
+    {
+        <div class="col-md-2"></div>
+
+        <div class="col-md-4 frontPageDiv donateDiv" style="height: 500px;">
+            <h1 style="text-align: center;">Doner penger!</h1>
+            <hr style="border: 1px solid grey"/>
+            <h4>Alle donasjoner hjelper å redde liv!</h4>
+        </div>
+        <div class="col-md-4 frontPageDiv requetDiv" style="height: 500px;">
+            <h1 style="text-align: center;">Bli medlem!</h1>
+            <hr style="border: 1px solid grey"/>
+            <h4 style="text-align: center;">Bli medlem og få tildelt ett hjelp ett eller flere fadderbarn!</h4><br/>
+            <h4>
+                Som medlem kan du også følge med på dine fadderbarn gjennom bilder vi legger ut.
+            </h4>
+            <div>
+                <hr style="border: 1px solid grey"/>
+
+                <a class="btn btn-lg btn-primary center-block home-button-link"
+                   href='@Url.Action("RequestMembership", "Home")'
+                   style="width: 15em; margin-top: 1em; margin-bottom: 1em;">
+                    <h4>Forespør medlemskap</h4>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    }
+    else
+    {        <div class="col-md-4"></div>
+
+        <div class="col-md-4 frontPageDiv donateDiv" style="height: 500px;">
+            <h1 style="text-align: center;">Doner penger!</h1>
+            <hr style="border: 1px solid grey" />
+            <h4>Alle donasjoner hjelper å redde liv!</h4>
+        </div>
+        <div class="col-md-4"></div>
+
+    }
+</div>
 @if (Model.Carousel != null) { 
 foreach (var carouselFile in Model.Carousel)
 {
@@ -67,12 +109,16 @@ foreach (var carouselFile in Model.Carousel)
     carousel += 1;
 }
 }
-<div id="articleContainer" style="margin-top: 900px;">
-    @if (Model.Articles != null) { 
-    @Html.Partial("_ArticlesPartial", Model.Articles)
+    @if (Model.Articles != null)
+    {
+        <div id="articleContainer" style="margin-top: 280px;">
+
+            @Html.Partial("_ArticlesPartial", Model.Articles)
+
+        </div>
+
     }
 
-</div>
 
 <div id="waypoint">
 </div>
@@ -92,17 +138,17 @@ foreach (var carouselFile in Model.Carousel)
             }
         }
         if(video.length > 0) {
-            slides.push({ video: {src:video},delay:90000 });
+            slides.push({ video: {src:video} });
         }
-    }
-    
-        $(function () {
+
+
             $('body').vegas({
                 delay: 20000,
                 animation: 'random',
-                shuffle:true,
+                shuffle: true,
                 slides: slides
             });
-        });
+    }
+    
     
 </script>

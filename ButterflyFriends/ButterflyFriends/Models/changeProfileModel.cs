@@ -9,6 +9,8 @@ namespace ButterflyFriends.Models
     public class changeProfileModel
     {
         [Required]
+        [StringLength(12, ErrorMessage = "Telefonummer må være mellom 8 og 12 karakterer", MinimumLength = 8)]
+        [RegularExpression(@"^[0-9+]+$", ErrorMessage = "Telefonummer kan kun vare karakterer mellom 0 og 9 og +")]
         [Display(Name = "Tlf")]
         public string Phone { get; set; }
 
@@ -38,5 +40,7 @@ namespace ButterflyFriends.Models
 
         [Required]
         public string Id { get; set; }
+
+        public DbTables.File File { get; set; }
     }
 }

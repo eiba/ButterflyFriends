@@ -80,10 +80,12 @@
             }
         </h3>
         <h5 slot="body">
+            <p class="text-success" id="success">@ViewBag.Success</p>
+            <p class="text-danger" id="error">@ViewBag.Error</p>
             <div id="profilePicture">
                 @Html.Partial("UploadImagePartials/_ProfileImagePartial", Model.File)
             </div>
-            <hr />
+            <hr/>
             <p>Profil informasjon</p>
             <dl class="dl-horizontal">
                 <dt>
@@ -139,9 +141,9 @@
                     </dd>
                 }
             </dl>
-            <hr />
+            <hr/>
             <p>Velg et nytt profilbilde</p>
-            <input type="file" id="files" name="files[]" />
+            <input type="file" id="files" name="files[]"/>
             <output id="output"></output>
 
         </h5>
@@ -200,10 +202,14 @@
                                 for (var i = 0, f; f = files[i]; i++) {
                                     //f.num = i;
 
+                                    $("#success").text('');
                                     // Only process image files.
                                     if (!f.type.match('image.*')) {
+                                        $("#error").text('Profilbildet må være et bilde');
+                                        document.getElementById("files").value = "";
                                         continue;
                                     }
+                                    $("#error").text('');
 
                                     var reader = new FileReader();
 
@@ -283,8 +289,13 @@
                                         }
                                         ,
                                         success: function (result) {
-                                            $('#' + id + "t").text("Profilbildet ble suksessfullt lastet opp");
+                                            $('#success').text('Profilbildet ble suksessfullt lastet opp');
                                             $("#profilePicture").html(result);
+                                            var output = document.getElementById("output");
+                                            while (output.firstChild) {
+                                                output.removeChild(output.firstChild);
+                                            }
+                                            document.getElementById("files").value = "";
 
 
                                         },

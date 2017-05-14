@@ -3,65 +3,201 @@
     ViewBag.Title = "Profil";
 }
 
-@*<div class="loader-mask"></div>*@
 <div class="loader"></div>
 <h2>@ViewBag.Title</h2>
 <div id="update"></div>
 <p class="text-success">@ViewBag.StatusMessage</p>
-<div>
-    <h4>Rediger din informasjon</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        
-        <dt>Passord:</dt>
-        <dd>
-            [
-            @if (Model.Index.HasPassword)
-            {
-                @Html.ActionLink("Endre passord", "ChangePassword")
-            }
-            else
-            {
-                @Html.ActionLink("Lag passord", "SetPassword")
-            }
-            ]
-        </dd>
-        <div id="ProfileUpdate">
-            @Html.Partial("_UserInfoPartial", Model.Profile)
+<div class="row">
+    <div class="col-md-6">
+        <h4>Rediger din informasjon</h4>
+        <hr />
+        <dl class="dl-horizontal">
+
+            <dt>Passord:</dt>
+            <dd>
+                [
+                @if (Model.Index.HasPassword)
+                {
+                    @Html.ActionLink("Endre passord", "ChangePassword")
+                }
+                else
+                {
+                    @Html.ActionLink("Lag passord", "SetPassword")
+                }
+                ]
+            </dd>
+            <div id="ProfileUpdate">
+                @Html.Partial("_UserInfoPartial", Model.Profile)
+            </div>
+            <dt></dt>
+            <dd>
+                @using (Ajax.BeginForm("ShowUserEdit", "Manage", new
+                {
+                    id = Model.Profile.Id
+                }, new AjaxOptions
+                {
+                    UpdateTargetId = "update",
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "GET",
+
+
+                }, new { @class = "form-horizontal", role = "form" }))
+                {
+                    <button type="submit" class="btn btn-primary btn-primary">Endre profil info <span class="glyphicon glyphicon-floppy-open"></span></button>
+
+                }
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-6">
+        <h5 class="text-success" id="success">@ViewBag.Success</h5>
+        <h5 class="text-danger" id="error">@ViewBag.Error</h5>
+        <div id="profilePicture">
+            @Html.Partial("_ProfileImagePartial", Model.Profile.File)
         </div>
-        <dt></dt>
-        <dd>
-            @using (Ajax.BeginForm("ShowUserEdit", "Manage", new
-            {
-                id = Model.Profile.Id
-            }, new AjaxOptions
-            {
-                UpdateTargetId = "update",
-                InsertionMode = InsertionMode.Replace,
-                HttpMethod = "GET",
+        <hr/>
+        <p>Velg et nytt profilbilde</p>
+        <input type="file" id="files" name="files[]"/>
+        <output id="output"></output>
 
-
-            }, new { @class = "form-horizontal", role = "form" }))
-            {
-                <button type="submit" class="btn btn-primary btn-primary">Endre profil info  <span class="glyphicon glyphicon-floppy-open"></span></button>
-
-            }
-        </dd>
-    </dl>
+    </div>
 </div>
 
 <script>
     $(document).ready(function () {
         $(".loader").hide();
-        //$(".loader-mask").hide();
         $(document).ajaxStart(function () {
             $(".loader").show();
-            //$(".loader-mask").show();
         }).ajaxStop(function () {
             $(".loader").hide();
-            //$(".loader-mask").hide();
         });
     });
 
+    function handleFileSelect(evt) {
+        var files = evt.target.files; // FileList object
+
+        var output = document.getElementById("output");
+        while (output.firstChild) {
+            output.removeChild(output.firstChild);
+        }
+
+        // Loop through the FileList and render image files as thumbnails.
+        for (var i = 0, f; f = files[i]; i++) {
+            //f.num = i;
+
+            $("#success").text('');
+            // Only process image files.
+            if (!f.type.match('image.*')) {
+                $("#error").text('Profilbildet må være et bilde');
+                document.getElementById("files").value = "";
+                continue;
+            }
+            $("#error").text('');
+            
+            var reader = new FileReader();
+
+            // Closure to capture the file information.
+            reader.onload = (function (theFile) {
+                return function (e) {
+                    // Render thumbnail.
+                    var span = document.createElement('span');
+                    var id = "img"; //theFile.num;
+                    span.innerHTML = [
+                        '<img class="profileImageShow" id="', id, '" src="', e.target.result,
+                        '" title="', escape(theFile.name), '"/><btn id="', id + "b",
+                        '" class="btn btn-primary"><span class="glyphicon glyphicon-open"></span> Last opp</btn><br/><br/><div class="statustxt" id="', id + "t", '">0%</div><div class="progress"><div id="', id + 'p', '" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div></div>'
+                    ].join('');
+                    document.getElementById('output').insertBefore(span, null);
+
+                    addHandeler(id);
+
+                };
+            })(f);
+
+            // Read in the image file as a data URL.
+            reader.readAsDataURL(f);
+        }
+    }
+
+    document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+    function addHandeler(id) {
+        $("#" + id + "b").on('click', function () {
+            var fileUpload = $("#files").get(0);
+            var files = fileUpload.files;
+            if (files[0].type.match('image.*')) {
+                sendFile(id);
+            } else {
+                alert("Du kan kun laste opp bilder");
+            }
+        });
+    }
+    function sendFile(id) {
+
+
+
+        // Checking whether FormData is available in browser
+        if (window.FormData !== undefined) {
+
+            var fileUpload = $("#files").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            //there will only be one image, but let's just loop over just incase we want to expand the code in the future
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+            }
+            fileData.append('userid', "@Model.Profile.Id");
+            fileData.append('type', "employee");
+            $.ajax({
+                url: '/Manage/ProfilePictureUpload',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                xhr: function () {  // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) { // Check if upload property exists
+
+                        // For handling the progress of the upload
+                        myXhr.upload.id = id;
+                        myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+
+                    }
+                    return myXhr;
+                }
+                ,
+                success: function (result) {
+                    $('#success').text('Profilbildet ble suksessfullt lastet opp');
+                    $("#profilePicture").html(result);
+                    var output = document.getElementById("output");
+                    while (output.firstChild) {
+                        output.removeChild(output.firstChild);
+                    }
+                    document.getElementById("files").value = "";
+
+
+                },
+                error: function (err) {
+                    $('#' + id + "t").text(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData er ikke støttet.");
+        }
+    }
+
+    function progressHandlingFunction(e) {
+        var id = e.target.id;
+        if (e.lengthComputable) {
+            var percentage = Math.floor((e.loaded / e.total) * 100);
+            //update progressbar percent complete
+            $('#' + id + "t").text(percentage + '%');
+            $('#' + id + "p").css("width", percentage + '%');
+        }
+    }
 
 </script>

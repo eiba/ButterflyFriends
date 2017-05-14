@@ -46,9 +46,11 @@ namespace ButterflyFriends.Controllers
         public ActionResult ArticleImage(int id)    //you can reach this controller as anonumous, but you can only get article images
         {
             var fileToRetrieve = _context.Files.Find(id);
-            if (fileToRetrieve == null || fileToRetrieve.FileType != DbTables.FileType.ArticleImage)
+            if (fileToRetrieve == null)
             {
+                if(fileToRetrieve.FileType != DbTables.FileType.ArticleImage) { 
                 return null;
+                }
             }
             return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
         }
@@ -56,10 +58,11 @@ namespace ButterflyFriends.Controllers
         public ActionResult Carousel(int id)    //you can reach this controller as anonumous, but you can only get article images
         {
             var fileToRetrieve = _context.Files.Find(id);
-            if (fileToRetrieve != null || fileToRetrieve.FileType == DbTables.FileType.CarouselImage || fileToRetrieve.FileType == DbTables.FileType.CarouselVideo)
+            if (fileToRetrieve != null)
             {
+                if (fileToRetrieve.FileType == DbTables.FileType.CarouselImage || fileToRetrieve.FileType == DbTables.FileType.CarouselVideo) { 
                 return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
-
+                }
             }
             return null;
         }

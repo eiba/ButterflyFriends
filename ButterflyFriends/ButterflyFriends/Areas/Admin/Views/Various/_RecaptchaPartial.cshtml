@@ -1,7 +1,7 @@
 ﻿@model DbTables.GoogleCaptchaAPI
 <div class="row">
-    <h5 id="RecaptchaError" class="text-danger">@ViewBag.Error</h5>
-    <h5 id="RecaptchaSuccess" class="text-success">@ViewBag.Success</h5>
+    <h5 id="RecaptchaError" class="text-danger" style="margin-left: 20px">@ViewBag.Error</h5>
+    <h5 id="RecaptchaSuccess" class="text-success" style="margin-left: 20px">@ViewBag.Success</h5>
     <div class="col-md-2">
         <h4>Google ReCaptcha</h4>
     </div>
@@ -11,13 +11,13 @@
 </div>
 <table class="table">
     <thead>
-        <tr>
-            <th>SiteKey</th>
-            <th>Secret</th>
-        </tr>
+    <tr>
+        <th>SiteKey</th>
+        <th>Secret</th>
+    </tr>
     </thead>
     <tbody>
-        <tr>
+    <tr>
         <tr>
             @if (string.IsNullOrWhiteSpace(Model.SiteKey))
             {
@@ -40,3 +40,113 @@
     </tr>
     </tbody>
 </table>
+
+@*Google recaptcha*@
+<div id="Recaptcha">
+
+    <modal :show.sync="showModal">
+
+        <h3 slot="header" style="text-align: center;">Google ReCaptcha API</h3>
+        <h5 slot="body">
+            @using (Ajax.BeginForm("EditRecaptcha", "Various", new AjaxOptions
+            {
+
+                UpdateTargetId = "updateRecaptcha",
+                InsertionMode = InsertionMode.Replace,
+                HttpMethod = "POST",
+
+            }, new { @class = "form-horizontal", role = "form", id = "RecaptchaForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SiteKey, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="SiteKey" value="@Model.SiteKey" class="form-control" id="model" required>
+                            @Html.ValidationMessageFor(model => model.SiteKey)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Secret, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="Secret" value="@Model.Secret" class="form-control" id="model" required>
+                            @Html.ValidationMessageFor(model => model.Secret)
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </h5>
+    </modal>
+</div>
+<script type="x/template" id="RecaptchaTemplate">
+    <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
+        <div class="modal-wrapper">
+            <div class="modal-container" v-on:click.stop>
+
+                <div class="modal-header">
+                    <slot name="header">
+                    </slot>
+                </div>
+
+                <div class="modal-body">
+                    <slot name="body">
+
+                    </slot>
+
+                </div>
+
+                <div class="modal-footer">
+                    <slot name="footer">
+                        <button class="btn btn-primary btn-primary" id="knapp" v-on:click="closeButton">Lagre <span class="glyphicon glyphicon-floppy-save"></span></button>
+
+                    </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    //google recaptcha
+    Vue.component('modal', {
+        template: '#RecaptchaTemplate',
+        props: {
+            show: {
+                type: Boolean,
+                required: true,
+                twoWay: true
+
+            }
+        },
+        methods: {
+            close: function () {
+                this.show = false;
+            },
+            closeButton: function () {
+                $("form#RecaptchaForm").submit();
+                this.show = false;
+
+            }
+        },
+        ready: function () {
+            document.addEventListener("keydown", (e) => {
+                if (this.show && e.keyCode == 27) {
+                    this.close();
+                } else if (this.show && e.keyCode == 13) {
+                    e.preventDefault();
+                    this.closeButton();
+                }
+            });
+        }
+    });
+    var recaptchaVue = new Vue({
+        el: '#Recaptcha',
+        data: {
+            showModal: false,
+        }
+    });
+</script>

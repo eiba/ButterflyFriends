@@ -4,7 +4,8 @@
     ViewBag.Title = "Forespør medlemskap";
 }
 
-<h2>Forespør medlemskap</h2>
+<h2 style="text-align: center">Forespør medlemskap</h2>
+<hr style="border: 1px solid grey" />
 
 
 @using (Ajax.BeginForm("RequestMembership", "Home", new AjaxOptions
@@ -23,99 +24,120 @@
         @Html.ValidationSummary(true)
         <div class="loader"></div>
         <br/>
-        <div class="form-group">
-            @Html.LabelFor(m => m.MembershipRequest.Email, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.MembershipRequest.Email, new { @class = "form-control", required = "required" })
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8" style="margin-left: 4%">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.MembershipRequest.Email, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.MembershipRequest.Email, new { @class = "form-control", required = "required" })
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.MembershipRequest.Fname, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.MembershipRequest.Fname, new { @class = "form-control", required = "required" })
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.MembershipRequest.Lname, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.MembershipRequest.Lname, new { @class = "form-control", required = "required" })
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.MembershipRequest.Phone, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.MembershipRequest.Phone, new { @class = "form-control", required = "required" })
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
 
             </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.MembershipRequest.Fname, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.MembershipRequest.Fname, new { @class = "form-control", required = "required" })
-
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.MembershipRequest.Lname, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.MembershipRequest.Lname, new { @class = "form-control", required = "required" })
-
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.MembershipRequest.Phone, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.MembershipRequest.Phone, new { @class = "form-control", required = "required" })
-
-            </div>
-        </div>
-        
         <br/>
-        <h4>Adresse</h4>
-        <hr/>
+        <h4 style="text-align: center;">Adresse</h4>
+        <hr style="border: 1px solid grey" />
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.MembershipRequest.StreetAdress, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.MembershipRequest.StreetAdress, new { @class = "form-control", required = "required" })
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8" style="margin-left: 4%">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.MembershipRequest.StreetAdress, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.MembershipRequest.StreetAdress, new { @class = "form-control", required = "required" })
 
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.MembershipRequest.PostCode, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.MembershipRequest.PostCode, new { @class = "form-control", type = "number", required = "required" })
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.MembershipRequest.City, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.MembershipRequest.City, new { @class = "form-control", required = "required" })
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.MembershipRequest.State, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.MembershipRequest.State, new { @class = "form-control", required = "required" })
+
+                    </div>
+                </div>
             </div>
-        </div><div class="form-group">
-            @Html.LabelFor(m => m.MembershipRequest.PostCode, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.MembershipRequest.PostCode, new { @class = "form-control", required = "required" })
-
-            </div>
+            <div class="col-md-2"></div>
         </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.MembershipRequest.City, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.MembershipRequest.City, new { @class = "form-control", required = "required" })
+            <br />
+            <h4 style="text-align: center;">Beskrivelse</h4>
+            <p style="text-align: center;">Skriv litt om deg selv og hvorfor du vil bli fadder hos oss</p>
+            <hr style="border: 1px solid grey" />
 
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.MembershipRequest.State, new { @class = "col-md-2 control-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.MembershipRequest.State, new { @class = "form-control", required = "required" })
-
-            </div>
-        </div>
+            @Html.TextAreaFor(m => m.MembershipRequest.Description, new { @class = "form-control", required = "required", @style = "height:200px; max-width:100%;" })
+        <hr style="border: 1px solid grey" />
         <br/>
-        <h4>Beskrivelse</h4>
-        <p>Skriv litt om deg selv og hvorfor du vil bli fadder hos oss</p>
-        <hr/>
-                @Html.TextAreaFor(m => m.MembershipRequest.Description, new { @class = "form-control", required = "required", @style="height:200px; max-width:100%;"})
-        <hr />
-        @if (!string.IsNullOrEmpty(Model.SiteKey))
-        {
-            <div class="g-recaptcha" data-sitekey="@Model.SiteKey" data-callback="recaptchaCallback"></div>
-        }
-        else
-        {
-            <input type="hidden" id="CaptchaHidden" value="false" />
-        }
-        @if (Model.TermsID != 0)
-        {
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                @if (!string.IsNullOrEmpty(Model.SiteKey))
+                {
+                    <div class="g-recaptcha" data-sitekey="@Model.SiteKey" data-callback="recaptchaCallback"></div>
+                }
+                else
+                {
+                    <input type="hidden" id="CaptchaHidden" value="false" />
+                }
+                @if (Model.TermsID != 0)
+                {
 
-            <div class="checkbox">
-                <label><input type="checkbox" id="termsCheck" onclick="checkTerms()" value="">Jeg samtykker til <a href="~/File?id=@Model.TermsID" target="_blank">sidens brukervilkår.</a></label>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="termsCheck" onclick="checkTerms()" value="">Jeg samtykker til <a href="~/File?id=@Model.TermsID" target="_blank">sidens brukervilkår.</a></label>
+                    </div>
+
+                }
+                else
+                {
+                    <input type="hidden" id="TermsHidden" value="false" />
+                }
+                <br />
+                <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Forespør medlemskap</button>
+
+                <div id="updateTxt">
+                    @Html.Partial("_statusPartial")
+                </div>
             </div>
-
-        }
-        else
-        {
-            <input type="hidden" id ="TermsHidden" value="false"/>
-        }
-        <br />
-        <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Forespør medlemskap</button>
-        
-        <div id="updateTxt">
-            @Html.Partial("_statusPartial")
+            <div class="col-md-4"></div>
         </div>
-    </div>
+        </div>
 
 
 }
@@ -135,7 +157,7 @@
     function recaptchaCallback() {
         recaptcha = true;
         
-        if ((recaptcha && terms) || (recaptcha && $('#TermsHidden').val() == false)) {
+        if ((recaptcha && terms) || (recaptcha && $('#TermsHidden').val() == "false")) {
             $('#submitBtn').removeAttr('disabled');
 
         }

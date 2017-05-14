@@ -61,9 +61,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 try
                 {
+                    var store = new UserStore<ApplicationUser>(_context);
+                    var manager = new UserManager<ApplicationUser>(store);
+                    ApplicationUser currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;  //the current user
+                    var userId = Request.Form["userid"];
                     var ProfileImageWidth = 300;
                     var ThumbnailImageWidth = 40;
-                    var userId = Request.Form["userid"];
                     var type = Request.Form["type"];
                     //ApplicationUser user = _context.Users.Find(userId);
                     var fileId = 0;
@@ -73,6 +76,16 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     if (type == "employee")
                     {
                         employee = _context.Users.Find(userId);
+                        if (currentUser.RoleNr >= employee.RoleNr)   //user not the current user or rolenumber to high, not allowed to change profile picture
+                        {
+                            if (currentUser.Id != userId)
+                            {
+                                return Json(new { error= "Du har ikke lov til å endre dette profilbildet" ,success="false"});
+
+                            }
+
+                        }
+
                         pictures = employee.Pictures;
                     }
                     else if (type == "child")
@@ -247,10 +260,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     return Json("Ooops, det skjedde en feil: " + ex.Message);
                 }
             }
-            else
-            {
+
                 return Json("Ingen filer valgt");
-            }
 
         }
 
@@ -976,16 +987,23 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     return HttpNotFound();
                 }
+                if ((currentUser.RoleNr >= user.RoleNr)) //rolenumber too low
+                {
+                    if (currentUser.Id != user.Id)
+                    {
+                        ViewBag.Id = user.Id;
+                        ViewBag.Error =
+                            "Kan ikke endre informasjonen til en bruker som er på samme brukernivå eller høyere";
+
+                        return FilterResultEmployees(search, active, order, filter, employeePhone, EmployeeStreetadress,
+                            EmployeeZip, EmployeeCity, EmployeeCounty, EmployeePosition, employeeAccountNumber,
+                            pageNumber);
+                    }
+
+                }
                 if (model.RoleNr != null)
                 { //there is a role number sent in
-                    if ((currentUser.RoleNr >= user.RoleNr) && currentUser.Id != user.Id) //rolenumber too low
-                    {
 
-                        ViewBag.Id = user.Id;
-                        ViewBag.Error = "Kan ikke endre informasjonen til en bruker som er på samme brukernivå eller høyere";
-
-                        return FilterResultEmployees(search, active, order, filter, employeePhone, EmployeeStreetadress, EmployeeZip, EmployeeCity, EmployeeCounty, EmployeePosition, employeeAccountNumber, pageNumber);
-                    }
                     if (currentUser.Id == user.Id && user.RoleNr != model.RoleNr)  //the user wants to change their own role, not allowed
                     {
                         ViewBag.Id = user.Id;

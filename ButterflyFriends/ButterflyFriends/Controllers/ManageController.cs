@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using ButterflyFriends.Areas.Admin.Models.HRmanagementModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -59,10 +64,10 @@ namespace ButterflyFriends.Controllers
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                message == ManageMessageId.ChangePasswordSuccess ? "Ditt passord har blitt endred."
+                : message == ManageMessageId.SetPasswordSuccess ? "Ditt passord har blitt sett."
                 : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
-                : message == ManageMessageId.Error ? "An error has occurred."
+                : message == ManageMessageId.Error ? "En feil oppstod."
                 : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
                 : "";
@@ -77,6 +82,12 @@ namespace ButterflyFriends.Controllers
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
             var user =_context.Users.Find(userId);
+            var ProfileImage = new DbTables.File();
+            var pictures = user.Pictures.Where(s => s.FileType == DbTables.FileType.Profile);
+            if (pictures.Any())
+            {
+                ProfileImage = pictures.First();
+            }
             var profileModel = new changeProfileModel 
             {
                 Fname = user.Fname,
@@ -86,7 +97,8 @@ namespace ButterflyFriends.Controllers
                 PostCode = user.Adress.PostCode,
                 State = user.Adress.County,
                 Phone = user.Phone,
-                Id = user.Id
+                Id = user.Id,
+                File = ProfileImage
             };
             var model = new ProfileViewModel
             {
@@ -305,7 +317,7 @@ namespace ButterflyFriends.Controllers
         {
             ViewBag.StatusMessage =
                 message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-                : message == ManageMessageId.Error ? "An error has occurred."
+                : message == ManageMessageId.Error ? "En feil oppstod."
                 : "";
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user == null)
@@ -496,7 +508,241 @@ namespace ButterflyFriends.Controllers
 
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
+        [Authorize(Roles = "Eier, Admin, Fadder, Ansatt")]
+        [HttpPost]
+        public ActionResult ProfilePictureUpload()
+        {
+            // Checking no of files injected in Request object  
+            if (Request.Files.Count > 0)
+            {
+                try
+                {
+                    var store = new UserStore<ApplicationUser>(_context);
+                    var manager = new UserManager<ApplicationUser>(store);
+                    ApplicationUser currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;  //the current user
+                    var userId = Request.Form["userid"];
+                    var ProfileImageWidth = 300;
+                    var ThumbnailImageWidth = 40;
+                    var type = Request.Form["type"];
+                    //ApplicationUser user = _context.Users.Find(userId);
+                    var fileId = 0;
+                    var employee = new ApplicationUser();
+                    var child = new DbTables.Child();
+                    IList<DbTables.File> pictures = new List<DbTables.File>();
+                    if (type == "employee")
+                    {
+                        employee = _context.Users.Find(userId);
+                        if (currentUser.RoleNr >= employee.RoleNr)   //user not the current user or rolenumber to high, not allowed to change profile picture
+                        {
+                            if (currentUser.Id != userId)
+                            {
+                                return Json(new { error = "Du har ikke lov til å endre dette profilbildet", success = "false" });
 
+                            }
+
+                        }
+
+                        pictures = employee.Pictures;
+                    }
+                    else if (type == "child")
+                    {
+                        child = _context.Children.Find(Int32.Parse(userId));
+                        pictures = child.Pictures;
+                    }
+
+                    //var pictures = user.Pictures;
+                    var profPic = new DbTables.File();
+                    var thumbNail = new DbTables.ThumbNail();
+                    if (pictures.Any())
+                    {
+                        foreach (var pic in pictures)
+                        {
+                            if (pic.FileType == DbTables.FileType.Profile)
+                            {
+                                profPic = pic;
+                                thumbNail = pic.ThumbNail;
+                            }
+                        }
+                    }
+                    //  Get all files from Request object  
+                    HttpFileCollectionBase files = Request.Files;
+                    for (int i = 0; i < files.Count; i++)
+                    {
+
+                        HttpPostedFileBase file = files[i];
+
+                        if (profPic.Content == null)
+                        {
+                            var picture = new DbTables.File();
+                            //save profile picture
+                            if (employee.Email != null)
+                            {
+                                picture = new DbTables.File
+                                {
+                                    FileName = Path.GetFileName(file.FileName),
+                                    FileType = DbTables.FileType.Profile,
+                                    ContentType = file.ContentType,
+                                    User = new List<ApplicationUser> { employee }
+                                };
+                            }
+                            else
+                            {
+                                picture = new DbTables.File
+                                {
+                                    FileName = Path.GetFileName(file.FileName),
+                                    FileType = DbTables.FileType.Profile,
+                                    ContentType = file.ContentType,
+                                    Children = new List<DbTables.Child> { child }
+                                };
+                            }
+                            byte[] content;
+                            using (var reader = new BinaryReader(file.InputStream))
+                            {
+
+                                content = reader.ReadBytes(file.ContentLength);
+                            }
+
+                            Bitmap bmp;
+                            using (var ms = new MemoryStream(content))
+                            {
+                                bmp = new Bitmap(ms);
+                            }
+                            double ratio = (double)((double)bmp.Width / (double)bmp.Height);
+                            int height = (int)((double)ProfileImageWidth / ratio);
+                            var newImg = ResizeImage(bmp, ProfileImageWidth, height);
+
+                            byte[] cntnt;
+                            using (var stream = new MemoryStream())
+                            {
+                                newImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                cntnt = stream.ToArray();
+                            }
+                            picture.Content = cntnt;
+
+                            _context.Files.Add(picture);
+
+                            //save thumbnail
+                            var thumbnail = new DbTables.ThumbNail
+                            {
+                                ThumbNailName = Path.GetFileName(file.FileName),
+                                ContentType = file.ContentType,
+                                FileType = DbTables.FileType.Thumbnail,
+                                File = picture
+                                //User = new List<ApplicationUser> {user}
+                            };
+
+                            int Theight = (int)((double)ThumbnailImageWidth / ratio);
+                            var newThumb = ResizeImage(bmp, ThumbnailImageWidth, Theight);
+                            byte[] Tcntnt;
+                            using (var stream = new MemoryStream())
+                            {
+                                newThumb.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                Tcntnt = stream.ToArray();
+                            }
+                            thumbnail.Content = Tcntnt;
+                            _context.ThumbNails.Add(thumbnail);
+
+                            if (employee.Email != null)
+                            {
+                                employee.Thumbnail = thumbnail;
+                                _context.Entry(employee).State = EntityState.Modified;
+                            }
+                            else
+                            {
+                                child.Thumbnail = thumbnail;
+                                _context.Entry(child).State = EntityState.Modified;
+                            }
+                            _context.SaveChanges();
+                            //fileId = picture.FileId;
+                        }
+                        else
+                        {
+                            //Profile picture
+                            profPic.FileName = Path.GetFileName(file.FileName);
+                            profPic.ContentType = file.ContentType;
+
+                            byte[] content;
+                            using (var reader = new BinaryReader(file.InputStream))
+                            {
+
+                                content = reader.ReadBytes(file.ContentLength);
+                            }
+
+                            Bitmap bmp;
+                            using (var ms = new MemoryStream(content))
+                            {
+                                bmp = new Bitmap(ms);
+                            }
+                            double ratio = (double)((double)bmp.Width / (double)bmp.Height);
+                            int height = (int)((double)ProfileImageWidth / ratio);
+                            var newImg = ResizeImage(bmp, ProfileImageWidth, height);
+
+                            byte[] cntnt;
+                            using (var stream = new MemoryStream())
+                            {
+                                newImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                cntnt = stream.ToArray();
+                            }
+                            profPic.Content = cntnt;
+
+                            _context.Entry(profPic).State = EntityState.Modified;
+
+                            //thumbnail
+                            thumbNail.ThumbNailName = Path.GetFileName(file.FileName);
+                            thumbNail.ContentType = file.ContentType;
+
+                            int Theight = (int)((double)ThumbnailImageWidth / ratio);
+                            var newThumb = ResizeImage(bmp, ThumbnailImageWidth, Theight);
+                            byte[] Tcntnt;
+                            using (var stream = new MemoryStream())
+                            {
+                                newThumb.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                Tcntnt = stream.ToArray();
+                            }
+                            thumbNail.Content = Tcntnt;
+                            _context.Entry(thumbNail).State = EntityState.Modified;
+
+                            _context.SaveChanges();
+                            //fileId = profPic.FileId;
+                        }
+
+                    }
+                    var user = _context.Users.Find(userId);
+                    var ProfileImage = new DbTables.File();
+                    var Picture = user.Pictures.Where(s => s.FileType == DbTables.FileType.Profile);
+                    if (Picture.Any())
+                    {
+                        ProfileImage = Picture.First();
+                    }
+                    // Returns message that successfully uploaded
+                    return PartialView("_ProfileImagePartial", ProfileImage);
+                    //return Json("Filopplastning var en suksess!");
+                }
+                catch (Exception ex)
+                {
+                    return Json("Ooops, det skjedde en feil: " + ex.Message);
+                }
+            }
+            return Json("Ingen filer valgt");
+        }
+
+        /// <summary>
+        /// Rezises image so that it will be be compressed with smaller dimensions
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        private static Bitmap ResizeImage(Bitmap image, int width, int height)
+        {
+            Bitmap resizedImage = new Bitmap(width, height);
+            using (Graphics gfx = Graphics.FromImage(resizedImage))
+            {
+                gfx.DrawImage(image, new Rectangle(0, 0, width, height),
+                    new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
+            }
+            return resizedImage;
+        }
         public DbTables.Adresses AdressExist(DbTables.Adresses adress)
         {
             var adresses = _context.Set<DbTables.Adresses>();

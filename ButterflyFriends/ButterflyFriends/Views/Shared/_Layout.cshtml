@@ -3,7 +3,7 @@
 @using Microsoft.AspNet.Identity
 @using Microsoft.AspNet.Identity.EntityFramework
 <!DOCTYPE html>
-<html id="tag">
+<html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -74,16 +74,10 @@
     </div>
 </div>
 <div class="container body-content">
-    <div class="row">
-        <div class="mainDiv col-md-8">
+        <div class="mainDiv">
             @RenderBody()
+</div>
 
-       </div>
-        <div class="col-md-1"></div>
-        <div class="side col-md-3">
-            <p>hi</p>
-        </div>
-    </div>
     <div class="bottom">
         <p>Social media and contact and stuff</p>
         <hr/>

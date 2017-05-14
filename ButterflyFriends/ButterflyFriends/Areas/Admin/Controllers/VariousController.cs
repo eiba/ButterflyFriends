@@ -24,6 +24,43 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 s.FileType == DbTables.FileType.PDF
                 select s);
             var carouselObj = new DbTables.Carousel();
+            var GoogleCap = new DbTables.GoogleCaptchaAPI();
+            var GoogleCapList = _context.GoogleCaptchaAPI.ToList();
+            if (GoogleCapList.Any())
+            {
+                GoogleCap = GoogleCapList.First();
+            }
+            var SendG = new DbTables.SendGridAPI();
+            var SendgridList = _context.SendGridAPI.ToList();
+            if (SendgridList.Any())
+            {
+                SendG = SendgridList.First();
+            }
+            var Stripe = new DbTables.StripeAPI();
+            var StripeList = _context.StripeAPI.ToList();
+            if (StripeList.Any())
+            {
+                Stripe = StripeList.First();
+            }
+            var Facebook = new DbTables.Facebook();
+            var FacebookList = _context.Facebook.ToList();
+            if (FacebookList.Any())
+            {
+                Facebook = FacebookList.First();
+            }
+            var Twitter = new DbTables.Twitter();
+            var TwitterList = _context.Twitter.ToList();
+            if (TwitterList.Any())
+            {
+                Twitter = TwitterList.First();
+            }
+            var About = new DbTables.Info();
+            var AboutList = _context.About.ToList();
+            if (AboutList.Any())
+            {
+                About = AboutList.First();
+            }
+
             var carousel = _context.Carousel.ToList();
             if (carousel.Any())
             {
@@ -36,10 +73,14 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
             var model = new VariousModel
             {
-                GoogleCaptchaAPI = _context.GoogleCaptchaAPI.First(),
-                SendGridAPI = _context.SendGridAPI.First(),
+                GoogleCaptchaAPI = GoogleCap,
+                SendGridAPI = SendG,
                 File = pdf,
-                Carousel = carouselObj
+                Carousel = carouselObj,
+                About = About,
+                StripeAPI = Stripe,
+                Twitter = Twitter,
+                Facebook = Facebook
             };
             return View(model);
         }
@@ -72,42 +113,278 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
 
         }
+        public ActionResult EnableTwitter()
+        {
+            var enable = Request.Form["enable"];
+            try
+            {
+                var twitter = _context.Twitter.ToList().First();
+
+                twitter.Enabeled = !twitter.Enabeled;
+                _context.SaveChanges();
+                if (enable == "true")
+                {
+                    ViewBag.Success = "Funksjonen ble slått på";
+                }
+                else
+                {
+                    ViewBag.Success = "Funksjonen ble slått av";
+
+                }
+                return PartialView("_TwitterPartial", _context.Twitter.ToList().First());
+            }
+            catch (Exception ex)
+            {
+
+                ViewBag.Error = "Error: " + ex.Message;
+                return PartialView("_TwitterPartial", _context.Twitter.ToList().First());
+            }
+
+        }
+        public ActionResult EnableFacebook()
+        {
+            var enable = Request.Form["enable"];
+            try
+            {
+                var facebook = _context.Facebook.ToList().First();
+
+                facebook.Enabeled = !facebook.Enabeled;
+                _context.SaveChanges();
+                if (enable == "true")
+                {
+                    ViewBag.Success = "Funksjonen ble slått på";
+                }
+                else
+                {
+                    ViewBag.Success = "Funksjonen ble slått av";
+
+                }
+                return PartialView("_FacebookPartial", _context.Facebook.ToList().First());
+            }
+            catch (Exception ex)
+            {
+
+                ViewBag.Error = "Error: " + ex.Message;
+                return PartialView("_FacebookPartial", _context.Facebook.ToList().First());
+            }
+
+        }
         [HttpPost]
         public ActionResult EditSendGrid(DbTables.SendGridAPI model)
         {
             try
             {
-                var SendGridAPI = _context.SendGridAPI.First();
-                SendGridAPI.PassWord = model.PassWord;
-                SendGridAPI.UserName = model.UserName;
+                var SendGrid = new DbTables.SendGridAPI();
+                var SendGridAPI = _context.SendGridAPI.ToList();
+                if (SendGridAPI.Any())
+                {
+                    SendGrid = SendGridAPI.First();
+                    SendGrid.PassWord = model.PassWord;
+                    SendGrid.UserName = model.UserName;
+                }
+                else
+                {
+                    SendGrid.PassWord = model.PassWord;
+                    SendGrid.UserName = model.UserName;
+                    _context.SendGridAPI.Add(SendGrid);
+                }
+                
                 _context.SaveChanges();
                 ViewBag.Success = "Sendgrid API variabler ble sukessfult oppdatert";
                 return PartialView("_SendGridPartial",_context.SendGridAPI.First());
             }
             catch (EntityException ex)
             {
-                ViewBag.Error = ex.Message;
+                ViewBag.Error ="Error:"+ ex.Message;
                 return PartialView("_SendGridPartial", _context.SendGridAPI.First());
             }
         }
 
+        public ActionResult EditFacebook(DbTables.Facebook model)
+        {
+            try
+            {
+                var Facebook = new DbTables.Facebook();
+                var FacebookList = _context.Facebook.ToList();
+                if (FacebookList.Any())
+                {
+                    Facebook = FacebookList.First();
+                    Facebook.Url = model.Url;
+                }
+                else
+                {
+                    Facebook.Url = model.Url;
+                    _context.Facebook.Add(Facebook);
+                }
+
+                _context.SaveChanges();
+                ViewBag.Success = "Facebook variabler ble sukessfult oppdatert";
+                return PartialView("_FacebookPartial", _context.Facebook.First());
+            }
+            catch (EntityException ex)
+            {
+                ViewBag.Error = "Error:" + ex.Message;
+                return PartialView("_FacebookPartial", _context.Facebook.First());
+            }
+        }
+        public ActionResult EditStripe(DbTables.StripeAPI model)
+        {
+            try
+            {
+                var Stripe = new DbTables.StripeAPI();
+                var StripeList = _context.StripeAPI.ToList();
+                if (StripeList.Any())
+                {
+                    Stripe = StripeList.First();
+                    Stripe.Key = model.Key;
+                    Stripe.Secret = model.Secret;
+                }
+                else
+                {
+                    Stripe.Key = model.Key;
+                    Stripe.Secret = model.Secret;
+                    _context.StripeAPI.Add(Stripe);
+                }
+
+                _context.SaveChanges();
+                ViewBag.Success = "Stripe API variabler ble sukessfult oppdatert";
+                return PartialView("_StripePartial", _context.StripeAPI.First());
+            }
+            catch (EntityException ex)
+            {
+                ViewBag.Error = "Error:" + ex.Message;
+                return PartialView("_StripePartial", _context.StripeAPI.First());
+            }
+        }
+        public ActionResult EditTwitter(DbTables.Twitter model)
+        {
+            try
+            {
+                var Twitter = new DbTables.Twitter();
+                var TwitterList = _context.Twitter.ToList();
+                if (TwitterList.Any())
+                {
+                    Twitter = TwitterList.First();
+                    Twitter.Url = model.Url;
+                    Twitter.UserName = model.UserName;
+                }
+                else
+                {
+                    Twitter.Url = model.Url;
+                    Twitter.UserName = model.UserName;
+                    _context.Twitter.Add(Twitter);
+                }
+
+                _context.SaveChanges();
+                ViewBag.Success = "Twitter variabler ble sukessfult oppdatert";
+                return PartialView("_TwitterPartial", _context.Twitter.First());
+            }
+            catch (EntityException ex)
+            {
+                ViewBag.Error = "Error:" + ex.Message;
+                return PartialView("_TwitterPartial", _context.Twitter.First());
+            }
+        }
         public ActionResult EditRecaptcha(DbTables.GoogleCaptchaAPI model)
         {
             try
             {
-                var GoogleRecaptcha = _context.GoogleCaptchaAPI.First();
-                GoogleRecaptcha.Secret = model.Secret;
-                GoogleRecaptcha.SiteKey = model.SiteKey;
+                var GoogleRe = new DbTables.GoogleCaptchaAPI();
+                var GoogleRecaptcha = _context.GoogleCaptchaAPI.ToList();
+                if (GoogleRecaptcha.Any())
+                {
+                    GoogleRe = GoogleRecaptcha.First();
+                    GoogleRe.SiteKey = model.SiteKey;
+                    GoogleRe.Secret = model.Secret;
+                }
+                else
+                {
+                    GoogleRe.SiteKey = model.SiteKey;
+                    GoogleRe.Secret = model.Secret;
+                    _context.GoogleCaptchaAPI.Add(GoogleRe);
+                }
                 _context.SaveChanges();
                 ViewBag.Success = "Google ReCaptcha variabler ble sukessfult oppdatert";
                 return PartialView("_RecaptchaPartial", _context.GoogleCaptchaAPI.First());
             }
             catch (EntityException ex)
             {
-                ViewBag.Error = ex.Message;
+                ViewBag.Error ="Error: "+ ex.Message;
                 return PartialView("_RecaptchaPartial", _context.GoogleCaptchaAPI.First());
 
             }
+        }
+
+        public ActionResult EditAbout(DbTables.Info model)
+        {
+            if (ModelState.IsValid) { 
+            try
+            {
+                var About = new DbTables.Info();
+                var AboutList = _context.About.ToList();
+                //var adress = new DbTables.Adresses();
+                if (AboutList.Any())
+                {
+                    About = AboutList.First();
+                    About.Phone = model.Phone;
+                    About.About = model.About;
+                    About.Email = model.Email;
+                        About.DonateText = model.DonateText;
+                        About.MembershipText = model.MembershipText;
+                        var adress = new AboutAdress
+                        {
+                            StreetAdress = model.Adress.StreetAdress,
+                            City = model.Adress.City,
+                            PostCode = model.Adress.PostCode,
+                            County = model.Adress.County
+                        };
+
+                    About.Adress = adress;
+                }
+                else
+                {
+                    About.Phone = model.Phone;
+                    About.About = model.About;
+                    About.Email = model.Email;
+                        About.DonateText = model.DonateText;
+                        About.MembershipText = model.MembershipText;
+
+                        var adress = new AboutAdress
+                        {
+                            StreetAdress = model.Adress.StreetAdress,
+                            City = model.Adress.City,
+                            PostCode = model.Adress.PostCode,
+                            County = model.Adress.County
+                        };
+                    About.Adress = adress;
+                    
+                        _context.About.Add(About);
+                }
+                _context.SaveChanges();
+                ViewBag.Success = "Sideinformasjonen ble oppdatert";
+                return PartialView("_AboutPartial", _context.About.First());
+            }
+            catch (EntityException ex)
+            {
+                ViewBag.Error = "Error: " + ex.Message;
+                return PartialView("_AboutPartial", _context.About.First());
+
+            }
+            }
+            var ErrorAbout = new DbTables.Info();
+            var ErrorAboutList = _context.About.ToList();
+            if (ErrorAboutList.Any())
+            {
+                ErrorAbout = ErrorAboutList.First();
+            }
+
+            string messages = string.Join(" ", ModelState.Values
+                                       .SelectMany(x => x.Errors)
+                                       .Select(x => x.ErrorMessage));
+
+            ViewBag.Error = "Ugyldige verdier: " + messages;
+
+            return PartialView("_AboutPartial", ErrorAbout);
         }
 
         public ActionResult TermsUpload()
@@ -301,6 +578,19 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return PartialView("_ImageCarouselPartial", carouselError);
 
+        }
+
+        public DbTables.Adresses AdressExist(DbTables.Adresses adress)
+        {
+                var adresses = _context.Set<DbTables.Adresses>();
+            foreach (var Adress in adresses)
+            {
+                if (adress.StreetAdress == Adress.StreetAdress && adress.PostCode == Adress.PostCode & adress.City == Adress.City && adress.County == Adress.County)
+                {
+                    return Adress;
+                }
+            }
+            return null;
         }
     }
 }

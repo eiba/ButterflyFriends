@@ -1,45 +1,46 @@
-﻿@model DbTables.SendGridAPI
+﻿@model DbTables.StripeAPI
 <div class="row">
-    <h5 id="SendgridError" class="text-danger" style="margin-left: 20px">@ViewBag.Error</h5>
-    <h5 id="SendgridSuccess" class="text-success" style="margin-left: 20px">@ViewBag.Success</h5>
+    <h5 id="StripeError" class="text-danger" style="margin-left: 20px">@ViewBag.Error</h5>
+    <h5 id="StripeSuccess" class="text-success" style="margin-left: 20px">@ViewBag.Success</h5>
     <div class="col-md-2">
-        <h4>Sendgrid API</h4>
+        <h4>Stripe API</h4>
     </div>
     <div class="col-md-10">
-        <button class="btn btn-primary" onclick="showSendGrid()" style="float: right;">Rediger <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+        <button class="btn btn-primary" onclick="showStripe()" style="float: right;">Rediger <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
     </div>
 </div>
 <table class="table">
     <thead>
         <tr>
-            <th>Brukernavn</th>
-            <th>Passord</th>
+            <th>Secret</th>
+            <th>Key</th>
         </tr>
     </thead>
     <tbody>
-    <tr>
-        @if (string.IsNullOrWhiteSpace(Model.UserName))
-        {
-            <td>Ingen brukernavn funnet</td>
-        }
-        else { 
-            <td>@Model.UserName</td>
-        }
-        @if (string.IsNullOrWhiteSpace(Model.PassWord))
-        {
-            <td>Ingen passord funnet</td>
+        <tr>
+            @if (string.IsNullOrWhiteSpace(Model.Secret))
+            {
+                <td>Ingen Secret funnet</td>
+            }
+            else
+            {
+                <td>@Model.Secret</td>
+            }
+            @if (string.IsNullOrWhiteSpace(Model.Key))
+            {
+                <td>Ingen Key funnet</td>
 
-        }
-        else
-        {
-            <td>@Model.PassWord</td>
-        }
-    </tr>
+            }
+            else
+            {
+                <td>@Model.Key</td>
+            }
+        </tr>
     </tbody>
 </table>
 
-@*Sendgrid*@
-<script type="x/template" id="SendGridTemplate">
+@*stripe*@
+<script type="x/template" id="StripeTemplate">
     <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
         <div class="modal-wrapper">
             <div class="modal-container" v-on:click.stop>
@@ -67,20 +68,20 @@
     </div>
 </script>
 
-<div id="SendGrid">
+<div id="Stripe">
 
     <modal :show.sync="showModal">
 
-        <h3 slot="header" style="text-align: center;">Sendgrid API</h3>
+        <h3 slot="header" style="text-align: center;">Stripe API</h3>
         <h5 slot="body">
-            @using (Ajax.BeginForm("EditSendGrid", "Various", new AjaxOptions
+            @using (Ajax.BeginForm("EditStripe", "Various", new AjaxOptions
             {
 
-                UpdateTargetId = "upadteSendGrid",
+                UpdateTargetId = "updateStripe",
                 InsertionMode = InsertionMode.Replace,
                 HttpMethod = "POST",
 
-            }, new { @class = "form-horizontal", role = "form", id = "SendGridForm" }))
+            }, new { @class = "form-horizontal", role = "form", id = "StripeForm" }))
             {
                 @Html.AntiForgeryToken()
 
@@ -88,17 +89,17 @@
                     @Html.ValidationSummary(true)
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.UserName, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.Secret, new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            <input name="UserName" value="@Model.UserName" class="form-control" id="model">
-                            @Html.ValidationMessageFor(model => model.UserName)
+                            <input name="Secret" value="@Model.Secret" class="form-control" id="model">
+                            @Html.ValidationMessageFor(model => model.Secret)
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.PassWord, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.Key, new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            <input name="PassWord" value="@Model.PassWord" class="form-control" id="model">
-                            @Html.ValidationMessageFor(model => model.PassWord)
+                            <input name="Key" value="@Model.Key" class="form-control" id="model">
+                            @Html.ValidationMessageFor(model => model.Key)
                         </div>
                     </div>
                 </div>
@@ -108,9 +109,9 @@
     </modal>
 </div>
 <script>
-    //sendgrid
+    //stripe
     Vue.component('modal', {
-        template: '#SendGridTemplate',
+        template: '#StripeTemplate',
         props: {
             show: {
                 type: Boolean,
@@ -124,7 +125,7 @@
                 this.show = false;
             },
             closeButton: function () {
-                $("form#SendGridForm").submit();
+                $("form#StripeForm").submit();
                 this.show = false;
 
             }
@@ -141,8 +142,8 @@
         }
     });
 
-    var sendGridVue = new Vue({
-        el: '#SendGrid',
+    var stripeVue = new Vue({
+        el: '#Stripe',
         data: {
             showModal: false,
         }

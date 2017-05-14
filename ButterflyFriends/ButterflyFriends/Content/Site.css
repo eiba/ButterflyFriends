@@ -1,6 +1,8 @@
 ﻿body {
     padding-top: 50px;
     background-color: #f5f5f5; /*f5f5f5 CECECE*/
+        overflow-x: hidden !important;
+
 }
 
 
@@ -54,6 +56,9 @@ div,a {
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
+    padding-left: 7%;
+    padding-right: 7%;
+    overflow-x: hidden;
 
 }
 
@@ -522,7 +527,6 @@ ul.ui-autocomplete {
     border-radius: 10px;
     background-color: white;
     position: relative;
-
     -webkit-transition: all 200ms ease-in;
     -webkit-transform: scale(1); 
     -ms-transition: all 200ms ease-in;
@@ -538,7 +542,7 @@ ul.ui-autocomplete {
     border-radius: 10px;
     background-color: white;
     cursor: pointer;
-    z-index: 2 !important;
+    z-index: 99999 !important;
     -webkit-transition: all 200ms ease-in;
     -webkit-transform: scale(1.3);
     -ms-transition: all 200ms ease-in;
@@ -616,6 +620,7 @@ ul.ui-autocomplete {
     cursor: pointer;
     transition: 0.3s;
     margin: 0.3%;
+    border: 2px solid black;
 
 }
 .ModalImg:before {
@@ -675,11 +680,11 @@ ul.ui-autocomplete {
     overflow-y: auto;
 }
 
-.modal-content, #caption {    
+.modal-content, .caption {    
     -webkit-animation-name: zoom;
-    -webkit-animation-duration: 0.6s;
+    -webkit-animation-duration: 0.2s;
     animation-name: zoom;
-    animation-duration: 0.6s;
+    animation-duration: 0.2s;
 }
 
 @-webkit-keyframes zoom {
@@ -767,20 +772,24 @@ ul.ui-autocomplete {
     text-align: center;
 }
 .frontPageDiv {
-        padding: 20px;
+    padding: 20px;
     background-color: #ffffff;
     box-shadow: 8px 8px 20px #000000;
-        border: 2px solid black;
-
+    border-width: 2px 0px 2px 0px;
+    border-style: solid;
 }
 .articleRow {
-    margin-bottom: 200px;
+    margin-top: 200px;
 }
 .frontPageBottom {
     padding: 20px;
     background-color: #f5f5f5;
-    box-shadow: 5px 5px 20px 4px #000000;
-        border: 1px solid black;
+    margin-top: 250px;
+    /*       border-width: 2px 0px 2px 0px;
+               border-style: solid;*/
+
+    /*box-shadow: 5px 5px 20px 4px #000000;
+        border: 1px solid black;*/
 }
 .articleContainer {
     margin-top: 900px !important;
@@ -791,11 +800,32 @@ ul.ui-autocomplete {
     margin-top: 50px;
     position: relative;
     bottom: 0px;
-    background-color: #f5f5f5;
+    margin-left: 12px;
+    background-color: #ffffff;
     box-shadow: 5px 5px 20px #000000;
-        border: 1px solid black;
+    border: 1px solid black;
 
 }
 .articlePreamble {
     
+}
+
+.requetDiv {
+    margin-left: 20px;
+    margin-top: 8%;
+        border: 2px solid black !important;
+
+}
+.donateDiv {
+        margin-right: 20px;
+            margin-top: 8%;
+    border: 2px solid black !important;
+
+
+}
+.AboutText {
+    border: 2px solid gray;
+    border-radius: 10px;
+    padding: 15px;
+
 }

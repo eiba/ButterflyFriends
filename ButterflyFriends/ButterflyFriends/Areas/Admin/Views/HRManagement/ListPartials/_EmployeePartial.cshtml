@@ -1,8 +1,15 @@
-﻿@using ButterflyFriends.Areas.Admin.Models.HRmanagementModels
+﻿@using ButterflyFriends.Areas.Admin.Controllers
+@using ButterflyFriends.Areas.Admin.Models.HRmanagementModels
+@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity.EntityFramework
 @using PagedList.Mvc
 @model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.EmployeeModel
     @{
         var count = 0;
+        HRManagementController HR = new HRManagementController();
+        var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+        ApplicationUser user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
+        var currentUserRoleNr = user.RoleNr;
     }
     <div class="row">
 
@@ -83,7 +90,8 @@
                                                 }
                                             </div>
                                             <div class="col-md-3">
-                                                @using (Ajax.BeginForm("showEmployeeEdit", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage }, new AjaxOptions
+                                                @if (currentUserRoleNr < employee.RoleNr || employee.Id == User.Identity.GetUserId()) { 
+                                                using (Ajax.BeginForm("showEmployeeEdit", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage}, new AjaxOptions
                                                 {
                                                     UpdateTargetId = "Modal",
                                                     InsertionMode = InsertionMode.Replace,
@@ -94,37 +102,41 @@
                                                 {
                                                     <button class="btn btn-default"><em class="fa fa-pencil"></em></button>
                                                 }
+                                                }
                                             </div>
                                             <div class="col-md-3">
-                                                @if (employee.IsEnabeled)
+                                                @if (currentUserRoleNr < employee.RoleNr)
                                                 {
-                                                    using (Ajax.BeginForm("employeeDeactivate", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage }, new AjaxOptions
-                                                    {
-                                                        UpdateTargetId = "updateEmployees",
-                                                        InsertionMode = InsertionMode.Replace,
-                                                        HttpMethod = "POST",
-                                                        
+                                                    if (employee.IsEnabeled)
+                                                     {
+                                                         using (Ajax.BeginForm("employeeDeactivate", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage}, new AjaxOptions
+                                                         {
+                                                             UpdateTargetId = "updateEmployees",
+                                                             InsertionMode = InsertionMode.Replace,
+                                                             HttpMethod = "POST",
 
 
-                                                    }, new {@class = "form-horizontal", id=count + "ed" }))
-                                                    {
-                                                        <button class="btn btn-danger" onclick="appendFilter(event,this)"><em class="fa fa-lock"></em></button>
 
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    using (Ajax.BeginForm("employeeActivate", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage }, new AjaxOptions
-                                                    {
-                                                        UpdateTargetId = "updateEmployees",
-                                                        InsertionMode = InsertionMode.Replace,
-                                                        HttpMethod = "POST",
+                                                         }, new {@class = "form-horizontal", id = count + "ed"}))
+                                                         {
+                                                             <button class="btn btn-danger" onclick="appendFilter(event, this)"><em class="fa fa-lock"></em></button>
+
+                                                         }
+                                                     }
+                                                     else
+                                                     {
+                                                         using (Ajax.BeginForm("employeeActivate", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage}, new AjaxOptions
+                                                         {
+                                                             UpdateTargetId = "updateEmployees",
+                                                             InsertionMode = InsertionMode.Replace,
+                                                             HttpMethod = "POST",
 
 
-                                                    }, new {@class = "form-horizontal", id=count +"ea"}))
-                                                    {
-                                                        <button class="btn btn-success" onclick="appendFilter(event,this)"><em class="fa fa-unlock"></em></button>
-                                                    }
+                                                         }, new {@class = "form-horizontal", id = count + "ea"}))
+                                                         {
+                                                             <button class="btn btn-success" onclick="appendFilter(event, this)"><em class="fa fa-unlock"></em></button>
+                                                         }
+                                                     }
                                                 }
                                             </div>
                                         </div>

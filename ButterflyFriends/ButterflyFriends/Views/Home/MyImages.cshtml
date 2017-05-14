@@ -181,9 +181,11 @@
 <h2 style="text-align: center;">Mine bilder</h2>
 <hr />
 <h5 style="text-align: center;" id="error" class="text-danger"></h5>
-@if (Model.Images != null && !Model.Images.Any())
+@if (Model.Images == null || !Model.Images.Any())
 {
-    <p>Ingen bilder å vise ennå</p>
+    <h4 style="text-align: center">Ingen bilder å vise ennå</h4>
+    <p style="text-align: center">Her blir bilder av deg og dine fadderbarn lagt ut etterhvert som de blir lagt til i databasen
+    </p>
     return;
 }
 <div id="images">

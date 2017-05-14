@@ -318,9 +318,19 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 }
                 // Init SmtpClient and send
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                    var SendGridAPI = _context.SendGridAPI.First();
+                var SendGridAPIList = _context.SendGridAPI.ToList();
+                var SendGridAPI = new DbTables.SendGridAPI();
+                if (SendGridAPIList.Any())
+                {
+                    SendGridAPI = SendGridAPIList.First();
+                }
+                else
+                {
+                    return false;
+                }
 
-                    System.Net.NetworkCredential credentials =
+
+                System.Net.NetworkCredential credentials =
                         new System.Net.NetworkCredential(SendGridAPI.UserName,
                             SendGridAPI.PassWord);
                     smtpClient.Credentials = credentials;

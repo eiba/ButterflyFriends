@@ -216,6 +216,20 @@ namespace ButterflyFriends.Models
             userManager.Create(user12, "Password1.");
             userManager.AddToRole(user12.Id, "Fadder");
 
+            var Admin1 = new ApplicationUser
+            {
+                UserName = "admin@butterflyfriends.no",
+                Email = "admin@butterflyfriends.no",
+                Fname = "Are",
+                Lname = "Odin",
+                AdressId = ownerAdress.AdressId,
+                RoleNr = 1,
+                IsEnabeled = true,
+                Phone = "96347584",
+                Employee = new DbTables.Employees { Position = "Sideadministrator", AccountNumber = 23452345 }
+            };
+            userManager.Create(Admin1, "Password1.");
+            userManager.AddToRole(Admin1.Id, "Admin");
             var employee1 = new ApplicationUser
             {
                 UserName = "employee1@butterflyfriends.no",

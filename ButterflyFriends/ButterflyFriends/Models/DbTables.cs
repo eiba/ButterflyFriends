@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
 using System.Web;
 using ButterflyFriends.Areas.Admin.Controllers;
+using ButterflyFriends.Areas.Admin.Models;
 
 namespace ButterflyFriends.Models
 {
@@ -193,7 +195,7 @@ namespace ButterflyFriends.Models
 
             [Required]
             [StringLength(12, ErrorMessage = "Telefonummer må være mellom 8 og 12 karakterer", MinimumLength = 8)]
-            [RegularExpression(@"^[0-9]+$", ErrorMessage = "Telefonummer kan kun vare karakterer mellom 0 og 9")]
+            [RegularExpression(@"^[0-9+]+$", ErrorMessage = "Telefonummer kan kun vare karakterer mellom 0 og 9")]
             [Display(Name = "Tlf")]
             public string Phone { get; set; }
 
@@ -236,6 +238,55 @@ namespace ButterflyFriends.Models
             [Display(Name = "Secret")]
             public string Secret { get; set; }
         }
+        public class StripeAPI
+        {
+            [Key]
+            public int Id { get; set; }
+
+            [Display(Name = "Key")]
+            public string Key { get; set; }
+            [Display(Name = "Secret")]
+            public string Secret { get; set; }
+        }
+        public class Info
+        {
+            [Key]
+            public int Id { get; set; }
+
+            [StringLength(12, ErrorMessage = "Telefonummer må være mellom 8 og 12 karakterer", MinimumLength = 8)]
+            [RegularExpression(@"^[0-9+]+$", ErrorMessage = "Telefonummer kan kun vare karakterer mellom 0 og 9 og +")]
+            [Display(Name = "Telefon")]
+            public string Phone { get; set; }
+            [EmailAddress]
+            public string Email { get; set; }
+            public string About { get; set; }
+            //[StringLength(200, ErrorMessage = "Donasjonstekst kan ikke være lengre enn 200 karakterer")]
+            public string DonateText { get; set; }
+            //[StringLength(200, ErrorMessage = "Medlemstekst kan ikke være lengre enn 200 karakterer")]
+            public string MembershipText { get; set; }
+            public virtual AboutAdress Adress { get; set; }
+
+        }
+
+        public class Facebook
+        {
+            [Key]
+            public virtual int Id { get; set; }
+
+            public string Url { get; set; }
+            public bool Enabeled { get; set; }
+        }
+        public class Twitter
+        {
+            [Key]
+            public virtual int Id { get; set; }
+
+            public string Url { get; set; }
+            [DisplayName("Brukernavn")]
+            public string UserName { get; set; }
+            public bool Enabeled { get; set; }
+        }
+
         public enum FileType
         {
             Picture = 1,Profile,Thumbnail,ArticleImage,PDF,CarouselVideo, CarouselImage

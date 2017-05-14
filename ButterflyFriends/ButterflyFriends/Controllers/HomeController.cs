@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Data.Entity.Core;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using ButterflyFriends.Areas.Admin.Models.HRmanagementModels;
 using ButterflyFriends.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -273,7 +277,16 @@ namespace ButterflyFriends.Controllers
             if (string.IsNullOrEmpty(encodedResponse)) return false;
             ApplicationDbContext _context = new ApplicationDbContext();
             var client = new System.Net.WebClient();
-            var GoogleCaptcha = _context.GoogleCaptchaAPI.First();
+            var GoogleCaptchaList = _context.GoogleCaptchaAPI.ToList();
+            var GoogleCaptcha = new DbTables.GoogleCaptchaAPI();
+            if (GoogleCaptchaList.Any())
+            {
+                GoogleCaptcha = GoogleCaptchaList.First();
+            }
+            else
+            {
+                return false;
+            }
             var secret = GoogleCaptcha.Secret;
 
             if (string.IsNullOrEmpty(secret)) return false;

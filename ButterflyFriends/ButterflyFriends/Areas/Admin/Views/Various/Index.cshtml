@@ -4,180 +4,82 @@
 }
 <h3 style="text-align: center;">Diverse</h3>
 
-<div class="loader" style="top: 50% !important;" hidden></div>
+<div class="loader" style="top: 50% !important; position: fixed;" hidden></div>
 <br/>
-<div class="solidBorder">
-    <h3 style="text-align: center">API nøkler</h3>
-    <div id="upadteSendGrid">
-        @Html.Partial("_SendGridPartial", Model.SendGridAPI)
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#APIkeys"><b>API nøkler og sosiale media</b></a></li>
+    <li><a data-toggle="tab" href="#Files"><b>Filer</b></a></li>
+    <li><a data-toggle="tab" href="#About"><b>Om oss</b></a></li>
+</ul>
+<div class="tab-content">
+    <div id="APIkeys" class="tab-pane fade in active">
+        <div class="solidBorder">
+            <h3 style="text-align: center">API nøkler</h3>
+            <div id="upadteSendGrid">
+                @Html.Partial("_SendGridPartial", Model.SendGridAPI)
+            </div>
+
+            <br />
+            <hr style="border: 1px solid black;" />
+            <br />
+            <div id="updateRecaptcha">
+                @Html.Partial("_RecaptchaPartial", Model.GoogleCaptchaAPI)
+            </div>
+            <br />
+            <hr style="border: 1px solid black;" />
+            <br />
+            <div id="updateStripe">
+                @Html.Partial("_StripePartial", Model.StripeAPI)
+            </div>
+            <br />
+            <hr style="border: 1px solid black;" />
+            <br />
+            <div id="updateFacebook">
+                @Html.Partial("_FacebookPartial", Model.Facebook)
+            </div>
+            <br />
+            <hr style="border: 1px solid black;" />
+            <br />
+            <div id="updateTwitter">
+                @Html.Partial("_TwitterPartial", Model.Twitter)
+            </div>
+            <br />
+        </div>
     </div>
+    <div id="Files" class="tab-pane fade">
+        <div class="solidBorder">
 
-    <br />
-    <hr style="border: 1px solid black;"/>
-    <br/>
-    <div id="updateRecaptcha">
-        @Html.Partial("_RecaptchaPartial", Model.GoogleCaptchaAPI)
-    </div>
-    <br />
-</div>
+            <h3 style="text-align: center">Brukervilkår</h3>
+            <p style="text-align: center">Last upp sidens brukervillkår i pdf format</p>
 
-<br/>
-<div class="solidBorder">
-
-    <h3 style="text-align: center">Brukervilkår</h3>
-    <p style="text-align: center">Last upp sidens brukervillkår i pdf format</p>
-
-    <div id="TermsOfUserUpdate">
-        @Html.Partial("_TermsOfUserPartial", Model.File)
-    </div>
-</div>
-<br/>
-<div class="solidBorder">
-    <h3 style="text-align: center">Bildekarusell</h3>
-    <p style="text-align: center">Last upp bilder og videoer som vises på forsiden</p>
-
-    <div id="CarouselUpdate">
-        @Html.Partial("_ImageCarouselPartial", Model.Carousel)
-    </div>
-</div>
-
-@*Sendgrid*@
-    <script type="x/template" id="SendGridTemplate">
-        <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
-            <div class="modal-wrapper">
-                <div class="modal-container" v-on:click.stop>
-
-                    <div class="modal-header">
-                        <slot name="header">
-                        </slot>
-                    </div>
-
-                    <div class="modal-body">
-                        <slot name="body">
-
-                        </slot>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <slot name="footer">
-                            <button class="btn btn-primary btn-primary" id="knapp" v-on:click="closeButton">Lagre <span class="glyphicon glyphicon-floppy-save"></span></button>
-
-                        </slot>
-                    </div>
-                </div>
+            <div id="TermsOfUserUpdate">
+                @Html.Partial("_TermsOfUserPartial", Model.File)
             </div>
         </div>
-    </script>
+        <br />
+        <div class="solidBorder">
+            <h3 style="text-align: center">Bildekarusell</h3>
+            <p style="text-align: center">Last upp bilder og videoer som vises på forsiden</p>
 
-    <div id="SendGrid">
-
-        <modal :show.sync="showModal">
-
-            <h3 slot="header" style="text-align: center;">Sendgrid API</h3>
-            <h5 slot="body">
-                @using (Ajax.BeginForm("EditSendGrid", "Various", new AjaxOptions
-            {
-
-                UpdateTargetId = "upadteSendGrid",
-                InsertionMode = InsertionMode.Replace,
-                HttpMethod = "POST",
-
-            }, new { @class = "form-horizontal", role = "form", id = "SendGridForm" }))
-            {
-                    @Html.AntiForgeryToken()
-
-                    <div class="form-horizontal">
-                        @Html.ValidationSummary(true)
-
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.SendGridAPI.UserName, new { @class = "control-label col-md-2" })
-                            <div class="col-md-10">
-                                <input name="UserName" value="@Model.SendGridAPI.UserName" class="form-control" id="model" required>
-                                @Html.ValidationMessageFor(model => model.SendGridAPI.UserName)
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.SendGridAPI.PassWord, new { @class = "control-label col-md-2" })
-                            <div class="col-md-10">
-                                <input name="PassWord" value="@Model.SendGridAPI.PassWord" class="form-control" id="model" required>
-                                @Html.ValidationMessageFor(model => model.SendGridAPI.PassWord)
-                            </div>
-                        </div>
-                    </div>
-
-                }
-            </h5>
-        </modal>
-    </div>
-    @*Google recaptcha*@
-    <div id="Recaptcha">
-
-        <modal :show.sync="showModal">
-
-            <h3 slot="header" style="text-align: center;">Google ReCaptcha API</h3>
-            <h5 slot="body">
-                @using (Ajax.BeginForm("EditRecaptcha", "Various", new AjaxOptions
-            {
-
-                UpdateTargetId = "updateRecaptcha",
-                InsertionMode = InsertionMode.Replace,
-                HttpMethod = "POST",
-
-            }, new { @class = "form-horizontal", role = "form", id = "RecaptchaForm" }))
-            {
-                    @Html.AntiForgeryToken()
-
-                    <div class="form-horizontal">
-                        @Html.ValidationSummary(true)
-
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.GoogleCaptchaAPI.SiteKey, new { @class = "control-label col-md-2" })
-                            <div class="col-md-10">
-                                <input name="SiteKey" value="@Model.GoogleCaptchaAPI.SiteKey" class="form-control" id="model" required>
-                                @Html.ValidationMessageFor(model => model.GoogleCaptchaAPI.SiteKey)
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.GoogleCaptchaAPI.Secret, new { @class = "control-label col-md-2" })
-                            <div class="col-md-10">
-                                <input name="Secret" value="@Model.GoogleCaptchaAPI.Secret" class="form-control" id="model" required>
-                                @Html.ValidationMessageFor(model => model.GoogleCaptchaAPI.Secret)
-                            </div>
-                        </div>
-                    </div>
-
-                }
-            </h5>
-        </modal>
-    </div>
-    <script type="x/template" id="RecaptchaTemplate">
-        <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
-            <div class="modal-wrapper">
-                <div class="modal-container" v-on:click.stop>
-
-                    <div class="modal-header">
-                        <slot name="header">
-                        </slot>
-                    </div>
-
-                    <div class="modal-body">
-                        <slot name="body">
-
-                        </slot>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <slot name="footer">
-                            <button class="btn btn-primary btn-primary" id="knapp" v-on:click="closeButton">Lagre <span class="glyphicon glyphicon-floppy-save"></span></button>
-
-                        </slot>
-                    </div>
-                </div>
+            <div id="CarouselUpdate">
+                @Html.Partial("_ImageCarouselPartial", Model.Carousel)
             </div>
         </div>
-    </script>
+    </div>
+    <div id="About" class="tab-pane fade">
+        <div class="solidBorder">
+            <h3 style="text-align: center">Info</h3>
+            <p style="text-align: center">Info som vises på forsiden og på "om oss" siden</p>
+
+            <div id="AboutUpdate">
+                @Html.Partial("_AboutPartial", Model.About)
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
     <script>
         $(document).ready(function () {
@@ -188,84 +90,7 @@
                 $(".loader").hide();
             });
         });
-        //sendgrid
-        Vue.component('modal', {
-            template: '#SendGridTemplate',
-            props: {
-                show: {
-                    type: Boolean,
-                    required: true,
-                    twoWay: true
 
-                }
-            },
-            methods: {
-                close: function () {
-                    this.show = false;
-                },
-                closeButton: function () {
-                    $("form#SendGridForm").submit();
-                    this.show = false;
-
-                }
-            },
-            ready: function () {
-                document.addEventListener("keydown", (e) => {
-                    if (this.show && e.keyCode == 27) {
-                        this.close();
-                    } else if (this.show && e.keyCode == 13) {
-                        e.preventDefault();
-                        this.closeButton();
-                    }
-                });
-            }
-        });
-
-        var sendGridVue = new Vue({
-            el: '#SendGrid',
-            data: {
-                showModal: false,
-            }
-        });
-
-        //google recaptcha
-        Vue.component('modal', {
-            template: '#RecaptchaTemplate',
-            props: {
-                show: {
-                    type: Boolean,
-                    required: true,
-                    twoWay: true
-
-                }
-            },
-            methods: {
-                close: function () {
-                    this.show = false;
-                },
-                closeButton: function () {
-                    $("form#RecaptchaForm").submit();
-                    this.show = false;
-
-                }
-            },
-            ready: function () {
-                document.addEventListener("keydown", (e) => {
-                    if (this.show && e.keyCode == 27) {
-                        this.close();
-                    } else if (this.show && e.keyCode == 13) {
-                        e.preventDefault();
-                        this.closeButton();
-                    }
-                });
-            }
-        });
-        var recaptchaVue = new Vue({
-            el: '#Recaptcha',
-            data: {
-                showModal: false,
-            }
-        });
 
         function showSendGrid() {
             sendGridVue.showModal = true;
@@ -274,7 +99,19 @@
         function showRecaptcha() {
             recaptchaVue.showModal = true;
         }
-
+        function showAbout() {
+            aboutVue.showModal = true;
+        }
+        function showStripe() {
+            stripeVue.showModal = true;
+        }
+        function showFacebook() {
+            facebookVue.showModal = true;
+        }
+        function showTwitter() {
+            twitterVue.showModal = true;
+        }
+        
         document.getElementById('file').addEventListener('change', handleFileSelect, false);
         document.getElementById('carouselFile').addEventListener('change', handleCarouselFileSelect, false);
 
@@ -454,4 +291,43 @@
                 }
             });
         }
+        function enableTwitter(enable) {
+            var formData = new FormData();
+            formData.append('enable', enable);
+            $.ajax({
+                url: '/Admin/Various/EnableTwitter',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                success: function (result) {
+                    $('#updateTwitter').html(result);
+                },
+                error: function (err) {
+                    $("#CarouselError").text(err.statusText);
+                    $("#CarouselSuccess").text("");
+                }
+            });
+        }
+        function enableFacebook(enable) {
+            var formData = new FormData();
+            formData.append('enable', enable);
+            $.ajax({
+                url: '/Admin/Various/EnableFacebook',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                success: function (result) {
+                    $('#updateFacebook').html(result);
+                },
+                error: function (err) {
+                    $("#CarouselError").text(err.statusText);
+                    $("#CarouselSuccess").text("");
+                }
+            });
+        }
+
     </script>
