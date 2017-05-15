@@ -78,9 +78,11 @@ namespace ButterflyFriends.Models
         public DbSet<DbTables.GoogleCaptchaAPI> GoogleCaptchaAPI { get; set; }
         public DbSet<DbTables.StripeAPI> StripeAPI { get; set; }
         public DbSet<DbTables.Carousel> Carousel { get; set; }
+        public DbSet<DbTables.BackgroundImage> BackgroundImage { get; set; }
         public DbSet<DbTables.Info> About { get; set; }
         public DbSet<DbTables.Facebook> Facebook { get; set; }
         public DbSet<DbTables.Twitter> Twitter { get; set; }
+        public DbSet<DbTables.TermsOfUse> TermsOfUse { get; set; }
 
 
 

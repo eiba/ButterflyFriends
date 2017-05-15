@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using ButterflyFriends.Areas.Admin.Models;
 using ButterflyFriends.Areas.Admin.Models.HRmanagementModels;
 using ButterflyFriends.Models;
 using Microsoft.AspNet.Identity;
@@ -47,11 +48,29 @@ namespace ButterflyFriends.Controllers
             {
                 carouselList = null;
             }
-            
+            var About = new DbTables.Info();
+            var AboutList = _context.About.ToList();
+            if (AboutList.Any())
+            {
+                About = AboutList.First();
+            }
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             var model = new FrontPageModel
             {
                 Articles = articles,
-                Carousel = carouselList
+                Carousel = carouselList,
+                About = About
             };
             return View(model);
 
@@ -69,14 +88,64 @@ namespace ButterflyFriends.Controllers
             {
                 return HttpNotFound();
             }
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
 
             return View(article);
         }
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "Om oss";
 
-            return View();
+            var AboutList = _context.About.ToList();
+            var About = new DbTables.Info();
+            if (AboutList.Any())
+            {
+                About = AboutList.First();
+            }
+            var TwitterList = _context.Twitter.ToList();
+            var Twitter = new DbTables.Twitter();
+            if (TwitterList.Any())
+            {
+                Twitter = TwitterList.First();
+            }
+            var FacebookList = _context.Facebook.ToList();
+            var Facebook = new DbTables.Facebook();
+            if (FacebookList.Any())
+            {
+                Facebook = FacebookList.First();
+            }
+            //var style = "background:url(/File/Background?id="+") no-repeat center center fixed";
+
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                    "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
+            var AboutModel = new AboutModel
+            {
+                About = About,
+                Facebook = Facebook,
+                Twitter = Twitter
+            };
+            return View(AboutModel);
         }
 
         public ActionResult Contact()
@@ -97,13 +166,27 @@ namespace ButterflyFriends.Controllers
                 MembershipRequest = new DbTables.MembershipRequest(),
                 SiteKey = GoogleCaptcha.SiteKey
             };
-            var terms = (from s in _context.Files
-                           where
-                           s.FileType == DbTables.FileType.PDF
-                           select s);
+            var terms = _context.TermsOfUse.ToList();
+            var Terms = new DbTables.TermsOfUse();
             if (terms.Any())
             {
-                model.TermsID = terms.First().FileId;
+                Terms = terms.First();
+                if (Terms.Enabeled && Terms.Terms.FileId != 0) { 
+
+                    model.TermsID = Terms.Terms.FileId;
+                }
+            }
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
             }
             return View(model);
         }
@@ -160,7 +243,18 @@ namespace ButterflyFriends.Controllers
             }
             var startId = 0;                                //id of first image i client
             var images = filterImages(currentUser, startId,imageNum);
-
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             return View(new MyImagesModel
             {
                 Images = images,

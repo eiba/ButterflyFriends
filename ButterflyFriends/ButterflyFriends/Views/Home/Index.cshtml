@@ -66,18 +66,24 @@
     {
         <div class="col-md-2"></div>
 
-        <div class="col-md-4 frontPageDiv donateDiv" style="height: 500px;">
+        <div class="col-md-4 frontPageDiv donateDiv">
             <h1 style="text-align: center;">Doner penger!</h1>
             <hr style="border: 1px solid grey"/>
-            <h4>Alle donasjoner hjelper å redde liv!</h4>
+            <h4 style="text-align: center;">Alle donasjoner hjelper å redde liv!</h4>
+            @if (!string.IsNullOrEmpty(Model.About.DonateText))
+            {
+                <p>@Model.About.DonateText</p>
+            }
+           
         </div>
-        <div class="col-md-4 frontPageDiv requetDiv" style="height: 500px;">
+        <div class="col-md-4 frontPageDiv requetDiv">
             <h1 style="text-align: center;">Bli medlem!</h1>
             <hr style="border: 1px solid grey"/>
-            <h4 style="text-align: center;">Bli medlem og få tildelt ett hjelp ett eller flere fadderbarn!</h4><br/>
-            <h4>
-                Som medlem kan du også følge med på dine fadderbarn gjennom bilder vi legger ut.
-            </h4>
+            <h4 style="text-align: center;">Bli medlem og hjelp ett eller flere fadderbarn!</h4><br/>
+            @if (!string.IsNullOrEmpty(Model.About.MembershipText))
+            {
+                <p>@Model.About.MembershipText</p>
+            }
             <div>
                 <hr style="border: 1px solid grey"/>
 
@@ -92,11 +98,15 @@
     }
     else
     {        <div class="col-md-4"></div>
-
-        <div class="col-md-4 frontPageDiv donateDiv" style="height: 500px;">
+    
+        <div class="col-md-4 frontPageDiv donateDiv">
             <h1 style="text-align: center;">Doner penger!</h1>
             <hr style="border: 1px solid grey" />
-            <h4>Alle donasjoner hjelper å redde liv!</h4>
+            <h4 style="text-align: center;">Alle donasjoner hjelper å redde liv!</h4>
+            @if (!string.IsNullOrEmpty(Model.About.DonateText))
+            {
+                <p>@Model.About.DonateText</p>
+            }
         </div>
         <div class="col-md-4"></div>
 

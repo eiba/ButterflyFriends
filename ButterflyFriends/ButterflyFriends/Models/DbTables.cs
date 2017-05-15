@@ -219,6 +219,13 @@ namespace ButterflyFriends.Models
 
 
         }
+        public class BackgroundImage
+        {
+            [Key]
+            public int Id { get; set; }
+            public bool Enabeled { get; set; }
+            public virtual File Image { get; set; }
+        }
         public class SendGridAPI
         {
             [Key]
@@ -272,7 +279,7 @@ namespace ButterflyFriends.Models
         {
             [Key]
             public virtual int Id { get; set; }
-
+            [Url]
             public string Url { get; set; }
             public bool Enabeled { get; set; }
         }
@@ -281,15 +288,26 @@ namespace ButterflyFriends.Models
             [Key]
             public virtual int Id { get; set; }
 
+            [Url]
             public string Url { get; set; }
             [DisplayName("Brukernavn")]
             public string UserName { get; set; }
             public bool Enabeled { get; set; }
         }
 
+        public class TermsOfUse
+        {
+            [Key]
+            public virtual int Id { get; set; }
+
+            public bool Enabeled { get; set; }
+
+            public virtual File Terms { get; set; }
+
+        }
         public enum FileType
         {
-            Picture = 1,Profile,Thumbnail,ArticleImage,PDF,CarouselVideo, CarouselImage
+            Picture = 1,Profile,Thumbnail,ArticleImage,PDF,CarouselVideo, CarouselImage,BackgroundImage
         }
     }
 }

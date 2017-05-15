@@ -120,7 +120,7 @@
                 {
 
                     <div class="checkbox">
-                        <label><input type="checkbox" id="termsCheck" onclick="checkTerms()" value="">Jeg samtykker til <a href="~/File?id=@Model.TermsID" target="_blank">sidens brukervilkår.</a></label>
+                        <label><input type="checkbox" id="termsCheck" onclick="checkTerms()" value="">Jeg samtykker til <a href="~/File/Terms?id=@Model.TermsID" target="_blank">sidens brukervilkår.</a></label>
                     </div>
 
                 }
@@ -143,7 +143,7 @@
 }
 
 <script>
-    var recaptcha = false;
+    var recaptchaCheck = false;
     var terms = false;
     $(document).ready(function () {
         $(".loader").hide();
@@ -155,22 +155,24 @@
     });
 
     function recaptchaCallback() {
-        recaptcha = true;
+        recaptchaCheck = true;
         
-        if ((recaptcha && terms) || (recaptcha && $('#TermsHidden').val() == "false")) {
+        if ((recaptcha && terms) || (recaptcha && typeof $('#TermsHidden').val() != 'undefined')) {
             $('#submitBtn').removeAttr('disabled');
 
         }
     }
 
     function checkTerms() {
+
         if ($('#termsCheck').is(":checked")) {
             terms = true;
-            if ((recaptcha && terms) || (terms && $('#CaptchaHidden').val() == false)) {
-                            $('#submitBtn').removeAttr('disabled');
+            if ((recaptchaCheck && terms) || (terms && typeof $('#CaptchaHidden').val() != 'undefined')) {
+
+                   $('#submitBtn').removeAttr('disabled');
 
             }
-        } else {
+        }else {
             terms = false;
             $('#submitBtn').attr('disabled',true);
         }

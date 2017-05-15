@@ -63,6 +63,18 @@ namespace ButterflyFriends.Controllers
         // GET: /Manage/Index
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Ditt passord har blitt endred."
                 : message == ManageMessageId.SetPasswordSuccess ? "Ditt passord har blitt sett."
@@ -250,6 +262,19 @@ namespace ButterflyFriends.Controllers
         // GET: /Manage/ChangePassword
         public ActionResult ChangePassword()
         {
+
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             return View();
         }
 
@@ -259,6 +284,18 @@ namespace ButterflyFriends.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -283,6 +320,18 @@ namespace ButterflyFriends.Controllers
         // GET: /Manage/SetPassword
         public ActionResult SetPassword()
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             return View();
         }
 
@@ -292,6 +341,18 @@ namespace ButterflyFriends.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SetPassword(SetPasswordViewModel model)
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             if (ModelState.IsValid)
             {
                 var result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);

@@ -1,6 +1,17 @@
-﻿@model DbTables.File
+﻿@model DbTables.TermsOfUse
 <h5 id="TermsError" class="text-danger">@ViewBag.Error</h5>
 <h5 id="TermsSuccess" class="text-success">@ViewBag.Success</h5>
+@if (Model.Id != 0)
+{
+    if (Model.Enabeled)
+    {
+        <button class="btn btn-danger" onclick="enableTerms(true)" style="float: right;  margin-right: 20px; margin-bottom: 5px;">Slå av <i class="fa fa-stop" aria-hidden="true"></i></button>
+    }
+    else
+    {
+        <button class="btn btn-success" onclick="enableTerms(false)" style="float: right; margin-right: 20px; margin-bottom: 5px;">Slå på <i class="fa fa-play" aria-hidden="true"></i></button>
+    }
+}
 <table class="table">
     <thead>
         <tr>
@@ -30,7 +41,7 @@
                     </div>
             </td>
 
-            @if (string.IsNullOrWhiteSpace(Model.FileName))
+            @if (Model.Terms == null)
             {
                 <td>Ingen fil funnet</td>
 
@@ -38,7 +49,7 @@
             else
             {
                 <td>
-                    <a href="~/File?id=@Model.FileId" target="_blank">@Model.FileName</a>
+                    <a href="~/File?id=@Model.Terms.FileId" target="_blank">@Model.Terms.FileName</a>
                 </td>
             }
         </tr>

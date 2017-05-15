@@ -3,7 +3,7 @@
 @using Microsoft.AspNet.Identity
 @using Microsoft.AspNet.Identity.EntityFramework
 <!DOCTYPE html>
-<html>
+<html style="@ViewBag.Style">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,9 +25,8 @@
     <link href="~/Scripts/Vegas/vegas.min.css" rel="stylesheet" />
     <script src="~/Scripts/Vegas/vegas.min.js"></script>
 </head>
-<body>
-
-    <div class="navbar navbar-inverse navbar-fixed-top">
+<body style="@ViewBag.BackGround">
+    <div class="navbar navbar-inverse navbar-fixed-top" style="opacity: 0.9">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -80,20 +79,71 @@
     <div>
 
                 @RenderBody()
+        
+@if (Model.Carousel != null && ViewBag.Style != null)
+{
+    <div class="frontPageBottom">
+        @if (Model.About.Adress != null)
+        {
+            <h4><b>Vår Adresse</b></h4>
+            <h4>@Model.About.Adress.StreetAdress @Model.About.Adress.PostCode @Model.About.Adress.City @Model.About.Adress.County</h4>
+        }
+        @if (Model.About.Phone != null || Model.About.Email != null)
+        {
+            <br />
+            <h4><b>Kontak oss</b></h4>
+            if (Model.About.Phone != null)
+            {
+                <h4>Telefon: @Model.About.Phone</h4>
+            }
+            if (Model.About.Email != null)
+            {
+                <h4> Email: @Model.About.Email</h4>
+            }
+        }
+        <br />
+        <h4><a href="@Url.Action("About", "Home", new {area = ""})">Om oss</a></h4>
+        <hr style="border: 1px solid gray" />
+        <footer>
+            <h4>&copy; @DateTime.Now.Year - Butterfly Friends</h4>
+        </footer>
 
-        <div class="frontPageBottom">
-            <p>Social media and contact and stuff</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer mollis venenatis orci quis porta. Proin a tincidunt leo, at imperdiet urna. Aenean felis urna, varius vel ligula eget, dictum tincidunt neque. Fusce mauris mi, tempus eu turpis imperdiet, faucibus placerat augue. Morbi enim turpis, vehicula sed justo eget, sodales mollis arcu. Praesent quam nisl, aliquet eu erat ultricies, ullamcorper condimentum erat. Fusce condimentum condimentum lacus, et tincidunt ex. Suspendisse faucibus ante nec nulla posuere, a facilisis nunc ullamcorper. Curabitur id sagittis sem, non vehicula augue. Curabitur risus sem, condimentum eu suscipit ac, luctus eu felis. Aliquam et metus eros. Aenean sagittis, eros quis aliquet auctor, orci velit lobortis diam, in feugiat neque lectus id metus. Vivamus efficitur, leo eget convallis molestie, lacus enim pulvinar nisl, sed rutrum ligula nisi placerat velit.</p>
-            <hr />
-            <footer>
-                <p>&copy; @DateTime.Now.Year - Butterfly Friends</p>
-            </footer>
-            
-        </div>
     </div>
+}
+else
+{
+    <div class="frontPageBottom" style="background-color: white">
+        @if (Model.About.Adress != null && (Model.About.Adress.PostCode != null || !string.IsNullOrEmpty(Model.About.Adress.StreetAdress) || !string.IsNullOrEmpty(Model.About.Adress.City) || !string.IsNullOrEmpty(Model.About.Adress.County)))
+        {
+            <h4><b>Vår Adresse</b></h4>
+            <h4>@Model.About.Adress.StreetAdress @Model.About.Adress.PostCode @Model.About.Adress.City @Model.About.Adress.County</h4>
+        }
+        @if (Model.About.Phone != null || Model.About.Email != null)
+        {
+            <br/>
+            <h4><b>Kontak oss</b></h4>
+            if (Model.About.Phone != null)
+            {
+                <h4>Telefon: @Model.About.Phone</h4>
+            }
+            if (Model.About.Email != null)
+            {
+               <h4> Email: @Model.About.Email</h4>
+            }
+        }
+        <br/>
+        <h4><a href="@Url.Action("About", "Home", new {area = ""})">Om oss</a></h4>
+        <hr style="border: 1px solid gray"/>
+        <footer>
+            <h4>&copy; @DateTime.Now.Year - Butterfly Friends</h4>
+        </footer>
+
+    </div>
+}
+    </div >
+
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
-
 
 </body>
 </html>

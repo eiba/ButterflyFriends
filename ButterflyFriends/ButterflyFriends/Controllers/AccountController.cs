@@ -16,6 +16,7 @@ namespace ButterflyFriends.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        ApplicationDbContext _context = new ApplicationDbContext();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -58,6 +59,18 @@ namespace ButterflyFriends.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -69,6 +82,18 @@ namespace ButterflyFriends.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -191,6 +216,18 @@ namespace ButterflyFriends.Controllers
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             return View();
         }
 
@@ -201,6 +238,18 @@ namespace ButterflyFriends.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
@@ -227,6 +276,18 @@ namespace ButterflyFriends.Controllers
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             return View();
         }
 
@@ -235,6 +296,18 @@ namespace ButterflyFriends.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword(string userId ,string code)
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             return code == null ? View("Error") : View();
         }
 
@@ -245,6 +318,18 @@ namespace ButterflyFriends.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -281,6 +366,18 @@ namespace ButterflyFriends.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SetPassword(SetPasswordViewModel model)
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -308,6 +405,18 @@ namespace ButterflyFriends.Controllers
         [AllowAnonymous]
         public ActionResult SetPasswordConfirmation()
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             return View();
         }
 
@@ -316,6 +425,18 @@ namespace ButterflyFriends.Controllers
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             return View();
         }
 
@@ -439,6 +560,18 @@ namespace ButterflyFriends.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            var background = new DbTables.BackgroundImage();
+            var backgroundList = _context.BackgroundImage.ToList();
+            if (backgroundList.Any())
+            {
+                background = backgroundList.First();
+                if (background.Enabeled)
+                {
+                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
+                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }

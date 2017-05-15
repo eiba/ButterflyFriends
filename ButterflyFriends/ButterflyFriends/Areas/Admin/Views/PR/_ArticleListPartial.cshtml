@@ -2,7 +2,8 @@
 @model PagedList.IPagedList<DbTables.Article>
 @if (!Model.Any())
 {
-    <p>Ingen resultater funnet</p>
+    <p style="text-align: center;">Ingen artikler funnet</p>
+    <div style="height: 300px"></div>
 }
 @foreach (var article in Model)
 {

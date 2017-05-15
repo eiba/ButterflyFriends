@@ -9,6 +9,7 @@ namespace ButterflyFriends.Models
     {
         public IList<DbTables.Article> Articles { get; set; }
         public IList<CarouselObject> Carousel { get; set; }
+        public DbTables.Info About { get; set; }
 
     }
 

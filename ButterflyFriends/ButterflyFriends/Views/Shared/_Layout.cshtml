@@ -3,7 +3,7 @@
 @using Microsoft.AspNet.Identity
 @using Microsoft.AspNet.Identity.EntityFramework
 <!DOCTYPE html>
-<html>
+<html style="@ViewBag.Style">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,10 +20,11 @@
     
     @*recapthca*@
     <script src='https://www.google.com/recaptcha/api.js'></script>
+    
 </head>
-<body>
+<body style="@ViewBag.BackGround">
 
-<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="navbar navbar-inverse navbar-fixed-top" style="opacity: 0.9">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -31,8 +32,8 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-                @Html.ActionLink("Butterfly Friends", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
+            @Html.ActionLink("Butterfly Friends", "Index", "Home", new {area = ""}, new {@class = "navbar-brand"})
+        </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
 
@@ -51,21 +52,21 @@
                                 </a>
                             </li>
                         }
-                    
+
                         var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
                         ApplicationUser currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;
                         if (currentUser != null)
                         {
-                            if (currentUser.RoleNr <3)
+                            if (currentUser.RoleNr < 3)
                             {
                                 <li>
                                     <a href="@Url.Action("Index", "Home", new {area = "Admin"})">
                                         Admin
                                     </a>
                                 </li>
-                                }
                             }
-                        
+                        }
+
                     }
                 }
             </ul>
@@ -74,20 +75,22 @@
     </div>
 </div>
 <div class="container body-content">
-        <div class="mainDiv">
-            @RenderBody()
-</div>
-
-    <div class="bottom">
-        <p>Social media and contact and stuff</p>
-        <hr/>
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Butterfly Friends</p>
-        </footer>
+    <div class="mainDiv">
+        @RenderBody()
     </div>
+
+    @*
+    <div class="bottom">
+       <p>Social media and contact and stuff</p>
+    <hr style="border: 1px solid grey" />
+
+    <footer>
+        <p>&copy; @DateTime.Now.Year - Butterfly Friends</p>
+    </footer>
+    </div>*@
 </div>
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+@Scripts.Render("~/bundles/bootstrap")
+@RenderSection("scripts", required: false)
 
 
 </body>

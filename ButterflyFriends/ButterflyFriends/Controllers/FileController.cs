@@ -55,7 +55,7 @@ namespace ButterflyFriends.Controllers
             return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
         }
 
-        public ActionResult Carousel(int id)    //you can reach this controller as anonumous, but you can only get article images
+        public ActionResult Carousel(int id)    //you can reach this controller as anonumous, but you can only get carousel images
         {
             var fileToRetrieve = _context.Files.Find(id);
             if (fileToRetrieve != null)
@@ -63,6 +63,26 @@ namespace ButterflyFriends.Controllers
                 if (fileToRetrieve.FileType == DbTables.FileType.CarouselImage || fileToRetrieve.FileType == DbTables.FileType.CarouselVideo) { 
                 return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
                 }
+            }
+            return null;
+        }
+
+        public ActionResult Background(int id)    //you can reach this controller as anonumous, but you can only get background images
+        {
+            var fileToRetrieve = _context.Files.Find(id);
+            if (fileToRetrieve?.FileType == DbTables.FileType.BackgroundImage)
+            {
+                return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
+            }
+            return null;
+        }
+
+        public ActionResult Terms(int id)    //you can reach this controller as anonumous, but you can only get the website terms
+        {
+            var fileToRetrieve = _context.Files.Find(id);
+            if (fileToRetrieve?.FileType == DbTables.FileType.PDF)
+            {
+                return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
             }
             return null;
         }

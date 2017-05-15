@@ -6,11 +6,11 @@
     {
         if (Model.Enabeled)
         {
-            <button class="btn btn-danger" onclick="enableFacebook(true)" style="float: right;  margin-right: 20px; margin-bottom: 5px;">Slå av <i class="fa fa-stop" aria-hidden="true"></i></button>
+            <button class="btn btn-danger" onclick="enableFacebook(false)" style="float: right;  margin-right: 20px; margin-bottom: 5px;">Slå av <i class="fa fa-stop" aria-hidden="true"></i></button>
         }
         else
         {
-            <button class="btn btn-success" onclick="enableFacebook(false)" style="float: right; margin-right: 20px; margin-bottom: 5px;">Slå på <i class="fa fa-play" aria-hidden="true"></i></button>
+            <button class="btn btn-success" onclick="enableFacebook(true)" style="float: right; margin-right: 20px; margin-bottom: 5px;">Slå på <i class="fa fa-play" aria-hidden="true"></i></button>
         }
     }
     <div class="col-md-2">
@@ -94,7 +94,6 @@
                         @Html.LabelFor(model => model.Url, new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
                             <input name="Url" value="@Model.Url" class="form-control" id="model">
-                            @Html.ValidationMessageFor(model => model.Url)
                         </div>
                     </div>
 

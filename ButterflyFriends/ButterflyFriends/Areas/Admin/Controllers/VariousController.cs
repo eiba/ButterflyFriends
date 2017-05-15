@@ -19,10 +19,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         // GET: Admin/Various
         public ActionResult Index()
         {
-            var terms = (from s in _context.Files
-                where
-                s.FileType == DbTables.FileType.PDF
-                select s);
+
             var carouselObj = new DbTables.Carousel();
             var GoogleCap = new DbTables.GoogleCaptchaAPI();
             var GoogleCapList = _context.GoogleCaptchaAPI.ToList();
@@ -60,27 +57,35 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 About = AboutList.First();
             }
-
             var carousel = _context.Carousel.ToList();
             if (carousel.Any())
             {
                 carouselObj = carousel.First();
             }
-            var pdf = new DbTables.File();
-            if (terms.Any())
+            var Terms = new DbTables.TermsOfUse();
+            var TermsList = _context.TermsOfUse.ToList();
+            if (TermsList.Any())
             {
-                pdf = terms.First();
+                Terms = TermsList.First();
             }
+            var Background = new DbTables.BackgroundImage();
+            var BackgroundList = _context.BackgroundImage.ToList();
+            if (BackgroundList.Any())
+            {
+                Background = BackgroundList.First();
+            }
+
             var model = new VariousModel
             {
                 GoogleCaptchaAPI = GoogleCap,
                 SendGridAPI = SendG,
-                File = pdf,
+                Terms = Terms,
                 Carousel = carouselObj,
                 About = About,
                 StripeAPI = Stripe,
                 Twitter = Twitter,
-                Facebook = Facebook
+                Facebook = Facebook,
+                Background = Background
             };
             return View(model);
         }
@@ -110,6 +115,62 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
                 ViewBag.Error = "Error: " + ex.Message;
                 return PartialView("_ImageCarouselPartial", _context.Carousel.ToList().First());
+            }
+
+        }
+        public ActionResult EnableBackground()
+        {
+            var enable = Request.Form["enable"];
+            try
+            {
+                var background = _context.BackgroundImage.ToList().First();
+
+                background.Enabeled = !background.Enabeled;
+                _context.SaveChanges();
+                if (enable == "true")
+                {
+                    ViewBag.Success = "Funksjonen ble slått på";
+                }
+                else
+                {
+                    ViewBag.Success = "Funksjonen ble slått av";
+
+                }
+                return PartialView("_BackgroundImagePartial", _context.BackgroundImage.ToList().First());
+            }
+            catch (Exception ex)
+            {
+
+                ViewBag.Error = "Error: " + ex.Message;
+                return PartialView("_BackgroundImagePartial", _context.BackgroundImage.ToList().First());
+            }
+
+        }
+        public ActionResult EnableTerms()
+        {
+            var enable = Request.Form["enable"];
+            try
+            {
+                var Terms = _context.TermsOfUse.ToList().First();
+
+                Terms.Enabeled = !Terms.Enabeled;
+                _context.SaveChanges();
+                if (enable == "true")
+                {
+                    ViewBag.Success = "Funksjonen ble slått på";
+                }
+                else
+                {
+                    ViewBag.Success = "Funksjonen ble slått av";
+
+                }
+                return PartialView("_TermsOfUserPartial", _context.TermsOfUse.ToList().First());
+            }
+            catch (Exception ex)
+            {
+
+                ViewBag.Error = "Error: " + ex.Message;
+                return PartialView("_TermsOfUserPartial", _context.TermsOfUse.ToList().First());
             }
 
         }
@@ -202,6 +263,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         public ActionResult EditFacebook(DbTables.Facebook model)
         {
+            if (ModelState.IsValid) { 
             try
             {
                 var Facebook = new DbTables.Facebook();
@@ -214,6 +276,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 else
                 {
                     Facebook.Url = model.Url;
+                    Facebook.Enabeled = true;
                     _context.Facebook.Add(Facebook);
                 }
 
@@ -226,6 +289,21 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 ViewBag.Error = "Error:" + ex.Message;
                 return PartialView("_FacebookPartial", _context.Facebook.First());
             }
+            }
+            var FacebookError = new DbTables.Facebook();
+            var FacebookListError = _context.Facebook.ToList();
+            if (FacebookListError.Any())
+            {
+                FacebookError = FacebookListError.First();
+            }
+            string messages = string.Join("\r\n\r\n", ModelState.Values
+                                      .SelectMany(x => x.Errors)
+                                      .Select(x => x.ErrorMessage));
+
+            ViewBag.Error = "Ugyldige verdier: " + messages;
+
+            return PartialView("_FacebookPartial", FacebookError);
+
         }
         public ActionResult EditStripe(DbTables.StripeAPI model)
         {
@@ -258,6 +336,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         }
         public ActionResult EditTwitter(DbTables.Twitter model)
         {
+            if (ModelState.IsValid) { 
             try
             {
                 var Twitter = new DbTables.Twitter();
@@ -272,6 +351,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     Twitter.Url = model.Url;
                     Twitter.UserName = model.UserName;
+                    Twitter.Enabeled = true;
                     _context.Twitter.Add(Twitter);
                 }
 
@@ -284,6 +364,20 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 ViewBag.Error = "Error:" + ex.Message;
                 return PartialView("_TwitterPartial", _context.Twitter.First());
             }
+            }
+            var TwitterError = new DbTables.Twitter();
+            var TwitterListError = _context.Twitter.ToList();
+            if (TwitterListError.Any())
+            {
+                TwitterError = TwitterListError.First();
+            }
+            string messages = string.Join("r\n\r\n", ModelState.Values
+                                      .SelectMany(x => x.Errors)
+                                      .Select(x => x.ErrorMessage));
+
+            ViewBag.Error = "Ugyldige verdier: " + messages;
+
+            return PartialView("_TwitterPartial", TwitterError);
         }
         public ActionResult EditRecaptcha(DbTables.GoogleCaptchaAPI model)
         {
@@ -378,9 +472,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 ErrorAbout = ErrorAboutList.First();
             }
 
-            string messages = string.Join(" ", ModelState.Values
-                                       .SelectMany(x => x.Errors)
-                                       .Select(x => x.ErrorMessage));
+            string messages = string.Join("r\n\r\n", ModelState.Values
+                                .SelectMany(x => x.Errors)
+                                .Select(x => x.ErrorMessage));
 
             ViewBag.Error = "Ugyldige verdier: " + messages;
 
@@ -393,19 +487,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 try
                 {
-                    var pdffiles = (from s in _context.Files
-                        where
-                        s.FileType == DbTables.FileType.PDF
-                        select s);
-
-                    var pdf = new DbTables.File();
-                    if (pdffiles.Any())
+                    var Terms = new DbTables.TermsOfUse();
+                    var TermsList = _context.TermsOfUse.ToList();
+                    if (TermsList.Any())
                     {
-                        pdf = pdffiles.First();
-                    }
-                    else
-                    {
-                        pdf = null;
+                        Terms = TermsList.First();
                     }
                     //  Get all files from Request object  
                     HttpFileCollectionBase files = Request.Files;
@@ -413,9 +499,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     {
 
                         HttpPostedFileBase file = files[i];
-                        if (pdf == null)
+                        if (Terms.Id == 0)
                         {
-                            pdf = new DbTables.File
+                            var TermsFile = new DbTables.File
                             {
                                 FileName = Path.GetFileName(file.FileName),
                                 FileType = DbTables.FileType.PDF,
@@ -426,57 +512,55 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             using (var reader = new BinaryReader(file.InputStream))
                             {
 
-                                pdf.Content = reader.ReadBytes(file.ContentLength);
+                                TermsFile.Content = reader.ReadBytes(file.ContentLength);
                             }
 
-                            _context.Files.Add(pdf);
+                            _context.Files.Add(TermsFile);
+                            Terms.Terms = TermsFile;
+                            Terms.Enabeled = true;
+                            _context.TermsOfUse.Add(Terms);
                             _context.SaveChanges();
 
                         }
                         else
                         {
-                            pdf.FileName = Path.GetFileName(file.FileName);
-                            pdf.FileType = DbTables.FileType.PDF;
-                            pdf.ContentType = file.ContentType;
+                            var TermsFile = Terms.Terms;
+                            TermsFile.FileName = Path.GetFileName(file.FileName);
+                            TermsFile.FileType = DbTables.FileType.PDF;
+                            TermsFile.ContentType = file.ContentType;
 
                             using (var reader = new BinaryReader(file.InputStream))
                             {
 
-                                pdf.Content = reader.ReadBytes(file.ContentLength);
+                                TermsFile.Content = reader.ReadBytes(file.ContentLength);
                             }
                             _context.SaveChanges();
                         }
 
                     }
                     ViewBag.Success = "Filen ble sukksessfult lastet opp";
-                    return PartialView("_TermsOfUserPartial",pdf);
+                    return PartialView("_TermsOfUserPartial",Terms);
                 }
                 catch (Exception ex)
                 {
                     ViewBag.Error = "Error: "+ex.Message;
-                    var pdf = (from s in _context.Files
-                                    where
-                                    s.FileType == DbTables.FileType.PDF
-                                    select s);
-                    var file = new DbTables.File();
-                    if (pdf.Any())
+                    var Terms = new DbTables.TermsOfUse();
+                    var TermsList = _context.TermsOfUse.ToList();
+                    if (TermsList.Any())
                     {
-                        file = pdf.First();
+                        Terms = TermsList.First();
                     }
-                    return PartialView("_TermsOfUserPartial", file);
+                    return PartialView("_TermsOfUserPartial", Terms);
                 }
             }
             ViewBag.Error = "Ingen fil valgt";
-            var pdfFile = (from s in _context.Files
-                       where
-                       s.FileType == DbTables.FileType.PDF
-                       select s);
-            var File = new DbTables.File();
-            if (pdfFile.Any())
+            var TermsError = new DbTables.TermsOfUse();
+            var TermsListError = _context.TermsOfUse.ToList();
+            if (TermsListError.Any())
             {
-                File = pdfFile.First();
+                TermsError = TermsListError.First();
             }
-            return PartialView("_TermsOfUserPartial", File);
+            return PartialView("_TermsOfUserPartial", TermsError);
         }
 
         public ActionResult CarouselUpload()
@@ -577,6 +661,90 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
 
             return PartialView("_ImageCarouselPartial", carouselError);
+
+        }
+
+        public ActionResult BackgroundUpload()
+        {
+            if (Request.Files.Count > 0)
+            {
+                try
+                {
+                    var backgroundObj = new DbTables.BackgroundImage();
+                    var background = _context.BackgroundImage.ToList();
+                    if (background.Any())
+                    {
+                        backgroundObj = background.First();
+                        
+                    }
+                    else
+                    {
+                        backgroundObj = new DbTables.BackgroundImage()
+                        {
+                            Enabeled = true,
+                            Image = new DbTables.File()
+                        };
+                        _context.BackgroundImage.Add(backgroundObj);
+
+                    }
+
+
+                    //  Get all files from Request object  
+                    HttpFileCollectionBase files = Request.Files;
+                    for (int i = 0; i < files.Count; i++)
+                    {
+
+                        HttpPostedFileBase file = files[i];
+
+                        var fileUpload = new DbTables.File
+                        {
+                            FileName = Path.GetFileName(file.FileName),
+                            ContentType = file.ContentType,
+                            Temporary = false,
+                            FileType = DbTables.FileType.BackgroundImage
+                        };
+
+                        
+                        using (var reader = new BinaryReader(file.InputStream))
+                        {
+
+                            fileUpload.Content = reader.ReadBytes(file.ContentLength);
+                        }
+
+                        _context.Files.Add(fileUpload);
+                        backgroundObj.Image = fileUpload;
+
+
+
+                    }
+                    _context.SaveChanges();
+
+                    ViewBag.Success = "Filen(e) ble sukksessfult lastet opp";
+                    return PartialView("_BackgroundImagePartial", backgroundObj);
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Error = "Error: " + ex.Message;
+                    var backgrounderr = new DbTables.BackgroundImage();
+                    var backgroundl = _context.BackgroundImage.ToList();
+                    if (backgroundl.Any())
+                    {
+                        backgrounderr = backgroundl.First();
+                    }
+
+                    return PartialView("_BackgroundImagePartial", backgrounderr);
+
+                }
+            }
+            ViewBag.Error = "Ingen fil valgt";
+            var backgroundError = new DbTables.BackgroundImage();
+            var backgroundL = _context.BackgroundImage.ToList();
+            if (backgroundL.Any())
+            {
+                backgroundError = backgroundL.First();
+            }
+
+            return PartialView("_BackgroundImagePartial", backgroundError);
 
         }
 

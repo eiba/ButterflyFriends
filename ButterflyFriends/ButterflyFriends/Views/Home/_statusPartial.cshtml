@@ -6,6 +6,9 @@
         if ("@ViewBag.Reset" == "true") {
             $('#form').trigger("reset");
             grecaptcha.reset();
+            $('#submitBtn').attr('disabled', true);
+            recaptchaCheck = false;
+            terms = false;
         }
     }
 </script>
