@@ -553,6 +553,7 @@
     <Content Include="Scripts\Vegas\vegas.min.css.map" />
     <Content Include="Views\Home\_ArticlesPartial.cshtml" />
     <Content Include="Views\Manage\_ProfileImagePartial.cshtml" />
+    <Content Include="Views\Home\_DonatePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

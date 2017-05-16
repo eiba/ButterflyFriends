@@ -314,12 +314,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 if (StripeList.Any())
                 {
                     Stripe = StripeList.First();
-                    Stripe.Key = model.Key;
+                    Stripe.Public = model.Public;
                     Stripe.Secret = model.Secret;
                 }
                 else
                 {
-                    Stripe.Key = model.Key;
+                    Stripe.Public = model.Public;
                     Stripe.Secret = model.Secret;
                     _context.StripeAPI.Add(Stripe);
                 }

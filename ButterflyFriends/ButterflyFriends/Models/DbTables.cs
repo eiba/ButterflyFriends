@@ -251,7 +251,7 @@ namespace ButterflyFriends.Models
             public int Id { get; set; }
 
             [Display(Name = "Key")]
-            public string Key { get; set; }
+            public string Public { get; set; }
             [Display(Name = "Secret")]
             public string Secret { get; set; }
         }

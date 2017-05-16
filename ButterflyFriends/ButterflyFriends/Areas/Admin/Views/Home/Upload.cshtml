@@ -69,7 +69,7 @@ function handleFileSelect(evt) {
             $("#" + id + 's').dblclick(function (e) {
                 //var n = document.getElementById(id + 's').childElementCount -1;
                 n += 1;
-                var parentOffset = $(this).parent().offset();
+                    var parentOffset = $(this).parent().offset();
 
                     var x = (e.pageX - parentOffset.left -15)-75;
                     var y = (e.pageY - parentOffset.top) - 75;
@@ -275,7 +275,7 @@ function handleFileSelect(evt) {
 
                 var fileUpload = $("#files").get(0);
                 var files = fileUpload.files;
-                if (imgNumArray.indexOf(id) === -1) {
+                if (imgNumArray.indexOf(id) === -1) {   //check if already uploaded
                 
                 // Create FormData object
                 var fileData = new FormData();

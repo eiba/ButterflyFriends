@@ -824,8 +824,8 @@ ul.ui-autocomplete {
         min-height: 500px;
         margin-right: 20px;
             margin-top: 8%;
-    border: 2px solid black !important;
-        white-space:pre-line;
+        border: 2px solid black !important;
+       /* white-space:pre-line;*/
 
 
 }
@@ -836,5 +836,33 @@ ul.ui-autocomplete {
     padding-right: 15px;
 
     white-space:pre-line;
+
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+
+.Amount {
+        width: 200px !important;
+                display: initial !important;
+
+}
+.DonateContact {
+
+        display: initial !important;
+        margin-top: 2px;
+
+}
+.DonateContactLabel {
+
+    margin-top: 10px;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+
 
 }

@@ -20,34 +20,34 @@
 
     function wayPoint() {
         var waypoints = $('#waypoint')
-    .waypoint({
-        handler: function (direction) {
-            if (direction == 'down') {
-                if (!inProgress) {
-                    inProgress = true;
-                    var formData = new FormData();
-                    formData.append("startid", articleCount);
-                    $.ajax({
-                        url: '/Home/GetArticles',
-                        type: "POST",
-                        contentType: false, // Not to set any content header
-                        processData: false, // Not to process data
-                        data: formData,
-                        success: function (result) {
-                            $("#articleContainer").append(result);
-                            inProgress = false;
+            .waypoint({
+                handler: function (direction) {
+                    if (direction == 'down') {
+                        if (!inProgress) {
+                            inProgress = true;
+                            var formData = new FormData();
+                            formData.append("startid", articleCount);
+                            $.ajax({
+                                url: '/Home/GetArticles',
+                                type: "POST",
+                                contentType: false, // Not to set any content header
+                                processData: false, // Not to process data
+                                data: formData,
+                                success: function (result) {
+                                    $("#articleContainer").append(result);
+                                    inProgress = false;
 
-                        },
-                        error: function (err) {
-                            console.log(err.statusText);
-                            inProgress = false;
+                                },
+                                error: function (err) {
+                                    console.log(err.statusText);
+                                    inProgress = false;
+                                }
+                            });
                         }
-                    });
-                }
-            }
-        },
-        offset: '90%'
-    });
+                    }
+                },
+                offset: '90%'
+            });
     }
 
     $(document).ajaxStart(function () {
@@ -60,6 +60,9 @@
         articleCount += parseInt(num);
     }
 </script>
+@*<button class="btn btn-lg btn-primary center-block home-button-link" style="width: 15em; margin-top: 1em; margin-bottom: 1em;" onclick="submitPayNow()">Donér</button>*@
+
+
 <div class="loader" style="position: fixed;" hidden></div>
 <div class="row">
     @if (User.Identity.GetUserId() == null)
@@ -67,14 +70,8 @@
         <div class="col-md-2"></div>
 
         <div class="col-md-4 frontPageDiv donateDiv">
-            <h1 style="text-align: center;">Doner penger!</h1>
-            <hr style="border: 1px solid grey"/>
-            <h4 style="text-align: center;">Alle donasjoner hjelper å redde liv!</h4>
-            @if (!string.IsNullOrEmpty(Model.About.DonateText))
-            {
-                <p>@Model.About.DonateText</p>
-            }
-           
+         @Html.Partial("_DonatePartial",Model.About)
+
         </div>
         <div class="col-md-4 frontPageDiv requetDiv">
             <h1 style="text-align: center;">Bli medlem!</h1>
@@ -100,13 +97,7 @@
     {        <div class="col-md-4"></div>
     
         <div class="col-md-4 frontPageDiv donateDiv">
-            <h1 style="text-align: center;">Doner penger!</h1>
-            <hr style="border: 1px solid grey" />
-            <h4 style="text-align: center;">Alle donasjoner hjelper å redde liv!</h4>
-            @if (!string.IsNullOrEmpty(Model.About.DonateText))
-            {
-                <p>@Model.About.DonateText</p>
-            }
+            @Html.Partial("_DonatePartial",Model.About)
         </div>
         <div class="col-md-4"></div>
 

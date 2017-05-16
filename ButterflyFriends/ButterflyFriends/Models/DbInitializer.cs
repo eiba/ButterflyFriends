@@ -664,6 +664,11 @@ namespace ButterflyFriends.Models
                 SiteKey = "6LdechwUAAAAAFGSpfDeR0o_5JEgtRDtpDrObXEA",
                 Secret = "6LdechwUAAAAAMgUKGwZntwpCT8PksWPETIBvyCi"
             });
+            db.StripeAPI.Add(new DbTables.StripeAPI
+            {
+                Public = "pk_test_VCuRH8tQy9irhE3fzBDq5mXA",
+                Secret = "sk_test_ZiM1B72G3fozYRKlO4BdCHJO"
+            });
             var filePathProfile = @"c:\Users\eirik\Documents\Visual Studio stuff\Bachelor\ButterflyFriends\ButterflyFriends\ButterflyFriends\defaultUserBig.png";
             byte[] profile = File.ReadAllBytes(filePathProfile);
             var Profile = new DbTables.File()

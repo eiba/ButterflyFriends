@@ -13,27 +13,27 @@
     <thead>
         <tr>
             <th>Secret</th>
-            <th>Key</th>
+            <th>Public</th>
         </tr>
     </thead>
     <tbody>
         <tr>
             @if (string.IsNullOrWhiteSpace(Model.Secret))
             {
-                <td>Ingen Secret funnet</td>
+                <td>Ingen Secret Key funnet</td>
             }
             else
             {
                 <td>@Model.Secret</td>
             }
-            @if (string.IsNullOrWhiteSpace(Model.Key))
+            @if (string.IsNullOrWhiteSpace(Model.Public))
             {
-                <td>Ingen Key funnet</td>
+                <td>Ingen Public Key funnet</td>
 
             }
             else
             {
-                <td>@Model.Key</td>
+                <td>@Model.Public</td>
             }
         </tr>
     </tbody>
@@ -96,10 +96,10 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Key, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.Public, new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            <input name="Key" value="@Model.Key" class="form-control" id="model">
-                            @Html.ValidationMessageFor(model => model.Key)
+                            <input name="Key" value="@Model.Public" class="form-control" id="model">
+                            @Html.ValidationMessageFor(model => model.Public)
                         </div>
                     </div>
                 </div>

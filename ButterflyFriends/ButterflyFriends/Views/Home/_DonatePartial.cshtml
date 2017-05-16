@@ -1,0 +1,339 @@
+﻿@model ButterflyFriends.Models.DbTables.Info
+
+<h1 style="text-align: center;">Støtt oss</h1>
+<hr style="border: 1px solid grey" />
+<h4 style="text-align: center;">Alle donasjoner hjelper å redde liv!</h4>
+
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#DonateOnce">Donér en gang</a></li>
+    <li><a data-toggle="tab" href="#DonateSubscription">Donér månedlig</a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="DonateOnce" class="tab-pane fade in active">
+
+        <ul class="nav nav-tabs tabOnce" style="white-space: normal; visibility: hidden">
+            <li class="active"><a data-toggle="tab" href="#DonateOnceAmount"></a></li>
+            <li><a data-toggle="tab" href="#DonateOnceContact"></a></li>
+            <li><a data-toggle="tab" href="#DonateOncePayment"></a></li>
+
+        </ul>
+
+        <div class="tab-content" >
+            <div id="DonateOnceAmount" class="tab-pane fade in active">
+                @*Donate onece amount*@
+                <h3 style="text-align: center;">Hvor mye ønsker du å donere?</h3>
+                <hr/>
+                <h5 class="text-danger" id="OnceAmountError"></h5>
+                <label for="fname">Hvor mye vil du bidra med? </label>
+                <input type="number" class="Amount form-control" placeholder="Menge i kr" id="AmountOnce"><label> kr</label>
+                <br/>
+                <a class="btn btn-primary btnNext" id="OnceAmountNext">Neste</a>
+                @*------*@
+
+            </div>
+            <div id="DonateOnceContact" class="tab-pane fade">
+                @*Donate one contact*@
+                <h3 style="text-align: center;">Kontaktinformasjon</h3>
+                <p style="text-align: center;">Det er opp til deg hvor mye informasjon du er villig til å dele</p>
+                <br/>
+                <h5 class="text-danger" id="OnceContactError" style="white-space:pre-wrap"></h5>
+
+                <label><input type="checkbox" name="vehicle" onclick="checkAnonymous()" id="OnceAnonymous"> Jeg ønsker å forbli anononym.</label>
+                <hr/>
+                <br/>
+                <div id="onceContact">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label DonateContactLabel" for="OnceEmail">Kvittering på e-post: </label>
+                            <label class="control-label DonateContactLabel" for="OnceName">Navn: </label>
+                            <br />
+                            <label class="control-label DonateContactLabel" for="OncePhone">Telefon: </label>
+                            <br />
+                            <label class="control-label DonateContactLabel" for="OnceStreet">Gateadresse: </label>
+                            <br />
+                            <label class="control-label DonateContactLabel" for="OncePostCode">Postkode: </label>
+                            <br />
+                            <label class="control-label DonateContactLabel" for="OnceCity">Kommune: </label>
+                            <br />
+                            <label class="control-label DonateContactLabel" for="OnceBirthNumber">Fødselsnummer: </label>
+
+                        </div>
+                        <div class="col-md-8">
+                            <input class="form-control DonateContact" id="OnceEmail" type="email" placeholder="navn@example.com" />
+                            <input class="form-control DonateContact" id="OnceName" type="text" placeholder="Fornavn Etternavn" />
+                            <input class="form-control DonateContact" id="OncePhone" type="text" placeholder="Telefon" maxlength="12"/>
+                            <input class="form-control DonateContact" id="OnceStreet" type="text" placeholder="Gateadresse" />
+                            <input class="form-control DonateContact" id="OncePostCode" type="text" placeholder="Postkode" maxlength="4"/>
+                            <input class="form-control DonateContact" id="OnceCity" type="text" placeholder="Kommune" />
+                            <input class="form-control DonateContact" id="OnceBirthNumber" type="text" placeholder="Fødselsnummer" title="Ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500." maxlength="11"/>
+
+                        </div>
+
+                    </div>
+                </div>
+                <hr/>
+                <div class="btn-group" style="line-height: 0px;">
+                    <a class="btn btn-primary btnPrevious" onclick="PrevTab()">Forrige</a>
+                    <a class="btn btn-primary btnNext" id="OnceContactNext">Neste</a>
+                </div>
+
+                @*------*@
+
+
+            </div>
+            <div id="DonateOncePayment" class="tab-pane fade">
+                <h3 style="text-align: center;">Betalingsinformasjon</h3>
+                <h5 class="text-danger" id="OncePaymentError" style="white-space:pre-wrap"></h5>
+                 <br/>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="OnceCardNmber">Kortnummer (VISA / Mastercard)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
+                                        <input class="form-control" id="OnceCardNmber" type="text" placeholder="0000 0000 0000 0000" maxlength="16" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <label class="control-label" for="OnceExpiration">Utløper (MM/ÅÅ)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                        <input class="form-control" id="OnceExpiration" type="text" placeholder="00/00" maxlength="5" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label class="control-label" for="OnceCvc">CVC</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-check"></i></span>
+                                        <input class="form-control" id="OnceCvc" type="text" placeholder="000" maxlength="3" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <em>Din betalingsinformasjon blir ikke sendt til oss, og behandles utelukkende av <a href="https://stripe.com/" target="_blank">Stripe</a>.</em>
+                        <button class="btn btn-success btn-block" onclick="OnceDonate()">Donér penger</button>
+                    </div>
+                </div>
+                <hr />
+                <a class="btn btn-primary btnPrevious" onclick="PrevTab()">Forrige</a>
+            </div>
+
+        </div>
+
+    </div>
+    <div id="DonateSubscription" class="tab-pane fade">
+        <h3>Menu 1</h3>
+    </div>
+
+</div>
+@*
+
+@if (!string.IsNullOrEmpty(Model.DonateText))
+            {
+    <hr style="border: 1px solid grey" />
+
+                <p>@Model.DonateText</p>
+}*@
+
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+
+<script>
+    Stripe.setPublishableKey('@ViewBag.StripePublic');
+    var stripePublic = "@ViewBag.StripePublic";
+    var anon = false;
+    var amount = 0;
+    var name = "";
+    var streetadress = "";
+    var phone = "";
+    var city = "";
+    var postcode = "";
+    var birthnumber = "";
+    var email = "";
+    var cardnumber = 0;
+    var expiration = "";
+    var cvc = 0;
+
+    $(function () {
+        $("#OnceBirthNumber").tooltip();
+    });
+
+    function checkAnonymous() {
+
+        if ($('#OnceAnonymous').is(":checked")) {
+
+            $('#onceContact').css('display', "none");
+
+        } else {
+            $('#onceContact').css('display', "");
+
+        }
+    }
+
+    $("#OnceAmountNext").click(function () {
+        if (parseInt($("#AmountOnce").val()) > 0) {
+            amount = parseInt($("#AmountOnce").val());
+            $('.tabOnce > .active').next('li').find('a').trigger('click');
+            $("#OnceAmountError").text("");
+
+        } else {
+            $("#OnceAmountError").text("Ugyldig donasjonsmengde");
+        }
+    });
+
+    $("#OnceContactNext").click(function () {
+        if ($('#OnceAnonymous').is(":checked")) {
+            anon = true;
+            $('.tabOnce > .active').next('li').find('a').trigger('click');
+            $("#OnceContactError").text("");
+
+        } else if ($("#OnceEmail").val() !== "" || $("#OnceCity").val() !== "" || $("#OnceName").val() !== "" || $("#OncePhone").val() !== "" || $("#OnceStreet").val() !== "" || $("#OncePostCode").val() !== "" || $("#OnceBirthNumber").val() !== "") {
+            var error = "";
+            var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/;
+            if ($("#OnceEmail").val() !== "" && !regTest.test($("#OnceEmail").val())) {
+                error += "Ugyldig email \n";
+
+            }
+            if ($("#OnceBirthNumber").val() !== "" && (isNaN($("#OnceBirthNumber").val()) || $("#OnceBirthNumber").val().length < 11)) {
+                error += "Ugyldig fødselsnummer \n";
+
+            }
+            if ($("#OncePostCode").val() !== "" && (isNaN($("#OncePostCode").val()) || $("#OncePostCode").val().length < 4)) {
+                error += "Ugyldig postnummber \n";
+
+            }
+            if (error !== "") {
+                $("#OnceContactError").text(error);
+                return;
+            }
+            else {
+                anon = false;
+                email = $("#OnceEmail").val();
+                city = $("#OnceCity").val();
+                name = $("#OnceName").val();
+                phone = $("#OncePhone").val();
+                streetadress = $("#OnceStreet").val();
+                postcode = $("#OncePostCode").val();
+                birthnumber = $("#OnceBirthNumber").val();
+
+                $('.tabOnce > .active').next('li').find('a').trigger('click');
+                $("#OnceContactError").text("");
+            }
+        }
+        else {
+            $("#OnceContactError").text("Du må skrive kontaktinformasjon eller velge å være anonym");
+        }
+    });
+
+    function PrevTab() {
+        $('.tabOnce > .active').prev('li').find('a').trigger('click');
+    }
+
+    function OnceDonate() {
+        var error = "";
+        if ($("#OnceCardNmber").val().length !== 16 || isNaN($("#OnceCardNmber").val())) {
+            error += "Ugyldig kortnummer \n";
+        }
+        if ($("#OnceCvc").val().length !== 3 || isNaN($("#OnceCvc").val()))
+        {
+            error += "Ugyldig CVC \n";
+        }
+        if ($("#OnceExpiration").val().length !== 5) {
+            error += "Ugyldig utløpsdato";
+
+        }
+        if (stripePublic === "") {
+            error += "Stripe er ikke konfigurert for nettsiden";
+        }
+
+        if (error !== "") {
+            $("#OncePaymentError").text(error);
+            return;
+        } else {
+            $("#OncePaymentError").text("");
+
+            cardnumber = $("#OnceCardNmber").val();
+            cvc = $("#OnceCvc").val();
+            expiration = $("#OnceExpiration").val();
+
+            var expParts = expiration.split('/');
+            var paymentInfo = {
+                number: cardnumber,
+                exp_month: parseInt(expParts[0]),
+                exp_year: parseInt('20' + expParts[1]),
+                cvc: cvc
+            };
+
+            Stripe.card.createToken(paymentInfo, function (status, response) {
+                if (response.error) {
+                    $("#OncePaymentError").text(response.error.message);
+                } else {
+                    $("#OncePaymentError").text("");
+                    alert("success");
+                }
+
+            });
+            //pk_test_VCuRH8tQy9irhE3fzBDq5mXA
+            if (name !== "") {
+                paymentInfo['name'] = name;
+
+            }
+            if (streetadress !== "") {
+                paymentInfo['address_line1'] = streetadress;
+
+            }
+            if (city !== "") {
+                paymentInfo['address_city'] = city;
+
+            }
+            if (postcode !== "") {
+                paymentInfo['address_zip'] = postcode;
+
+            }
+
+            /*
+            var formData = new FormData();
+            formData.append("type","once");
+            formData.append("cvc",cvc);
+            formData.append("cardnumber",cardnumber);
+            formData.append("expiration",expiration);
+            formData.append("amount",amount);
+            formData.append("anon", anon);
+
+            if (!anon) {
+                formData.append("email", email);
+                formData.append("phone", phone);
+                formData.append("city", city);
+                formData.append("streetadress", streetadress);
+                formData.append("postcode", postcode);
+                formData.append("birthnumber", birthnumber);
+                formData.append("name", name);
+            }
+
+            $.ajax({
+                url: '/Home/HandlePayment',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: formData
+            ,
+                success: function (result) {
+                   console.log("success");
+
+                },
+                error: function (err) {
+                    console.log("error" + err.statusMessage);
+                }
+            });*/
+        }
+
+    }
+</script>

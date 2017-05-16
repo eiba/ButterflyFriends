@@ -66,6 +66,12 @@ namespace ButterflyFriends.Controllers
                     ViewBag.BackGround = "background-color:transparent;";
                 }
             }
+            var stripeList = _context.StripeAPI.ToList();
+            if (stripeList.Any())
+            {
+                ViewBag.StripePublic = stripeList.First().Public;
+            }
+
             var model = new FrontPageModel
             {
                 Articles = articles,
@@ -357,6 +363,28 @@ namespace ButterflyFriends.Controllers
             var articles = filterArticles(startId, articleNum);
 
             return PartialView("_ArticlesPartial", articles);
+        }
+
+        [HttpPost]
+        public ActionResult HandlePayment()
+        {
+            var cardnumber = Request.Form["cardnumber"];
+            var cvc = Request.Form["cvc"];
+            var expiration = Request.Form["expiration"];
+            var type = Request.Form["type"];
+            var amount = Request.Form["amount"];
+            var anon = Request.Form["anon"];
+
+            var email = Request.Form["email"];
+            var phone = Request.Form["phone"];
+            var city = Request.Form["city"];
+            var streetadress = Request.Form["streetadress"];
+            var postcode = Request.Form["postcode"];
+            var birthnumber = Request.Form["birthnumber"];
+            var name = Request.Form["name"];
+
+
+            return null;
         }
     }
 
