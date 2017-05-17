@@ -92,7 +92,7 @@
                     Email:
                 </dt>
                 <dd>
-                    <a href="@mailto">@Html.DisplayFor(modelItem => Model.User.Email)</a>
+                    <a href="mailto:@mailto">@Html.DisplayFor(modelItem => Model.User.Email)</a>
                 </dd>
 
                 <dt>
@@ -164,7 +164,6 @@
                                 methods: {
                                     close: function() {
                                         this.show = false;
-                                        $(".loader-mask").hide();
                                     }
                                 },
                                 ready: function () {

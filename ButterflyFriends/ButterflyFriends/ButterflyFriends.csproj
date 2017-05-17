@@ -222,6 +222,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\DonationsController.cs" />
     <Compile Include="Areas\Admin\Controllers\FileAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\HRManagementController.cs" />
@@ -256,6 +257,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MyImagesModel.cs" />
     <Compile Include="Models\ProfileViewModel.cs" />
+    <Compile Include="Models\RecieptModel.cs" />
     <Compile Include="Models\RequestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -481,6 +483,11 @@
     <Content Include="Areas\Admin\Views\Various\_FacebookPartial.cshtml" />
     <Content Include="Areas\Admin\Views\Various\_StripePartial.cshtml" />
     <Content Include="Areas\Admin\Views\Various\_BackgroundImagePartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Donations\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Donations\DonationListPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Donations\_DonationDetailsPartial.cshtml" />
+    <None Include="Properties\PublishProfiles\ButterflyFriends2017 - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\ButterflyFriends2017 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -554,6 +561,7 @@
     <Content Include="Views\Home\_ArticlesPartial.cshtml" />
     <Content Include="Views\Manage\_ProfileImagePartial.cshtml" />
     <Content Include="Views\Home\_DonatePartial.cshtml" />
+    <Content Include="Views\Home\_RecieptPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

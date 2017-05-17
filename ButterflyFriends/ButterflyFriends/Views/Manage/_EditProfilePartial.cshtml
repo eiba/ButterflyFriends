@@ -75,6 +75,13 @@
                             @Html.ValidationMessageFor(model => model.Phone)
                         </div>
                     </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BirthNumber, new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="BirthNumber" value="@Model.BirthNumber" class="form-control" maxlength="11">
+                            @Html.ValidationMessageFor(model => model.BirthNumber)
+                        </div>
+                    </div>
                 </div>
 
             }

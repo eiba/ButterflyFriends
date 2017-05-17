@@ -86,7 +86,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 Lname = req.Lname,
                 Phone = req.Phone,
                 RoleNr = 3,
-                IsEnabeled = true
+                IsEnabeled = true,
+                BirthNumber = req.BirthNumber
             };
             var adress = new DbTables.Adresses
             {

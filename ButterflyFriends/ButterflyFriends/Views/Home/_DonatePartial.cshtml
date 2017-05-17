@@ -1,4 +1,5 @@
-﻿@model ButterflyFriends.Models.DbTables.Info
+﻿@using Microsoft.AspNet.Identity
+@model ButterflyFriends.Models.DbTables.Info
 
 <h1 style="text-align: center;">Støtt oss</h1>
 <hr style="border: 1px solid grey" />
@@ -38,34 +39,47 @@
                 <p style="text-align: center;">Det er opp til deg hvor mye informasjon du er villig til å dele</p>
                 <br/>
                 <h5 class="text-danger" id="OnceContactError" style="white-space:pre-wrap"></h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label><input type="checkbox" onclick="checkAnonymous()" id="OnceAnonymous"> Jeg ønsker å forbli anononym.</label>
+                    </div>
+                    <div class="col-md-6">
+                        @if (User.Identity.GetUserId() != null)
+                        {
+                            <label><input type="checkbox" onclick="checkUser()" id="OnceUser">Link donasjonen til min bruker.</label>
+                        }
+                    </div>
+                </div>
+                <br/>
+                <label class="control-label" for="OnceDescription">Donasjonsmelding:</label>
+                <textarea class="form-control" id ="OnceDescription" style="min-width: 100%; max-width: 100%;"></textarea>
 
-                <label><input type="checkbox" name="vehicle" onclick="checkAnonymous()" id="OnceAnonymous"> Jeg ønsker å forbli anononym.</label>
-                <hr/>
                 <br/>
                 <div id="onceContact">
+                    <hr />
                     <div class="row">
                         <div class="col-md-4">
                             <label class="control-label DonateContactLabel" for="OnceEmail">Kvittering på e-post: </label>
                             <label class="control-label DonateContactLabel" for="OnceName">Navn: </label>
-                            <br />
+                            <br/>
                             <label class="control-label DonateContactLabel" for="OncePhone">Telefon: </label>
-                            <br />
+                            <br/>
                             <label class="control-label DonateContactLabel" for="OnceStreet">Gateadresse: </label>
-                            <br />
+                            <br/>
                             <label class="control-label DonateContactLabel" for="OncePostCode">Postkode: </label>
-                            <br />
+                            <br/>
                             <label class="control-label DonateContactLabel" for="OnceCity">Kommune: </label>
-                            <br />
+                            <br/>
                             <label class="control-label DonateContactLabel" for="OnceBirthNumber">Fødselsnummer: </label>
 
                         </div>
                         <div class="col-md-8">
-                            <input class="form-control DonateContact" id="OnceEmail" type="email" placeholder="navn@example.com" />
-                            <input class="form-control DonateContact" id="OnceName" type="text" placeholder="Fornavn Etternavn" />
+                            <input class="form-control DonateContact" id="OnceEmail" type="email" placeholder="navn@example.com"/>
+                            <input class="form-control DonateContact" id="OnceName" type="text" placeholder="Fornavn Etternavn"/>
                             <input class="form-control DonateContact" id="OncePhone" type="text" placeholder="Telefon" maxlength="12"/>
-                            <input class="form-control DonateContact" id="OnceStreet" type="text" placeholder="Gateadresse" />
+                            <input class="form-control DonateContact" id="OnceStreet" type="text" placeholder="Gateadresse"/>
                             <input class="form-control DonateContact" id="OncePostCode" type="text" placeholder="Postkode" maxlength="4"/>
-                            <input class="form-control DonateContact" id="OnceCity" type="text" placeholder="Kommune" />
+                            <input class="form-control DonateContact" id="OnceCity" type="text" placeholder="Kommune"/>
                             <input class="form-control DonateContact" id="OnceBirthNumber" type="text" placeholder="Fødselsnummer" title="Ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500." maxlength="11"/>
 
                         </div>
@@ -94,7 +108,7 @@
                                     <label class="control-label" for="OnceCardNmber">Kortnummer (VISA / Mastercard)</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
-                                        <input class="form-control" id="OnceCardNmber" type="text" placeholder="0000 0000 0000 0000" maxlength="16" />
+                                        <input class="form-control" id="OnceCardNmber" type="text" placeholder="0000 0000 0000 0000" maxlength="19" />
                                     </div>
                                 </div>
                             </div>
@@ -150,6 +164,7 @@
     Stripe.setPublishableKey('@ViewBag.StripePublic');
     var stripePublic = "@ViewBag.StripePublic";
     var anon = false;
+    var user = false;
     var amount = 0;
     var name = "";
     var streetadress = "";
@@ -161,6 +176,8 @@
     var cardnumber = 0;
     var expiration = "";
     var cvc = 0;
+    var token = "";
+    var description = "";
 
     $(function () {
         $("#OnceBirthNumber").tooltip();
@@ -171,6 +188,19 @@
         if ($('#OnceAnonymous').is(":checked")) {
 
             $('#onceContact').css('display', "none");
+            $("#OnceUser").prop("checked", false);
+
+        }else {
+            $('#onceContact').css('display', "");
+
+        }
+    }
+
+    function checkUser() {
+        if ($('#OnceUser').is(":checked")) {
+
+            $('#onceContact').css('display', "none");
+            $("#OnceAnonymous").prop("checked", false);
 
         } else {
             $('#onceContact').css('display', "");
@@ -192,10 +222,19 @@
     $("#OnceContactNext").click(function () {
         if ($('#OnceAnonymous').is(":checked")) {
             anon = true;
+            user = false;
+            description = $("#OnceDescription").val();
             $('.tabOnce > .active').next('li').find('a').trigger('click');
             $("#OnceContactError").text("");
 
-        } else if ($("#OnceEmail").val() !== "" || $("#OnceCity").val() !== "" || $("#OnceName").val() !== "" || $("#OncePhone").val() !== "" || $("#OnceStreet").val() !== "" || $("#OncePostCode").val() !== "" || $("#OnceBirthNumber").val() !== "") {
+        } else if ($('#OnceUser').is(":checked")) {
+            anon = false;
+            user = true;
+            description = $("#OnceDescription").val();
+            $('.tabOnce > .active').next('li').find('a').trigger('click');
+            $("#OnceContactError").text("");
+        }
+        else if ($("#OnceEmail").val() !== "" || $("#OnceCity").val() !== "" || $("#OnceName").val() !== "" || $("#OncePhone").val() !== "" || $("#OnceStreet").val() !== "" || $("#OncePostCode").val() !== "" || $("#OnceBirthNumber").val() !== "") {
             var error = "";
             var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/;
             if ($("#OnceEmail").val() !== "" && !regTest.test($("#OnceEmail").val())) {
@@ -229,7 +268,7 @@
             }
         }
         else {
-            $("#OnceContactError").text("Du må skrive kontaktinformasjon eller velge å være anonym");
+            $("#OnceContactError").text("Du må skrive inn kontaktinformasjon, velge å være anonym eller bruke nettsidebrukeren");
         }
     });
 
@@ -239,14 +278,16 @@
 
     function OnceDonate() {
         var error = "";
-        if ($("#OnceCardNmber").val().length !== 16 || isNaN($("#OnceCardNmber").val())) {
+        if (!(Stripe.card.validateCardNumber($("#OnceCardNmber").val()))) {
+            
             error += "Ugyldig kortnummer \n";
         }
-        if ($("#OnceCvc").val().length !== 3 || isNaN($("#OnceCvc").val()))
+        if (!(Stripe.card.validateCVC($("#OnceCvc").val())))
         {
             error += "Ugyldig CVC \n";
         }
-        if ($("#OnceExpiration").val().length !== 5) {
+        var expParts = $("#OnceExpiration").val().split('/');
+        if (!(Stripe.card.validateExpiry(parseInt(expParts[0]), parseInt('20' + expParts[1])))) {
             error += "Ugyldig utløpsdato";
 
         }
@@ -264,24 +305,12 @@
             cvc = $("#OnceCvc").val();
             expiration = $("#OnceExpiration").val();
 
-            var expParts = expiration.split('/');
             var paymentInfo = {
                 number: cardnumber,
                 exp_month: parseInt(expParts[0]),
                 exp_year: parseInt('20' + expParts[1]),
                 cvc: cvc
             };
-
-            Stripe.card.createToken(paymentInfo, function (status, response) {
-                if (response.error) {
-                    $("#OncePaymentError").text(response.error.message);
-                } else {
-                    $("#OncePaymentError").text("");
-                    alert("success");
-                }
-
-            });
-            //pk_test_VCuRH8tQy9irhE3fzBDq5mXA
             if (name !== "") {
                 paymentInfo['name'] = name;
 
@@ -298,42 +327,67 @@
                 paymentInfo['address_zip'] = postcode;
 
             }
-
-            /*
-            var formData = new FormData();
-            formData.append("type","once");
-            formData.append("cvc",cvc);
-            formData.append("cardnumber",cardnumber);
-            formData.append("expiration",expiration);
-            formData.append("amount",amount);
-            formData.append("anon", anon);
-
-            if (!anon) {
-                formData.append("email", email);
-                formData.append("phone", phone);
-                formData.append("city", city);
-                formData.append("streetadress", streetadress);
-                formData.append("postcode", postcode);
-                formData.append("birthnumber", birthnumber);
-                formData.append("name", name);
-            }
-
-            $.ajax({
-                url: '/Home/HandlePayment',
-                type: "POST",
-                contentType: false, // Not to set any content header
-                processData: false, // Not to process data
-                data: formData
-            ,
-                success: function (result) {
-                   console.log("success");
-
-                },
-                error: function (err) {
-                    console.log("error" + err.statusMessage);
+            $(".loader").show();    //show loader as we're working
+            Stripe.card.createToken(paymentInfo, function (status, response) {
+                if (response.error) {
+                    $("#OncePaymentError").text(response.error.message);
+                    $(".loader").hide();    //failed hide error
+                    return;
+                } else {
+                    $("#OncePaymentError").text("");
+                    token = response.id;
+                    processPayment();
                 }
-            });*/
+
+            });
         }
 
+    }
+
+    function processPayment() {
+        var formData = new FormData();
+        formData.append("token", token);
+        formData.append("type", "once");
+        formData.append("cvc", cvc);
+        formData.append("cardnumber", cardnumber);
+        formData.append("expiration", expiration);
+        formData.append("amount", amount);
+        formData.append("anon", anon);
+        formData.append("description", description);
+        formData.append("user", user);
+
+        if (!anon) {
+            formData.append("email", email);
+            formData.append("phone", phone);
+            formData.append("city", city);
+            formData.append("streetadress", streetadress);
+            formData.append("postcode", postcode);
+            formData.append("birthnumber", birthnumber);
+            formData.append("name", name);
+        }
+
+        $.ajax({
+            url: '/Home/HandlePayment',
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: formData
+        ,
+            success: function (result) {
+                if (result.Success == "false" && result.striperesponse == "true") {
+                    $("#OncePaymentError").text(JSON.parse(result.Error).error.message);
+                    
+                }
+                else if (result.Success == "false" && result.striperesponse == "false") {
+                    $("#OncePaymentError").text(result.Error);
+                }else {
+                    $("#Donations").html(result);
+                }
+
+            },
+            error: function (err) {
+                console.log("error " + err.Error);
+            }
+        });
     }
 </script>

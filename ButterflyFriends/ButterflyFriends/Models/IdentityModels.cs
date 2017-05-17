@@ -31,6 +31,11 @@ namespace ButterflyFriends.Models
         [RegularExpression(@"^[0-9+]+$", ErrorMessage = "Telefonummer kan kun vare karakterer mellom 0 og 9 og +")]
         [Display(Name = "Tlf")]
         public string Phone { get; set; }
+
+        [StringLength(11, ErrorMessage = "Fødselsnummer må være 11 siffer", MinimumLength = 11)]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Fødselsnummer kan kun vare karakterer mellom 0 og 9")]
+        [Display(Name = "Fødselsnr.")]
+        public string BirthNumber { get; set; }
         public DateTime? InactiveSince { get; set; }
         [DefaultValue(true)]
         public bool IsEnabeled { get; set; }
@@ -83,6 +88,7 @@ namespace ButterflyFriends.Models
         public DbSet<DbTables.Facebook> Facebook { get; set; }
         public DbSet<DbTables.Twitter> Twitter { get; set; }
         public DbSet<DbTables.TermsOfUse> TermsOfUse { get; set; }
+        public DbSet<DbTables.Donations> Donations { get; set; }
 
 
 

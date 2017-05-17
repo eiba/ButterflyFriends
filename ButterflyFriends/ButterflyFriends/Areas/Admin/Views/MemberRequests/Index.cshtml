@@ -98,6 +98,15 @@
                             <dd>
                                 @Html.DisplayFor(modelItem => request.Phone)
                             </dd>
+                            @if (request.BirthNumber != null)
+                            {
+                                <dt>
+                                    Fødselsnr.:
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(modelItem => request.BirthNumber)
+                                </dd>
+                            }
                             <br/>
 
                             <hr/>

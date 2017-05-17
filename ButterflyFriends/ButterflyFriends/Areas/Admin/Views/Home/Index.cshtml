@@ -41,6 +41,13 @@
             Medlemskapsforespørsler
         </a>
         <a class="btn btn-lg btn-primary center-block home-button-link"
+           href='@Url.Action("Index", "Donations")'
+           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           v-on:mouseover="donations"
+           v-on:mouseleave="MouseLeave">
+            Donasjoner
+        </a>
+        <a class="btn btn-lg btn-primary center-block home-button-link"
            href='@Url.Action("Index", "Various")'
            style="width:14em; margin-top:1em; margin-bottom:1em;"
            v-on:mouseover="various"
@@ -100,6 +107,9 @@
                 this
                     .description =
                     "Last opp og tagg bilder med brukere og fadderbarn";
+            },
+            donations: function() {
+                this.description = "Se oversikt og informasjon om donasjoner og administrer planer";
             }
         }
     });

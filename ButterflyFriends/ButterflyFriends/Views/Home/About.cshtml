@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Om oss";
     var at = "@";
+    var k = Model;
 }
 @if (Model.Twitter.Enabeled && !string.IsNullOrEmpty(Model.Twitter.Url))
 {
@@ -39,6 +40,11 @@ window.twttr = (function(d, s, id) {
 
 <h1>@ViewBag.Message</h1>
 <hr style="border: 1px solid grey"/>
+@if (( string.IsNullOrEmpty(Model.About.About) && (Model.About.Adress== null || Model.About.Adress.PostCode == null && string.IsNullOrEmpty(Model.About.Adress.StreetAdress) && string.IsNullOrEmpty(Model.About.Adress.City) && string.IsNullOrEmpty(Model.About.Adress.County)) && string.IsNullOrEmpty(Model.About.About) && string.IsNullOrEmpty(Model.About.Email) && string.IsNullOrEmpty(Model.About.Phone) && !Model.Twitter.Enabeled && !Model.Facebook.Enabeled))
+{
+    <h4>Det er ingenting her ennå.</h4>
+    return;;
+}
 
 @if (Model.About != null)
 {

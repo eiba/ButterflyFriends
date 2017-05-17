@@ -69,9 +69,8 @@
     {
         <div class="col-md-2"></div>
 
-        <div class="col-md-4 frontPageDiv donateDiv">
+        <div class="col-md-4 frontPageDiv donateDiv" id="Donations">
          @Html.Partial("_DonatePartial",Model.About)
-
         </div>
         <div class="col-md-4 frontPageDiv requetDiv">
             <h1 style="text-align: center;">Bli medlem!</h1>
@@ -96,7 +95,7 @@
     else
     {        <div class="col-md-4"></div>
     
-        <div class="col-md-4 frontPageDiv donateDiv">
+        <div class="col-md-4 frontPageDiv donateDiv" id="Donations">
             @Html.Partial("_DonatePartial",Model.About)
         </div>
         <div class="col-md-4"></div>

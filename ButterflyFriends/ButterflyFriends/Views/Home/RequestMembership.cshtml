@@ -55,6 +55,13 @@
 
                     </div>
                 </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.MembershipRequest.BirthNumber, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.MembershipRequest.BirthNumber, new { @class = "form-control", id= "BirthNumber", title = "Dette feltet er valgfritt, ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500.", maxlength="11" })
+
+                    </div>
+                </div>
             </div>
             <div class="col-md-2"></div>
 
@@ -177,4 +184,8 @@
             $('#submitBtn').attr('disabled',true);
         }
     }
+
+    $(function () {
+        $("#BirthNumber").tooltip();
+    });
 </script>

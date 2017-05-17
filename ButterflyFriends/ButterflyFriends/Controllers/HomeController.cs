@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.Core;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
+using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
 using ButterflyFriends.Areas.Admin.Models;
@@ -228,7 +232,7 @@ namespace ButterflyFriends.Controllers
                     return PartialView("_statusPartial");
             }
             }
-            string messages = string.Join(" ", ModelState.Values
+            string messages = string.Join("\n", ModelState.Values
                                         .SelectMany(x => x.Errors)
                                         .Select(x => x.ErrorMessage));
 
@@ -368,13 +372,12 @@ namespace ButterflyFriends.Controllers
         [HttpPost]
         public ActionResult HandlePayment()
         {
-            var cardnumber = Request.Form["cardnumber"];
-            var cvc = Request.Form["cvc"];
-            var expiration = Request.Form["expiration"];
+            
             var type = Request.Form["type"];
-            var amount = Request.Form["amount"];
+            var amount = int.Parse(Request.Form["amount"]);
             var anon = Request.Form["anon"];
-
+            var user = Request.Form["user"];
+            var token = Request.Form["token"];
             var email = Request.Form["email"];
             var phone = Request.Form["phone"];
             var city = Request.Form["city"];
@@ -382,9 +385,190 @@ namespace ButterflyFriends.Controllers
             var postcode = Request.Form["postcode"];
             var birthnumber = Request.Form["birthnumber"];
             var name = Request.Form["name"];
+            var description = Request.Form["description"];
+
+            var recieptemail = "";
+            var recieptname = "";
+            var donation = new DbTables.Donations();
+
+            if (anon == "true")
+            {
+                donation = new DbTables.Donations
+                {
+                    Amount = amount,
+                    Description = description,
+                    anonymous = true
+                };
+            }
+            else if (user == "true" && User.Identity.GetUserId() != null)
+            {
+                var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
+                ApplicationUser currentUser = manager.FindById(User.Identity.GetUserId());
+                donation = new DbTables.Donations
+                {
+                    Amount = amount,
+                    Description = description,
+                    anonymous = false,
+                    User = currentUser
+                };
+                recieptname = currentUser.Fname + " " + currentUser.Lname;
+                recieptemail = currentUser.Email;
+            }
+            else
+            {
+                donation = new DbTables.Donations
+                {
+                    Amount = amount,
+                    Email = email,
+                    Phone = phone,
+                    City = city,
+                    StreetAdress = streetadress,
+                    ZipCode = postcode,
+                    BirthNumber = birthnumber,
+                    Name = name,
+                    Description = description,
+                    anonymous = false
+                };
+                recieptemail = email;
+                recieptname = name;
+            }
+            _context.Donations.Add(donation);
+            _context.SaveChanges();
+
+            // Process payment.
+            var client = new WebClient();
+
+            var data = new NameValueCollection();
+            data["amount"] = (amount*100).ToString(CultureInfo.InvariantCulture); // Stripe charges are øre-based in NOK, so 100x the price.
+            data["currency"] = "nok";
+            data["source"] = token;
+            data["description"] = "Donasjon "+donation.Id +": "+description;
+
+            if (!string.IsNullOrEmpty(email)) { 
+                data["receipt_email"] = email;
+            }else if (user == "true")
+            {
+                data["receipt_email"]=donation.User.Email;
+            }
+            client.UseDefaultCredentials = true;
+
+            var stripeList = _context.StripeAPI.ToList();
+            if (!stripeList.Any())
+            {
+                return Json(new { Error = "Stripe er ikke konfigurert for applikasjonen.",Succsess="false", striperesponse ="false"});
+            }
+
+            client.Credentials = new NetworkCredential(_context.StripeAPI.ToList().First().Secret, "");
+
+            try
+            {
+                client.UploadValues("https://api.stripe.com/v1/charges", "POST", data);
+
+            }
+            catch (WebException exception)
+            {
+                string responseString;
+                using (var reader = new StreamReader(exception.Response.GetResponseStream()))
+                {
+                    responseString = reader.ReadToEnd();
+                }
+
+                return Json(new { Error = responseString ,Success="false",striperesponse="true"});
+            }
+
+            // If we got this far, there were no errors, and we set the order to paid, and save.
+            Response.StatusCode = 200;
+            donation.isPaid = true;
+            _context.SaveChanges();
+            if (!string.IsNullOrEmpty(recieptemail))
+            {
+                var subject = "Kvitering på donasjon";
+                var message = "Takk for din støtte! \n Du har donert "+amount+" kroner til Butterfly Friends. \n"+"Ditt referansenummer er "+donation.Id+". \n\n"+"Vennlig hilsen,\nButterfly Friends.";
+                var messageHTML = "<p>Takk for din støtte! <br> Du har donert "+amount+" kroner til Butterfly Friends. <br>"+"Ditt referansenummer er "+donation.Id+". <br><br>"+"Vennlig hilsen,<br>Butterfly Friends.</p>";
+                if(!SendEmail(message, messageHTML, subject, recieptemail, recieptname))
+                {
+                    ViewBag.Error = "Emailkviteringen kunne ikke sendes";
+                }
+            }
+
+            ViewBag.Share = "https://www." + Request.Url.Host + "/Home/Index";
+            ViewBag.ShareText = "Jeg har donert "+amount+" kr. til Butterfly Friends!";
+
+            var TwitterList = _context.Twitter.ToList();
+            var Twitter = new DbTables.Twitter();
+            if (TwitterList.Any())
+            {
+                Twitter = TwitterList.First();
+            }
+            var FacebookList = _context.Facebook.ToList();
+            var Facebook = new DbTables.Facebook();
+            if (FacebookList.Any())
+            {
+                Facebook = FacebookList.First();
+            }
+
+            var model = new RecieptModel
+            {
+                Facebook = Facebook,
+                Twitter = Twitter,
+                Donation = donation
+            };
+            return PartialView("_RecieptPartial", model);
+        }
+
+        public bool SendEmail(string message, string messageHTML, string subject, string recieverEmail, string recieverName)
+        {
+
+            try
+            {
+                MailMessage mailMsg = new MailMessage();
+
+                // To
+                mailMsg.To.Add(new MailAddress(recieverEmail, recieverName));
+
+                // From
+                mailMsg.From = new MailAddress("noreply@butterflyfriends.com", "Butterfly Friends");
+
+                // Subject and multipart/alternative Body
+
+                    mailMsg.Subject = subject;
+                    if (message != "")
+                    {
+                        string text = message;
+                        string html = @messageHTML;
+                        mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(text, null,
+                            MediaTypeNames.Text.Plain));
+                        mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(html, null,
+                            MediaTypeNames.Text.Html));
+                    }
+
+                // Init SmtpClient and send
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                var SendGridAPIList = _context.SendGridAPI.ToList();
+                var SendGridAPI = new DbTables.SendGridAPI();
+                if (SendGridAPIList.Any())
+                {
+                    SendGridAPI = SendGridAPIList.First();
+                }
+                else
+                {
+                    return false;
+                }
 
 
-            return null;
+                System.Net.NetworkCredential credentials =
+                        new System.Net.NetworkCredential(SendGridAPI.UserName,
+                            SendGridAPI.PassWord);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMsg);
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
     }
 

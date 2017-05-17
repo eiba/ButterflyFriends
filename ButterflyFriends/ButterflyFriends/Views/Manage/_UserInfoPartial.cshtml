@@ -22,9 +22,14 @@
     
     <dt>@Html.LabelFor(m => Model.State):</dt>
     <dd>@Html.DisplayFor(m => Model.State)</dd>
+    @if (Model.BirthNumber != null)
+    {
+        <dt>@Html.LabelFor(m => Model.BirthNumber):</dt>
+        <dd>@Html.DisplayFor(m => Model.BirthNumber)</dd>
+    }
     <dt></dt>
     <dd>
         <p class="text-success"><b>@ViewBag.Success</b></p>
-        <p class="text-danger"><b>@ViewBag.Error</b></p>
+        <p class="text-danger" style="white-space: pre-line;"><b>@ViewBag.Error</b></p>
     </dd>
 </dl>

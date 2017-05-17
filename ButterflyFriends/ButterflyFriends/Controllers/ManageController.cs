@@ -110,7 +110,8 @@ namespace ButterflyFriends.Controllers
                 State = user.Adress.County,
                 Phone = user.Phone,
                 Id = user.Id,
-                File = ProfileImage
+                File = ProfileImage,
+                BirthNumber = user.BirthNumber
             };
             var model = new ProfileViewModel
             {
@@ -452,7 +453,8 @@ namespace ButterflyFriends.Controllers
                 PostCode = user.Adress.PostCode,
                 State = user.Adress.County,
                 Phone = user.Phone,
-                Id = user.Id
+                Id = user.Id,
+                BirthNumber = user.BirthNumber
             };
 
             return PartialView("_EditProfilePartial", changeProfileModel);
@@ -482,6 +484,7 @@ namespace ButterflyFriends.Controllers
                 user.Fname = model.Fname;
                 user.Lname = model.Lname;
                 user.Phone = model.Phone;
+                user.BirthNumber = model.BirthNumber;
 
                 var newAdress = new DbTables.Adresses
                 {
@@ -526,7 +529,8 @@ namespace ButterflyFriends.Controllers
                             City = adress.City,
                             State = adress.County,
                             StreetAdress = adress.StreetAdress,
-                            PostCode = adress.PostCode
+                            PostCode = adress.PostCode,
+                            BirthNumber = user.BirthNumber
                         };
                         return PartialView("_UserInfoPartial", ProfileModel);
                     }
@@ -563,7 +567,12 @@ namespace ButterflyFriends.Controllers
                     StreetAdress = adress.StreetAdress,
                     PostCode = adress.PostCode
                 };
-                ViewBag.Error = "Noe gikk galt.";
+                string messages = string.Join("\n", ModelState.Values
+                                        .SelectMany(x => x.Errors)
+                                        .Select(x => x.ErrorMessage));
+
+                ViewBag.Error = "Ugyldige verdier: " + messages;
+
                 return PartialView("_UserInfoPartial", ProfileModel);
             }
 

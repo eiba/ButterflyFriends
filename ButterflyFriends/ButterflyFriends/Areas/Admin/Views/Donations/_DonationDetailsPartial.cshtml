@@ -1,0 +1,251 @@
+﻿@model DbTables.Donations
+
+@{
+    var ModalId = Model.Id + "s";
+    var mailto = "";
+    if (!string.IsNullOrEmpty(Model.Email))
+    {
+        mailto = Model.Email;
+    }
+    else if (Model.User != null)
+    {
+        mailto = Model.User.Email;
+    }
+
+}
+<script type="x/template" id="@ModalId">
+    <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
+        <div class="modal-wrapper">
+            <div class="modal-container" v-on:click.stop>
+
+                <div class="modal-header">
+                    <slot name="header">
+                    </slot>
+                </div>
+
+                <div class="modal-body">
+                    <slot name="body">
+                    </slot>
+                </div>
+
+                <div class="modal-footer">
+                    <slot name="footer">
+                        <button class="modal-default-button btn-primary btn"
+                                v-on:click="close">
+                            OK <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<div id="Box">
+
+    <modal :show.sync="showModal">
+        <h3 slot="header" style="text-align: center">
+            <span>Donasjon #@Model.Id</span>
+        </h3>
+
+        <h5 slot="body">
+            <p class="text-success" id="success">@ViewBag.Success</p>
+            <p class="text-danger" id="error">@ViewBag.Error</p>
+
+            <dl class="dl-horizontal">
+                @if (Model.anonymous) {
+                  
+                    <h4 style="text-align: center;">Anonym Donasjon</h4>
+                    <br />
+
+                }
+                else if (Model.User != null)
+                {
+                    <h4 style="text-align: center;">Donasjon fra bruker</h4>
+                    <br />
+
+                    <dt>
+                        Email:
+                    </dt>
+                    <dd>
+                        <a href="mailto:@mailto">@Html.DisplayFor(modelItem => Model.User.Email)</a>
+                    </dd>
+                    <dt>
+                        Gateadresse:
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(modelItem => Model.User.Adress.StreetAdress)
+                    </dd>
+                    <dt>
+                        Poststed:
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(modelItem => Model.User.Adress.City)
+                    </dd>
+                    <dt>
+                        Postnummer:
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(modelItem => Model.User.Adress.PostCode)
+                    </dd>
+                    <dt>
+                        Tlf:
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(modelItem => Model.User.Phone)
+                    </dd>
+                    if (Model.User.BirthNumber == null)
+                    {
+                        <dt>
+                            Fødselsnummer:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => Model.User.BirthNumber)
+                        </dd>
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <dt>
+                            Email:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => Model.Email)
+                        </dd>
+                    }
+                    if (!string.IsNullOrEmpty(Model.Name))
+                    {
+                        <dt>
+                            Navn:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => Model.Name)
+                        </dd>
+                    }
+                    if (!string.IsNullOrEmpty(Model.Phone))
+                    {
+                        <dt>
+                            Tlf:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => Model.Phone)
+                        </dd>
+                    }
+                    if (!string.IsNullOrEmpty(Model.StreetAdress))
+                    {
+                        <dt>
+                            Gateadresse:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => Model.StreetAdress)
+                        </dd>
+                    }
+                    if (!string.IsNullOrEmpty(Model.ZipCode))
+                    {
+                        <dt>
+                            Postkode:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => Model.ZipCode)
+                        </dd>
+                    }
+                    if (!string.IsNullOrEmpty(Model.City))
+                    {
+                        <dt>
+                            Kommune:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => Model.City)
+                        </dd>
+                    }
+                    if (!string.IsNullOrEmpty(Model.BirthNumber))
+                    {
+                        <dt>
+                            Fødselsnummer:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => Model.BirthNumber)
+                        </dd>
+                    }
+                }
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <dt>
+                        Beskrivelse
+                    </dt>
+                    <dd>
+                        @Model.Description
+                    </dd>
+                }
+                <dt>
+                    Suksessfult betalt:
+                </dt>
+                <dd>
+                    @if (Model.isPaid)
+                    {
+                        <p>Ja</p>
+                    }
+                    else
+                    {
+                        <p>Nei</p>
+                    }
+                </dd>
+                <dt>
+                    Mengde:
+                </dt>
+                <dd>
+                    @Model.Amount kroner
+                </dd>
+                <dt>
+                    Betalingstidspunkt:
+                </dt>
+                <dd>
+                    @Model.DonationTime.ToString("dd/MM/yyyy")
+                </dd>
+            </dl>
+
+        </h5>
+    </modal>
+</div>
+
+<script>
+    Vue.component('modal', {
+        template: '#@ModalId',
+        props: {
+            show: {
+                type: Boolean,
+                required: true,
+                twoWay: true
+
+            }
+        },
+        methods: {
+            close: function () {
+                this.show = false;
+            }
+        },
+        ready: function () {
+            this.show = true;
+            document.addEventListener("keydown", (e) => {
+                if (this.show && e.keyCode == 27) {
+
+                    this.close();
+                }
+                else if (this.show && e.keyCode == 13) {
+                    e.preventDefault();
+                    this.close();
+                }
+
+
+            });
+        }
+    });
+    var v = new Vue({
+        el: '#Box',
+        data: {
+            showModal: false
+        }
+    });
+</script>

@@ -14,6 +14,11 @@ namespace ButterflyFriends.Models
         [Display(Name = "Tlf")]
         public string Phone { get; set; }
 
+        [StringLength(11, ErrorMessage = "Fødselsnummer må være 11 siffer", MinimumLength = 11)]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Fødselsnummer kan kun vare karakterer mellom 0 og 9")]
+        [Display(Name = "Fødselsnr.")]
+        public string BirthNumber { get; set; }
+
         [Required]
         [Display(Name = "Gateadresse")]
         public string StreetAdress { get; set; }

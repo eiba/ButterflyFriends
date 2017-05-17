@@ -177,6 +177,11 @@ namespace ButterflyFriends.Models
             [Display(Name = "Etternavn")]
             public string Lname { get; set; }
 
+            [StringLength(11, ErrorMessage = "Fødselsnummer må være 11 siffer", MinimumLength = 11)]
+            [RegularExpression(@"^[0-9]+$", ErrorMessage = "Fødselsnummer kan kun vare karakterer mellom 0 og 9")]
+            [Display(Name = "Fødselsnr.")]
+            public string BirthNumber { get; set; }
+
             [Required]
             [Display(Name = "Gateadresse")]
             public string StreetAdress { get; set; }
@@ -273,6 +278,57 @@ namespace ButterflyFriends.Models
             public string MembershipText { get; set; }
             public virtual AboutAdress Adress { get; set; }
 
+        }
+
+        public class Donations
+        {
+            public Donations()
+            {
+                DonationTime = DateTime.Now;
+                ReceiptKey = Guid.NewGuid().ToString();
+            }
+            [Key]
+            [Required]
+            public int Id { get; set; }
+
+            [Display(Name = "Gateadresse")]
+            public string StreetAdress { get; set; }
+
+            [Display(Name = "Postnummer")]
+            public string ZipCode { get; set; }
+
+            [Display(Name = "Navn")]
+            public string Name { get; set; }
+
+            [Display(Name = "Postnummer")]
+            [EmailAddress]
+            public string Email { get; set; }
+
+            [Display(Name = "Poststed")]
+            public string City { get; set; }
+
+            [Display(Name = "Telefon")]
+            public string Phone { get; set; }
+
+            [Display(Name = "Donasjonstidspunkt")]
+            public DateTime DonationTime { get; set; }
+
+            [Display(Name = "Fødselsnr.")]
+            public string BirthNumber { get; set; }
+
+            [Display(Name = "Kr")]
+            public int Amount { get; set; }
+
+            [Display(Name = "Beskrivelse")]
+            public string Description { get; set; }
+
+            [Required]
+            public string ReceiptKey { get; set; }
+
+            public bool isPaid { get; set; }
+            public bool anonymous { get; set; }
+
+            public virtual ApplicationUser User { get; set; }
         }
 
         public class Facebook
