@@ -486,6 +486,7 @@
     <Content Include="Areas\Admin\Views\Donations\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Donations\DonationListPartial.cshtml" />
     <Content Include="Areas\Admin\Views\Donations\_DonationDetailsPartial.cshtml" />
+    <None Include="Properties\PublishProfiles\ButterflyFriends1 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\ButterflyFriends2017 - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\ButterflyFriends2017 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />

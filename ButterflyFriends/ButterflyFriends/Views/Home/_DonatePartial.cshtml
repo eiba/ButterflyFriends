@@ -4,7 +4,7 @@
 <h1 style="text-align: center;">Støtt oss</h1>
 <hr style="border: 1px solid grey" />
 <h4 style="text-align: center;">Alle donasjoner hjelper å redde liv!</h4>
-
+<hr style="border: 1px solid grey" />
 <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#DonateOnce">Donér en gang</a></li>
     <li><a data-toggle="tab" href="#DonateSubscription">Donér månedlig</a></li>
@@ -24,24 +24,29 @@
             <div id="DonateOnceAmount" class="tab-pane fade in active">
                 @*Donate onece amount*@
                 <h3 style="text-align: center;">Hvor mye ønsker du å donere?</h3>
+                <h5 class="text-danger" style="text-align: center;" id="OnceAmountError"></h5>
+                <div class="row">
+                    <div class="col-lg-offset-3 col-md-7">
+                        @*<h5 for="fname">Hvor mye vil du bidra med? </h5><br /><br />*@
+                        <input type="number" class="Amount form-control" placeholder="Menge i kr" id="AmountOnce"><label style="font-size: 35px;"> kr</label>
+                    </div>
+                </div>
                 <hr/>
-                <h5 class="text-danger" id="OnceAmountError"></h5>
-                <label for="fname">Hvor mye vil du bidra med? </label>
-                <input type="number" class="Amount form-control" placeholder="Menge i kr" id="AmountOnce"><label> kr</label>
-                <br/>
-                <a class="btn btn-primary btnNext" id="OnceAmountNext">Neste</a>
-                @*------*@
+                <a class="btn btn-primary btnNext" id="OnceAmountNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
 
             </div>
+            @*------*@
+
+
             <div id="DonateOnceContact" class="tab-pane fade">
                 @*Donate one contact*@
                 <h3 style="text-align: center;">Kontaktinformasjon</h3>
-                <p style="text-align: center;">Det er opp til deg hvor mye informasjon du er villig til å dele</p>
+                <p style="text-align: center;">Det er opp til deg hvor mye informasjon du vil gi</p>
                 <br/>
                 <h5 class="text-danger" id="OnceContactError" style="white-space:pre-wrap"></h5>
                 <div class="row">
                     <div class="col-md-6">
-                        <label><input type="checkbox" onclick="checkAnonymous()" id="OnceAnonymous"> Jeg ønsker å forbli anononym.</label>
+                        <label><input type="checkbox" onclick="checkAnonymous()" id="OnceAnonymous"> Jeg ønsker å være anononym.</label>
                     </div>
                     <div class="col-md-6">
                         @if (User.Identity.GetUserId() != null)
@@ -58,8 +63,8 @@
                 <div id="onceContact">
                     <hr />
                     <div class="row">
-                        <div class="col-md-4">
-                            <label class="control-label DonateContactLabel" for="OnceEmail">Kvittering på e-post: </label>
+                        <div class="col-md-3">
+                            <label class="control-label DonateContactLabel" for="OnceEmail">E-post: </label><br/>
                             <label class="control-label DonateContactLabel" for="OnceName">Navn: </label>
                             <br/>
                             <label class="control-label DonateContactLabel" for="OncePhone">Telefon: </label>
@@ -76,20 +81,20 @@
                         <div class="col-md-8">
                             <input class="form-control DonateContact" id="OnceEmail" type="email" placeholder="navn@example.com"/>
                             <input class="form-control DonateContact" id="OnceName" type="text" placeholder="Fornavn Etternavn"/>
-                            <input class="form-control DonateContact" id="OncePhone" type="text" placeholder="Telefon" maxlength="12"/>
-                            <input class="form-control DonateContact" id="OnceStreet" type="text" placeholder="Gateadresse"/>
-                            <input class="form-control DonateContact" id="OncePostCode" type="text" placeholder="Postkode" maxlength="4"/>
-                            <input class="form-control DonateContact" id="OnceCity" type="text" placeholder="Kommune"/>
-                            <input class="form-control DonateContact" id="OnceBirthNumber" type="text" placeholder="Fødselsnummer" title="Ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500." maxlength="11"/>
+                            <input class="form-control DonateContact" id="OncePhone" type="text" placeholder="" maxlength="12"/>
+                            <input class="form-control DonateContact" id="OnceStreet" type="text" placeholder=""/>
+                            <input class="form-control DonateContact" id="OncePostCode" type="text" placeholder="" maxlength="4"/>
+                            <input class="form-control DonateContact" id="OnceCity" type="text" placeholder=""/>
+                            <input class="form-control DonateContact" id="OnceBirthNumber" type="text" placeholder="" title="Ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500." maxlength="11"/>
 
                         </div>
 
                     </div>
                 </div>
                 <hr/>
-                <div class="btn-group" style="line-height: 0px;">
-                    <a class="btn btn-primary btnPrevious" onclick="PrevTab()">Forrige</a>
-                    <a class="btn btn-primary btnNext" id="OnceContactNext">Neste</a>
+                <div class="btn-group" style="line-height: 0px; float: right;">
+                    <a class="btn btn-primary btnPrevious" onclick="PrevTab()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
+                    <a class="btn btn-primary btnNext" id="OnceContactNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
                 </div>
 
                 @*------*@
@@ -138,7 +143,7 @@
                     </div>
                 </div>
                 <hr />
-                <a class="btn btn-primary btnPrevious" onclick="PrevTab()">Forrige</a>
+                <a class="btn btn-primary btnPrevious" onclick="PrevTab()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
             </div>
 
         </div>

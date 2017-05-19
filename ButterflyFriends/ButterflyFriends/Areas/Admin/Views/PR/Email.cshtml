@@ -99,7 +99,8 @@
             allowFreeEntries: true,
             highlight: true,
             typeDelay: 0,
-            minChars: 1,
+            minChars: 2,
+            maxSelection:null,
             data: '/Admin/PR/GetUsers'
         });
         $(res).on('selectionchange', function (e, cb, s) {
