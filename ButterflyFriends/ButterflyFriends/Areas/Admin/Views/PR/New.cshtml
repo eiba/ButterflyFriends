@@ -499,11 +499,11 @@
                 dialog.state('uploading');
                 dialog.progress(0);
 
-                // Build the form data to post to the server
+                //values to be posted to the server
                 formData = new FormData();
                 formData.append('image', file);
 
-                // Make the request
+                // Ajax request
                 xhr = new XMLHttpRequest();
                 xhr.upload.addEventListener('progress', xhrProgress);
                 xhr.addEventListener('readystatechange', xhrComplete);

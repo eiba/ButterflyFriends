@@ -89,6 +89,8 @@ namespace ButterflyFriends.Models
         public DbSet<DbTables.Twitter> Twitter { get; set; }
         public DbSet<DbTables.TermsOfUse> TermsOfUse { get; set; }
         public DbSet<DbTables.Donations> Donations { get; set; }
+        public DbSet<DbTables.Subscriptions> Subscriptions { get; set; }
+        public DbSet<DbTables.Disqus> Disqus { get; set; }
 
 
 

@@ -1,166 +1,189 @@
 ﻿@using PagedList.Mvc
-@model PagedList.IPagedList<DbTables.Donations>
+@model ButterflyFriends.Areas.Admin.Models.DonationModel
 @{
     ViewBag.Title = "Donasjoner";
 }
 <div id="Modal"></div>
 <div class="loader" hidden></div>
 <h2 style="text-align: center;">Donasjonsoversikt</h2>
-@*Searchfilter*@
-<div class="searchFilter">
-    <div class="input-group Search">
-        <input type="text" id="SponsorsearchField" class="form-control max_width" placeholder="Søk etter navn eller email..." />
-        <div class="input-group-btn">
-            <div class="btn-group" role="group">
-                <div class="dropdown dropdown-lg" id="#dropDown">
-                    <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-                    <div class="dropdown-menu dropdown-menu-right" role="menu">
 
-                        <form class="form-horizontal" role="form">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label>Sorter etter</label>
-                                        <select class="form-control max_width" id="SponsorSelected">
-                                            <option id="SponsorDefault" value="0" selected>Etternavn</option>
-                                            <option value="1">Fornavn</option>
-                                            <option value="2">Email</option>
-                                        </select>
-
-                                    </div>
-                                </div>
-                                <div class="col-md-4" style="padding-top: 2%">
-                                    <div id="SponsorOrderFilter">
-                                        <label class="radio-inline"><input type="radio" name="opt" value="ascending" checked>Stigende</label>
-                                        <br />
-                                        <label class="radio-inline"><input type="radio" id="SponsorOrderDefault" name="opt" value="descending">Synkende</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Telefonummer</label>
-                                <input id="SponsorPhone" class="form-control max_width" type="text" />
-                            </div>
-                            <div class="form-group">
-                                <label>Gateadresse</label>
-                                <input id="SponsorStreetadress" class="form-control max_width" type="text" />
-                            </div>
-                            <div class="form-group">
-                                <label>Postkode</label>
-                                <input id="SponsorZip" class="form-control max_width" type="number" />
-                            </div>
-                            <div class="form-group">
-                                <label>Kommune</label>
-                                <input id="SponsorCity" class="form-control max_width" type="text" />
-                            </div>
-                            <div class="form-group">
-                                <label>Fylke</label>
-                                <input id="SponsorCounty" class="form-control max_width" type="text" />
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    Aktiv
-                                    <div id="SponsorActive">
-                                        <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
-                                        <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
-                                        <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="SponsorDefaultRadio" checked>Uvesentlig</label>
-                                    </div>
-                                </label>
-                            </div>
-
-                        </form>
-                        <button id="Reset" class="btn btn-primary" style="float: right">Reset</button>
-                    </div>
-                </div>
-                <button type="button" onclick="filterDonations()" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-            </div>
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#Plans" class="Plans"><b>Donasjonsplaner</b></a></li>
+    <li><a data-toggle="tab" href="#Subscriptions" class="Subscriptions"><b>Abonnenter</b></a></li>
+    <li><a data-toggle="tab" href="#Donations" class="Donations"><b>Donasjoner</b></a></li>
+</ul>
+<div class="tab-content">
+    <div id="Plans" class="tab-pane fade in active">
+        <div id="updatePlans">
+            @Html.Partial("_PlanListPartial", Model.Plans)
         </div>
     </div>
+    <div id="Subscriptions" class="tab-pane fade">
+        <br/>
+        <p>Ingen abonnementer funnet</p>
+    </div>
+    <div id="Donations" class="tab-pane fade">
+        
+        @*Searchfilter*@
+        <div class="searchFilter">
+            <div class="input-group Search">
+                <input type="text" id="SponsorsearchField" class="form-control max_width" placeholder="Søk etter navn eller email..." />
+                <div class="input-group-btn">
+                    <div class="btn-group" role="group">
+                        <div class="dropdown dropdown-lg" id="#dropDown">
+                            <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+                            <div class="dropdown-menu dropdown-menu-right" role="menu">
 
-</div>
-@*------------*@
+                                <form class="form-horizontal" role="form">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label>Sorter etter</label>
+                                                <select class="form-control max_width" id="SponsorSelected">
+                                                    <option id="SponsorDefault" value="0" selected>Etternavn</option>
+                                                    <option value="1">Fornavn</option>
+                                                    <option value="2">Email</option>
+                                                </select>
 
-<div id="donationsUpdate">
-    @Html.Partial("DonationListPartial",Model)
-</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" style="padding-top: 2%">
+                                            <div id="SponsorOrderFilter">
+                                                <label class="radio-inline"><input type="radio" name="opt" value="ascending" checked>Stigende</label>
+                                                <br />
+                                                <label class="radio-inline"><input type="radio" id="SponsorOrderDefault" name="opt" value="descending">Synkende</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Telefonummer</label>
+                                        <input id="SponsorPhone" class="form-control max_width" type="text" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Gateadresse</label>
+                                        <input id="SponsorStreetadress" class="form-control max_width" type="text" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Postkode</label>
+                                        <input id="SponsorZip" class="form-control max_width" type="number" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Kommune</label>
+                                        <input id="SponsorCity" class="form-control max_width" type="text" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Fylke</label>
+                                        <input id="SponsorCounty" class="form-control max_width" type="text" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            Aktiv
+                                            <div id="SponsorActive">
+                                                <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
+                                                <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
+                                                <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="SponsorDefaultRadio" checked>Uvesentlig</label>
+                                            </div>
+                                        </label>
+                                    </div>
 
-<script>
-    
-    $(document).ajaxStart(function () {
-        $(".loader").show();
-    }).ajaxStop(function () {
-        $(".loader").hide();
-    });
+                                </form>
+                                <button id="Reset" class="btn btn-primary" style="float: right">Reset</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="filterDonations()" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+            </div>
 
-    function filterDonations() {
-        var formData = new FormData();
-        formData.append('search', $('#EmployeesearchField').val());
-        formData.append('active', $('#employeeActive input:radio:checked').val());
-        formData.append('order', $('#EmployeeOrderFilter input:radio:checked').val());
-        formData.append('filter', $("#EmployeeSelected option:selected").val());
-        formData.append('employeePhone', $('#employeePhone').val());
-        formData.append('EmployeeStreetadress', $('#EmployeeStreetadress').val());
-        formData.append('EmployeeZip', $('#EmployeeZip').val());
-        formData.append('EmployeeCity', $('#EmployeeCity').val());
-        formData.append('EmployeeCounty', $('#EmployeeCounty').val());
-        formData.append('EmployeePosition', $('#EmployeePosition').val());
-        formData.append('employeeAccountNumber', $('#employeeAccountNumber').val());
+        </div>
+        @*------------*@
+
+        <div id="donationsUpdate">
+            @Html.Partial("DonationListPartial", Model.Donations)
+        </div>
+
+    </div>
+
+ </div>
+
+        <script>
+
+            $(document).ajaxStart(function () {
+                $(".loader").show();
+            }).ajaxStop(function () {
+                $(".loader").hide();
+            });
+
+            function filterDonations() {
+                var formData = new FormData();
+                formData.append('search', $('#EmployeesearchField').val());
+                formData.append('active', $('#employeeActive input:radio:checked').val());
+                formData.append('order', $('#EmployeeOrderFilter input:radio:checked').val());
+                formData.append('filter', $("#EmployeeSelected option:selected").val());
+                formData.append('employeePhone', $('#employeePhone').val());
+                formData.append('EmployeeStreetadress', $('#EmployeeStreetadress').val());
+                formData.append('EmployeeZip', $('#EmployeeZip').val());
+                formData.append('EmployeeCity', $('#EmployeeCity').val());
+                formData.append('EmployeeCounty', $('#EmployeeCounty').val());
+                formData.append('EmployeePosition', $('#EmployeePosition').val());
+                formData.append('employeeAccountNumber', $('#employeeAccountNumber').val());
 
 
-        $.ajax({
-            url: '/Admin/Donations/FilterDonations',
-            type: 'POST',
-            async: true,
-            contentType: false,
-            processData: false,
-            data: formData,
-            success: function (result) {
-                $('#donationsUpdate').html(result);
+                $.ajax({
+                    url: '/Admin/Donations/FilterDonations',
+                    type: 'POST',
+                    async: true,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function (result) {
+                        $('#donationsUpdate').html(result);
+                    }
+                });
             }
-        });
-    }
 
-    $(document).on("click", "#Pager a[href]", function () {
-        var formData = new FormData();
-        formData.append('search', $('#EmployeesearchField').val());
-        formData.append('active', $('#employeeActive input:radio:checked').val());
-        formData.append('order', $('#EmployeeOrderFilter input:radio:checked').val());
-        formData.append('filter', $("#EmployeeSelected option:selected").val());
-        formData.append('employeePhone', $('#employeePhone').val());
-        formData.append('EmployeeStreetadress', $('#EmployeeStreetadress').val());
-        formData.append('EmployeeZip', $('#EmployeeZip').val());
-        formData.append('EmployeeCity', $('#EmployeeCity').val());
-        formData.append('EmployeeCounty', $('#EmployeeCounty').val());
-        formData.append('EmployeePosition', $('#EmployeePosition').val());
-        formData.append('employeeAccountNumber', $('#employeeAccountNumber').val());
-        $.ajax({
-            url: $(this).attr("href"),
-            type: 'POST',
-            async: true,
-            contentType: false,
-            processData: false,
-            data: formData,
-            cache: false,
-            success: function (result) {
-                $('#donationsUpdate').html(result);
-            }
-        });
-        return false;
-    });
+            $(document).on("click", "#Pager a[href]", function () {
+                var formData = new FormData();
+                formData.append('search', $('#EmployeesearchField').val());
+                formData.append('active', $('#employeeActive input:radio:checked').val());
+                formData.append('order', $('#EmployeeOrderFilter input:radio:checked').val());
+                formData.append('filter', $("#EmployeeSelected option:selected").val());
+                formData.append('employeePhone', $('#employeePhone').val());
+                formData.append('EmployeeStreetadress', $('#EmployeeStreetadress').val());
+                formData.append('EmployeeZip', $('#EmployeeZip').val());
+                formData.append('EmployeeCity', $('#EmployeeCity').val());
+                formData.append('EmployeeCounty', $('#EmployeeCounty').val());
+                formData.append('EmployeePosition', $('#EmployeePosition').val());
+                formData.append('employeeAccountNumber', $('#employeeAccountNumber').val());
+                $.ajax({
+                    url: $(this).attr("href"),
+                    type: 'POST',
+                    async: true,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    cache: false,
+                    success: function (result) {
+                        $('#donationsUpdate').html(result);
+                    }
+                });
+                return false;
+            });
 
-    $("#Rest").on('click', function () {
-        event.stopPropagation();
-        $('#SponsorsearchField').val('');
+            //reset search filter
+            $("#Rest").on('click', function () {
+                event.stopPropagation();
+                $('#SponsorsearchField').val('');
 
-        $('#SponsorPhone').val('');
-        $('#SponsorStreetadress').val('');
-        $('#SponsorZip').val('');
-        $('#SponsorCity').val('');
-        $('#SponsorCounty').val('');
-        $('#SponsorPosition').val('');
-        $('#SponsorAccountNumber').val('');
-        document.getElementById("SponsorDefault").selected = "true";
-        $("#SponsorOrderDefault").prop("checked", true);
-        $("#SponsorDefaultRadio").prop("checked", true);
-    });
-</script>
+                $('#SponsorPhone').val('');
+                $('#SponsorStreetadress').val('');
+                $('#SponsorZip').val('');
+                $('#SponsorCity').val('');
+                $('#SponsorCounty').val('');
+                $('#SponsorPosition').val('');
+                $('#SponsorAccountNumber').val('');
+                document.getElementById("SponsorDefault").selected = "true";
+                $("#SponsorOrderDefault").prop("checked", true);
+                $("#SponsorDefaultRadio").prop("checked", true);
+            });
+        </script>

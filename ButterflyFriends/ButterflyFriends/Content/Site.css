@@ -1,6 +1,6 @@
 ﻿body {
     padding-top: 50px;
-    background-color: #f5f5f5; /*f5f5f5 CECECE*/
+    background-color: #f5f5f5; /*f5f5f5 or CECECE*/
         overflow-x: hidden !important;
 
 }
@@ -16,6 +16,7 @@
 
 }
 
+/*Fonts and font sizes*/
 p,dd,dt,tr,th,h5,label,li{
     font-family: "Helvetica Neue",Arial,freesans,sans-serif;
     font-size: 16px;
@@ -54,6 +55,8 @@ div,a {
      font-family: "Helvetica Neue",Arial,freesans,sans-serif;
 }
 
+/*----------------------*/
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 7%;
@@ -70,7 +73,7 @@ div,a {
 }
 
 
-/* Set padding to keep content from hitting the edges */
+/* Set padding to keep content from hitting the edges on admin panel*/
 .body-contentAdmin {
     padding-left: 15px;
     padding-right: 15px;
@@ -111,14 +114,10 @@ div,a {
     border-radius: 15px 50px 30px;
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
 .dl-horizontal dt {
     white-space: normal;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
 input,
 select{
     max-width: 280px;
@@ -146,7 +145,7 @@ select{
 }
 
 .navbar-inverse {
-  background-color: #337ab7;/*337ab7, 00004d eller 3b5998*/
+  background-color: #337ab7;/*337ab7, 00004d or 3b5998*/
   border-color: #e6e6e6;
   font-size: 120%;
 }
@@ -158,11 +157,7 @@ select{
 .b:hover {
     color: white;
 }
-/*
-a,
-a:hover{
-    color: white;
-}*/
+
 
 /*Modal css*/
 .modal-mask {
@@ -231,7 +226,7 @@ a:hover{
 .loader
 {
     background: black;
-    position: absolute; /* or absolute */
+    position: absolute; /* or fixed */
     top: 50%;
     left: 50%;
     width: 50px;
@@ -260,7 +255,6 @@ a:hover{
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, .5);
-  /*display: table;*/
   transition: opacity .15s ease;
 }
 
@@ -350,7 +344,6 @@ a:hover{
 
             .box input
             {
-                /*visibility: hidden;*/
                 width: 100%; 
                 position: absolute;
                 bottom: 0;
@@ -375,13 +368,6 @@ a:hover{
                 opacity: 1;
                 border-width: 4px;
             }
-            /*
-            .box:hover input
-            {
-                visibility: visible;
-                z-index: 999;
-                opacity: 1;
-            }*/
 
          .showBox{
             
@@ -403,7 +389,6 @@ a:hover{
 
             .showBox input
             {
-                /*visibility: hidden;*/
                 width: 100%; 
                 position: absolute;
                 bottom: 0;
@@ -517,10 +502,7 @@ ul.ui-autocomplete {
     left: 1%;
     opacity: 0.8;
 }
-/*
-.ms-trigger {
-    visibility: hidden;
-}*/
+
 
 .article_display {
     border: 2px solid black;
@@ -553,11 +535,7 @@ ul.ui-autocomplete {
     transition: all 200ms ease-in;
     transform: scale(1.3);
 }
-.article_show_encapsule {
-    /*background-color: #C8C8C8;*/
-    /*padding-top: 1.5%;*/
-    /*border-radius: 10px;*/
-}
+
 /*Search dropdown*/
 
 .searchFilter .dropdown.dropdown-lg .dropdown-menu {
@@ -636,7 +614,6 @@ ul.ui-autocomplete {
     opacity: 1;
 }
 .ModalImg:hover {
-    /*opacity: 0.7;*/   
     -webkit-transition: all 200ms ease-in;
     -webkit-transform: scale(1.2);
     -ms-transition: all 200ms ease-in;
@@ -786,11 +763,6 @@ ul.ui-autocomplete {
     padding: 20px;
     background-color: #f5f5f5;
     margin-top: 250px;
-    /*       border-width: 2px 0px 2px 0px;
-               border-style: solid;*/
-
-    /*box-shadow: 5px 5px 20px 4px #000000;
-        border: 1px solid black;*/
 }
 .articleContainer {
     margin-top: 900px !important;
@@ -825,7 +797,6 @@ ul.ui-autocomplete {
         margin-right: 20px;
             margin-top: 8%;
         border: 2px solid black !important;
-       /* white-space:pre-line;*/
 
 
 }
@@ -840,9 +811,8 @@ ul.ui-autocomplete {
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    /* display: none; <- Crashes Chrome on hover */
     -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+    margin: 0;
 }
 
 
@@ -893,3 +863,90 @@ input::-webkit-inner-spin-button {
     font-size: 16px;
     resize: none;
 }
+
+/*sub radio button*/
+
+.SubSelect div {
+  clear: both;
+  overflow: hidden;
+  width: 80%
+}
+
+.SubSelect label {
+  width: 100%;
+  border-radius: 3px;
+  border: 1px solid #D1D3D4;
+  font-weight: normal;
+}
+
+.SubSelect input[type="radio"]:empty,
+.SubSelect input[type="checkbox"]:empty {
+  display: none;
+}
+
+.SubSelect input[type="radio"]:empty ~ label,
+.SubSelect input[type="checkbox"]:empty ~ label {
+  position: relative;
+  line-height: 2.5em;
+  text-indent: 3.25em;
+  margin-top: 2em;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+}
+
+.SubSelect input[type="radio"]:empty ~ label:before,
+.SubSelect input[type="checkbox"]:empty ~ label:before {
+  position: absolute;
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  content: '';
+  width: 2.5em;
+  background: #D1D3D4;
+  border-radius: 3px 0 0 3px;
+}
+
+.SubSelect input[type="radio"]:hover:not(:checked) ~ label,
+.SubSelect input[type="checkbox"]:hover:not(:checked) ~ label {
+  color: #888;
+}
+
+.SubSelect input[type="radio"]:hover:not(:checked) ~ label:before,
+.SubSelect input[type="checkbox"]:hover:not(:checked) ~ label:before {
+  content: '\2714';
+  text-indent: .9em;
+  color: #C2C2C2;
+}
+
+.SubSelect input[type="radio"]:checked ~ label,
+.SubSelect input[type="checkbox"]:checked ~ label {
+  color: black;
+}
+
+.SubSelect input[type="radio"]:checked ~ label:before,
+.SubSelect input[type="checkbox"]:checked ~ label:before {
+  content: '\2714';
+  text-indent: .9em;
+  color: #333;
+  background-color: #ccc;
+}
+
+.SubSelect input[type="radio"]:focus ~ label:before,
+.SubSelect input[type="checkbox"]:focus ~ label:before {
+  box-shadow: 0 0 0 3px #999;
+}
+
+.SubSelect-info input[type="radio"]:checked ~ label:before,
+.SubSelect-info input[type="checkbox"]:checked ~ label:before {
+  color: #fff;
+  background-color: #5bc0de;
+}
+.SubLabel {
+    color: gray;
+    margin-top: 0px !important;
+
+}
+/*----------------*/

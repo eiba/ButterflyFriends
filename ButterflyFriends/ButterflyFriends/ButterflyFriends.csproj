@@ -230,6 +230,7 @@
     <Compile Include="Areas\Admin\Controllers\PRController.cs" />
     <Compile Include="Areas\Admin\Controllers\VariousController.cs" />
     <Compile Include="Areas\Admin\Models\ArticleModel.cs" />
+    <Compile Include="Areas\Admin\Models\DonationModel.cs" />
     <Compile Include="Areas\Admin\Models\HRmanagementModels\changeUserInfo.cs" />
     <Compile Include="Areas\Admin\Models\HRManagamentModel.cs" />
     <Compile Include="Areas\Admin\Models\HRmanagementModels\ChildCreateModel.cs" />
@@ -486,6 +487,9 @@
     <Content Include="Areas\Admin\Views\Donations\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Donations\DonationListPartial.cshtml" />
     <Content Include="Areas\Admin\Views\Donations\_DonationDetailsPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Donations\_CreatePlanPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Various\_DisqusPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Donations\_PlanListPartial.cshtml" />
     <None Include="Properties\PublishProfiles\ButterflyFriends1 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\ButterflyFriends2017 - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\ButterflyFriends2017 - Web Deploy.pubxml" />

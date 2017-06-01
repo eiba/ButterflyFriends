@@ -17,7 +17,7 @@ namespace ButterflyFriends.Models
     /// The database initializer. Here we seed the database with test data when we run the project.
     /// The database is current DropCreateDatabaseIfModelChanges, so it drops and reseeds the database if any of the models/database tables change
     /// </summary>
-    public class DbInitializer: DropCreateDatabaseAlways<ApplicationDbContext>
+    public class DbInitializer: DropCreateDatabaseIfModelChanges<ApplicationDbContext>
     {
 
         /// <summary>
@@ -31,6 +31,7 @@ namespace ButterflyFriends.Models
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
 
+            //Roles of the application
             roleManager.Create(new IdentityRole("Admin")); // rights to view admin 
             roleManager.Create(new IdentityRole("Ansatt")); // The employee role
             roleManager.Create(new IdentityRole("Fadder")); //the sponsor role
@@ -413,6 +414,7 @@ namespace ButterflyFriends.Models
             userManager.Create(employee13, "Password1.");
             userManager.AddToRole(employee13.Id, "Ansatt");
 
+            //Add children
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Mohammed",
@@ -496,6 +498,7 @@ namespace ButterflyFriends.Models
                 DoB = new DateTime(2005, 6, 19),
                 isActive = true,
             });
+            //Add memberrequests
             db.MembershipRequests.Add(new DbTables.MembershipRequest
             {
                 City = "Arendal",
@@ -654,20 +657,26 @@ namespace ButterflyFriends.Models
                 State = "Hordaland",
                 StreetAdress = "Vangvei 45"
             });
+            //Sendgrid API
             db.SendGridAPI.Add(new DbTables.SendGridAPI
             {
                 PassWord = "MJK67pm30g",
-                UserName = "azure_37743dcaeaf80d7f3e17e3f077a91b20@azure.com"
+                UserName = "azure_37743dcaeaf80d7f3e17e3f077a91b20@azure.com",
+                Enabeled = true
             });
+            //Google recaptcha API
             db.GoogleCaptchaAPI.Add(new DbTables.GoogleCaptchaAPI
             {
                 SiteKey = "6LdechwUAAAAAFGSpfDeR0o_5JEgtRDtpDrObXEA",
-                Secret = "6LdechwUAAAAAMgUKGwZntwpCT8PksWPETIBvyCi"
+                Secret = "6LdechwUAAAAAMgUKGwZntwpCT8PksWPETIBvyCi",
+                Enabeled = true
             });
+            //Stripe API
             db.StripeAPI.Add(new DbTables.StripeAPI
             {
                 Public = "pk_test_VCuRH8tQy9irhE3fzBDq5mXA",
-                Secret = "sk_test_ZiM1B72G3fozYRKlO4BdCHJO"
+                Secret = "sk_test_ZiM1B72G3fozYRKlO4BdCHJO",
+                Enabeled = true
             });
             var filePathProfile = @"c:\Users\eirik\Documents\Visual Studio stuff\Bachelor\ButterflyFriends\ButterflyFriends\ButterflyFriends\defaultUserBig.png";
             byte[] profile = File.ReadAllBytes(filePathProfile);
@@ -682,6 +691,7 @@ namespace ButterflyFriends.Models
 
             db.Files.Add(Profile);
 
+            //add default profile picture for users
             var filePathThumbNail = @"c:\Users\eirik\Documents\Visual Studio stuff\Bachelor\ButterflyFriends\ButterflyFriends\ButterflyFriends\defautUser.png";
             byte[] thumbnail = File.ReadAllBytes(filePathThumbNail);
             var Thumbnail = new DbTables.ThumbNail()

@@ -20,7 +20,7 @@
 
 @foreach (var item in Model.Images)
 {
-    <img src="~/File?id=@item.FileId" class="ModalImg" id="@thumbId" onload="addHandelers(this)" width="300" imgnm="@imgId" />
+    <img src="~/File?id=@item.FileId" class="ModalImg" id="@thumbId" onload="addHandelers(this)" width="260" imgnm="@imgId" />
 
     <div id="@modalId" class="modal">
         <span class="close" id="@closeId">&times;</span>

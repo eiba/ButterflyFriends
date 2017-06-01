@@ -18,6 +18,7 @@ namespace ButterflyFriends.Areas.Admin.Models
         public DbTables.Twitter Twitter { get; set; }
         public DbTables.Facebook Facebook { get; set; }
         public DbTables.BackgroundImage Background { get; set; }
+        public DbTables.Disqus Disqus { get; set; }
 
     }
 

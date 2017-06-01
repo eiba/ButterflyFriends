@@ -6,6 +6,9 @@ using System.Web;
 
 namespace ButterflyFriends.Models
 {
+    /// <summary>
+    /// model used to change profile information
+    /// </summary>
     public class changeProfileModel
     {
         [Required]

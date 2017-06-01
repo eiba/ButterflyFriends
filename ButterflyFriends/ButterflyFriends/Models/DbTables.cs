@@ -239,6 +239,7 @@ namespace ButterflyFriends.Models
             public string UserName { get; set; }
             [Display(Name = "Passord")]
             public string PassWord { get; set; }
+            public bool Enabeled { get; set; }
         }
         public class GoogleCaptchaAPI
         {
@@ -249,6 +250,7 @@ namespace ButterflyFriends.Models
             public string SiteKey { get; set; }
             [Display(Name = "Secret")]
             public string Secret { get; set; }
+            public bool Enabeled { get; set; }
         }
         public class StripeAPI
         {
@@ -259,6 +261,7 @@ namespace ButterflyFriends.Models
             public string Public { get; set; }
             [Display(Name = "Secret")]
             public string Secret { get; set; }
+            public bool Enabeled { get; set; }
         }
         public class Info
         {
@@ -285,7 +288,6 @@ namespace ButterflyFriends.Models
             public Donations()
             {
                 DonationTime = DateTime.Now;
-                ReceiptKey = Guid.NewGuid().ToString();
             }
             [Key]
             [Required]
@@ -322,13 +324,27 @@ namespace ButterflyFriends.Models
             [Display(Name = "Beskrivelse")]
             public string Description { get; set; }
 
-            [Required]
-            public string ReceiptKey { get; set; }
-
             public bool isPaid { get; set; }
             public bool anonymous { get; set; }
 
             public virtual ApplicationUser User { get; set; }
+        }
+        public class Subscriptions
+        {
+            [Key]
+            [Required]
+            public int Id { get; set; }
+
+            [Display(Name = "Navn")]
+            public string Name { get; set; }
+
+            [Display(Name = "Kr")]
+            public int Amount { get; set; }
+
+            [Display(Name = "Beskrivelse")]
+            public string Description { get; set; }
+
+            public bool Enabeled { get; set; }
         }
 
         public class Facebook
@@ -348,6 +364,16 @@ namespace ButterflyFriends.Models
             public string Url { get; set; }
             [DisplayName("Brukernavn")]
             public string UserName { get; set; }
+            public bool Enabeled { get; set; }
+        }
+        public class Disqus
+        {
+            [Key]
+            public virtual int Id { get; set; }
+
+            [DisplayName("Disqus URL")]
+            public string DisqusUrl { get; set; }
+
             public bool Enabeled { get; set; }
         }
 

@@ -29,7 +29,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
     public class PRController : Controller
     {
         ApplicationDbContext _context = new ApplicationDbContext();
-        public int pageSize = 4;
+        public int pageSize = 4;    //how many articles to show per page
+
+        /// <summary>
+        /// Get index method of PR
+        /// </summary>
+        /// <param name="message">message to display if an article has been deleten and user has been returned to index view</param>
+        /// <returns>returns index view</returns>
         // GET: Admin/PR
         public ActionResult Index(string message)
         {   
@@ -42,7 +48,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                            orderby s.Id descending 
                            select s;
             ViewBag.page = 1;
-            return View(articles.ToPagedList(1, pageSize));
+            return View(articles.ToPagedList(1, pageSize)); //return articles as pages list
         }
         public ActionResult Email()
         {
@@ -50,10 +56,14 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Sends email 
+        /// </summary>
+        /// <returns>error or success message</returns>
         public ActionResult SendEmail()
         {
-            var emailHTML = Request.Unvalidated.Form["html"];
-            var emailSubject = Request.Form["subject"];
+            var emailHTML = Request.Unvalidated.Form["html"];   //email text
+            var emailSubject = Request.Form["subject"];         
             var recipients = Request.Form["recipients"].Split(',');
             var allsponsors = Request.Form["allsponsors"];
             var allemployees = Request.Form["allemployees"];
@@ -62,12 +72,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 if (recipients[0] == "" && recipients.Length == 1 && allsponsors ==null && allemployees ==null)
                 {
-                    return Json(new { error = true, message = "Error: Ingen mottakere", success = false });
+                    return Json(new { error = true, message = "Error: Ingen mottakere", success = false }); //no recievers sent in
                 }
 
                 try
             {
-                MailMessage mailMsg = new MailMessage();
+                MailMessage mailMsg = new MailMessage();    //mailmessage object
 
                     if (Request.Files.Count > 0)
                     {
@@ -143,12 +153,18 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 if (SendGridAPIList.Any())
                 {
                     SendGridAPI = SendGridAPIList.First();
-                }
+                    }
                 else
                 {
                         return Json(new { error = true, message = "SendGrid er ikke konfigurert", success = false });
 
                     }
+                if (!SendGridAPI.Enabeled)  //sendgrid is disabeled
+                {
+                        return Json(new { error = true, message = "SendGrid er slått av", success = false });
+
+                    }
+
                     System.Net.NetworkCredential credentials =
                     new System.Net.NetworkCredential(SendGridAPI.UserName,
                         SendGridAPI.PassWord);
@@ -171,6 +187,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// Get article
+        /// </summary>
+        /// <param name="id">id of article</param>
+        /// <returns>return view with article</returns>
         public ActionResult Article(int? id)
         {
 
@@ -187,13 +208,17 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return View(article);
         }
 
+        /// <summary>
+        /// publishes article for display at front page
+        /// </summary>
+        /// <returns>error or success message</returns>
         [HttpPost]
         public ActionResult Publish()
         {
             var id = Request.Form["articleid"];
             if (id == "")
             {
-                return Json(new { error = true, message = "Artikkelen må lagres først", success = false });
+                return Json(new { error = true, message = "Artikkelen må lagres først", success = false }); //article is not saved yet
             }
             var article = _context.Articles.Find(int.Parse(id));
             if (article == null)
@@ -208,12 +233,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 }
 
                     article.Published = !article.Published;
-                    _context.Entry(article).State = EntityState.Modified;
+                    _context.Entry(article).State = EntityState.Modified;   
                     _context.SaveChanges();
 
                 if (article.Published)
                 {
-                    return Json(new { error = false, message = "Siste lagrede versjon av " + article.Name + " ble publisert", success = true ,published =true});
+                    return Json(new { error = false, message = "Siste lagrede versjon av " + article.Name + " ble publisert", success = true ,published =true});    //publishing was succsessful
 
                 }
 
@@ -227,10 +252,14 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
 
         }
+        /// <summary>
+        /// Delete article
+        /// </summary>
+        /// <returns>return succsses or error message</returns>
         [HttpPost]
         public ActionResult Delete()
         {
-            var id = Request.Form["articleid"];
+            var id = Request.Form["articleid"]; 
             if (id == "")
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -254,11 +283,14 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
             catch (EntityException ex)
             {
-                return Json(new { error = true, message = "Error, artikkelen ble ikke slettet: " + ex.Message, success = false });
+                return Json(new { error = true, message = "Error, artikkelen ble ikke slettet: " + ex.Message, success = false });  
 
             }
 
         }
+        /// <summary>
+        /// Deletes image from article and database
+        /// </summary>
         [HttpPost]
         public void DeleteImage()
         {
@@ -278,6 +310,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 _context.SaveChanges();
 
         }
+        /// <summary>
+        /// Show new article view
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public ActionResult New(string message)
         {
             if (message != null)
@@ -291,11 +328,16 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return View(new ArticleModel { Date = DateTime.Now, Name = currentUser.Fname + " " + currentUser.Lname });
         }
 
+        /// <summary>
+        /// Uploads article
+        /// </summary>
+        /// <returns>error or succsess</returns>
         [HttpPost]
         public ActionResult UploadArticle()
         {
             var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
             ApplicationUser currentUser = manager.FindById(User.Identity.GetUserId());
+            //article parts from form
             var content = Request.Unvalidated.Form["article"];
             var title = Request.Unvalidated.Form["article-title"];
             var preamble = Request.Unvalidated.Form["article-preamble"];
@@ -306,7 +348,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var TitleInner = Request.Unvalidated.Form["title-inner"];
             var PreambleInner = Request.Unvalidated.Form["preamble-inner"];
             List<DbTables.File> imagesList = new List<DbTables.File>();
-            if (Request.Form["images"] != "none")
+            if (Request.Form["images"] != "none")   //get image ids from form. Images that are currently in the article
             {
                 var images = Array.ConvertAll(Request.Form["images"].Split(','), s => int.Parse(s));
                 imagesList = _context.Files.Where(s => images.Contains(s.FileId)).ToList();
@@ -332,13 +374,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     if (currentUser.Employee != null)
                     {
-                        if (id == "")
+                        if (id == "")   //save new article
                         {
                             try
                             {
                                 IList<DbTables.Employees> autorList = new List<DbTables.Employees>();
                                 autorList.Add(currentUser.Employee);
-                                DbTables.Article article = new DbTables.Article
+                                DbTables.Article article = new DbTables.Article //create article object
                                 {
                                     Content = content,
                                     Employees = autorList,
@@ -353,9 +395,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                     TitleInner = TitleInner,
                                     PreambleInner = PreambleInner
                         };
-                                foreach (var image in imagesList)
+                                foreach (var image in imagesList)   //get images and change their temporary status to false
                                 {
-                                    if (image != null)
+                                    if (image != null) 
                                     {
                                         image.Temporary = false;
                                         _context.Entry(image).State = EntityState.Modified;
@@ -390,8 +432,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                     return Json(new { error = true, message = "Error, fant ikke artikkelen som skulle lagres", success = false });
 
                                 }
-                                IList<DbTables.File> imagesToRemove = new List<DbTables.File>();
-                                foreach (var image in article.Images)
+                                IList<DbTables.File> imagesToRemove = new List<DbTables.File>();    
+                                foreach (var image in article.Images)       //check if there are any images related to the article which are not in the article anymore and delete them
                                 {
                                     if (imagesList.Contains(image))
                                     {
@@ -418,7 +460,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                         newAuthor = false;
                                     }
                                 }
-                                if (newAuthor)
+                                if (newAuthor)  //new author, add to authors
                                 {
                                     article.Employees.Add(currentUser.Employee);
                                 }
@@ -481,13 +523,17 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// upload article image
+        /// </summary>
+        /// <returns>return image data, or error message</returns>
         [HttpPost]
         public ActionResult uploadImage()
         {
             HttpFileCollectionBase files = Request.Files;
             HttpPostedFileBase file = files[0];
-            var maxWidth = 800;
-            var picture = new DbTables.File
+            var maxWidth = 800;     //max image with allowed in article
+            var picture = new DbTables.File //new picture object
             {
                 FileName = Path.GetFileName(file.FileName),
                 FileType = DbTables.FileType.ArticleImage,
@@ -496,11 +542,6 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 UploadDate = DateTime.Now
 
             };
-            /*using (var reader = new BinaryReader(file.InputStream))
-            {
-
-                picture.Content = reader.ReadBytes(file.ContentLength);
-            }*/
 
             byte[] content;
             using (var reader = new BinaryReader(file.InputStream))
@@ -509,16 +550,16 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 content = reader.ReadBytes(file.ContentLength);
             }
 
-            Bitmap bmp;
+            Bitmap bmp; //convert to bitmap
             using (var ms = new MemoryStream(content))
             {
                 bmp = new Bitmap(ms);
             }
 
-            if (bmp.Width > maxWidth) {
-                double ratio = (double)((double)bmp.Width / (double)bmp.Height);
-                int height = (int)((double)maxWidth / ratio);
-                bmp = ResizeImage(bmp, maxWidth, height);
+            if (bmp.Width > maxWidth) { //if bitmap with is greater than max allowed with, scale down image
+                double ratio = (double)((double)bmp.Width / (double)bmp.Height);    //get height to width ratio
+                int height = (int)((double)maxWidth / ratio);   //get new calculated height
+                bmp = ResizeImage(bmp, maxWidth, height);   //resize image with new height and maxwidth
 
                 using (var stream = new MemoryStream())
                 {
@@ -538,7 +579,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         new
                         {
                             size = bmp.Width + "," + bmp.Height,
-                            url = "/File/ArticleImage?id=" + picture.FileId,
+                            url = "/File/ArticleImage?id=" + picture.FileId,    //return image url, id and size
                             id = picture.FileId
                         });
             }
@@ -552,11 +593,15 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// rotate the image
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult rotateImage()
         {
             var id = int.Parse(Request.Form["id"]);
-            var direction = Request.Form["direction"];
+            var direction = Request.Form["direction"];  //direction to rotate, CW or CCW (counter clockwise)
             if (id == 0 || direction == null)
             {
                 return Json(new {error = "Error, ugyldige verdier"});
@@ -567,13 +612,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 return Json(new {error = "Error, fant ikke bilde"});
             }
             Bitmap bmp;
-            using (var ms = new MemoryStream(picture.Content))
+            using (var ms = new MemoryStream(picture.Content))  //get bitmap of image
             {
                 bmp = new Bitmap(ms);
             }
             if (direction == "CW")
             {
-                bmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                bmp.RotateFlip(RotateFlipType.Rotate90FlipNone);    //rotate image 90 degrees
 
                 byte[] content;
                 using (var stream = new MemoryStream())
@@ -605,7 +650,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
             else
             {
-                bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);   //rotate image 270 degrees to simulate 90 degrees clockwise
 
                 byte[] content;
                 using (var stream = new MemoryStream())
@@ -618,7 +663,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 {
                     _context.Entry(picture).State = EntityState.Modified;
                     _context.SaveChanges();
-                    return Json(new { size = bmp.Width + "," + bmp.Height, url = "/File/ArticleImage?id=" + picture.FileId, id = picture.FileId });
+                    return Json(new { size = bmp.Width + "," + bmp.Height, url = "/File/ArticleImage?id=" + picture.FileId, id = picture.FileId }); //return new height and width of new image
 
                 }
                 catch (EntityException ex)
@@ -632,17 +677,21 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// Insert image into article
+        /// </summary>
+        /// <returns>error or image data</returns>
         [HttpPost]
         public ActionResult InsertImage()
         {
             var id = int.Parse(Request.Form["id"]);
             var crop = Request.Form["crop"];
             double[] cropList = new double[4];
-            if (crop != "0,0,1,1")
+            if (crop != "0,0,1,1")  //check if image should be cropped
             {
-                string[] cropArray = Request.Form["crop"].Split(',');
+                string[] cropArray = Request.Form["crop"].Split(',');   //get the crop values
                 var index = 0;
-                foreach (var num in cropArray)
+                foreach (var num in cropArray)  
                 {
                     var number = num.Replace(".", ",");
                     cropList[index]=double.Parse(number);
@@ -651,7 +700,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             }
             
-            var width = int.Parse(Request.Form["width"]);
+            var width = int.Parse(Request.Form["width"]);   //get image width
             if (id == 0 || width == 0)
             {
                 return Json(new { error = "Error, ugyldige verdier" });
@@ -666,17 +715,20 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 bmp = new Bitmap(ms);
             }
-            if (crop != "0,0,1,1")
+            if (crop != "0,0,1,1")  //crop image
             {
 
+                    //get new cropped x and y values
                     var x1 = (int) (bmp.Width*cropList[1]);
                     var y1 = (int) (bmp.Height*cropList[0]);
 
                     var y2 = (int) (bmp.Height*cropList[2]);
                     var x2 = (int) (bmp.Width*cropList[3]);
-                    var newWidth = x2 - x1;
+
+                    //get new height and width
+                    var newWidth = x2 - x1; 
                     var newHeight = y2 - y1;
-                    Bitmap CroppedImage = cropImage(bmp, new Rectangle(x1, y1, newWidth, newHeight));
+                    Bitmap CroppedImage = cropImage(bmp, new Rectangle(x1, y1, newWidth, newHeight));   //crop the image and display only new region
                 
                 byte[] content;
                 using (var stream = new MemoryStream())
@@ -694,7 +746,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         width = CroppedImage.Width;
                     }
                     double ratio = (double)((double)CroppedImage.Width / (double)CroppedImage.Height);
-                    int height = (int)((double)width / ratio);
+                    int height = (int)((double)width / ratio);  //get new height of cropped image
 
                     return
                         Json(
@@ -716,7 +768,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             }
             //Image is not to be cropped
-            if (bmp.Width < width)
+            if (bmp.Width < width)  
             {
                 width = bmp.Width;
             }
@@ -735,11 +787,17 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// Function used to crop image
+        /// </summary>
+        /// <param name="bmp">bitmap of image to be cropped</param>
+        /// <param name="cropArea">croparea representet by a rectangle</param>
+        /// <returns>cropped image</returns>
         public Bitmap cropImage(Bitmap bmp, Rectangle cropArea)
         {
-            Bitmap target = new Bitmap(cropArea.Width, cropArea.Height);
+            Bitmap target = new Bitmap(cropArea.Width, cropArea.Height);    //define the bitmap target 
 
-            using (Graphics g = Graphics.FromImage(target))
+            using (Graphics g = Graphics.FromImage(target)) //draw image over on new cropped rectangle
             {
                 g.DrawImage(bmp, new Rectangle(0, 0, target.Width, target.Height),
                                  cropArea,
@@ -748,6 +806,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return target;
         }
 
+        /// <summary>
+        /// Get users based on query
+        /// </summary>
+        /// <returns>list of user objects</returns>
         public ActionResult GetUsers()
         {
            var k = Request.Form["query"];
@@ -763,7 +825,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             foreach (var user in users)
             {
-                var imgId = 1;
+                var imgId = 1;  //if user has no profile image, return id of default image
                 bool isEmployee = new bool();
                 if (user.Employee != null)
                 {
@@ -780,7 +842,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return Json(enteties);
         }
 
-        public ActionResult ArticleList(int? page)
+        /// <summary>
+        /// Return list of articles based on filter options
+        /// </summary>
+        /// <param name="page">page where the user is at the moment</param>
+        /// <returns>returns a filter result</returns>
+        public ActionResult ArticleList(int? page)  
         {
             var published = Request.Form["published"];
             var filter = Request.Form["filter"];
@@ -795,6 +862,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return FilterResult(published, search, content, filter, pageNumber,order,author);
         }
 
+        /// <summary>
+        /// Filter articles
+        /// </summary>
+        /// <returns>returns filter result</returns>
         public ActionResult Filter()
         {
 
@@ -812,6 +883,17 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return FilterResult(published, search, content, filter, pageNumber,order,author);
         }
 
+        /// <summary>
+        /// Filter out articles based on criteria
+        /// </summary>
+        /// <param name="published"></param>
+        /// <param name="search"></param>
+        /// <param name="content"></param>
+        /// <param name="filter"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="order"></param>
+        /// <param name="author"></param>
+        /// <returns>partial view with resulting articles</returns>
         public PartialViewResult FilterResult(string published, string search, string content, string filter, int pageNumber,string order,string author)
         {
             var articles = from s in _context.Articles
@@ -831,7 +913,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 articles = articles.Where(s => !s.Published);
 
             }
-            if (!string.IsNullOrEmpty(author))
+            if (!string.IsNullOrEmpty(author))  //get the articles of author in query
             {
                 IList<DbTables.Article> Articles = new List<DbTables.Article>();
                 foreach (var article in articles.ToList())
@@ -840,7 +922,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     {
                         var user = articleAuthor.User;
                         var name = user.Fname + " " + user.Lname;
-                        if (name.ToLower().Contains(author.ToLower()))
+                        if (name.ToLower().Contains(author.ToLower()))  
                         {
                             Articles.Add(article);
                             break;
@@ -849,7 +931,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 }
                 articles = Articles.AsQueryable();
             }
-            if (order == "descending")
+            if (order == "descending")  //choose what to order by
             {
                 switch (filter)
                 {
@@ -873,7 +955,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
             else
             {
-                switch (filter)
+                switch (filter) //choose what to filter by
                 {
                     case "1":
                         articles =
@@ -896,6 +978,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return PartialView("_ArticleListPartial", articles.ToPagedList(pageNumber, pageSize));
         }
+        /// <summary>
+        /// Resized image
+        /// </summary>
+        /// <param name="image">Image to resize</param>
+        /// <param name="width">with of image to be created</param>
+        /// <param name="height">height of image to created</param>
+        /// <returns>Returns a bitmap with resized image</returns>
         private static Bitmap ResizeImage(Bitmap image, int width, int height)
         {
             Bitmap resizedImage = new Bitmap(width, height);

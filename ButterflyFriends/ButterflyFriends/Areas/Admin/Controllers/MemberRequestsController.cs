@@ -24,9 +24,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
     public class MemberRequestsController : Controller
     {
         ApplicationDbContext _context = new ApplicationDbContext();
-        public int pageSize = 10;
+        public int pageSize = 10;   //requests per page
 
         // GET: Admin/MemberRequests
+        /// <summary>
+        /// get index page
+        /// </summary>
+        /// <returns>view with requests based to default last name</returns>
         public ActionResult Index()
         {
             var requests = from s in _context.MembershipRequests
@@ -36,14 +40,17 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return View(requests.ToPagedList(1, pageSize));
         }
 
-
+        /// <summary>
+        /// Accept request
+        /// </summary>
+        /// <returns>returns partial view with requests</returns>
         [HttpPost]
         public async Task<ActionResult> RequestAccept()
         {
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
             var id = int.Parse(Request.Form["requestid"]);
             var message = Request.Form["message"];
-            var req = _context.MembershipRequests.Find(id);
+            var req = _context.MembershipRequests.Find(id); //get the request
 
             ViewBag.page = Request.Form["page"];
             var pageNumber = int.Parse(Request.Form["page"]);
@@ -55,7 +62,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 ViewBag.Error = "Fant ikke forespørselen.";
                 return PartialView("_AccordionPartial", requests.ToPagedList(pageNumber, pageSize));
             }
-            var email = req.Email;
+            var email = req.Email;  
 
             var results = (from s in _context.Users
                 where
@@ -66,7 +73,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 foreach (var r in results)
                 {
-                    if (r.Email == email)
+                    if (r.Email == email)   //email of request is already being used.
                     {
 
                         ViewBag.Error = "Emailen er allerede i bruk.";
@@ -78,7 +85,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             }
 
-            var newUser = new ApplicationUser
+            var newUser = new ApplicationUser   //validation passed so far, create new user object
             {
                 Email = email,
                 UserName = email,
@@ -96,18 +103,18 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 PostCode = req.PostCode,
                 County = req.State
             };
-            var userAdress = AdressExist(adress);
+            var userAdress = AdressExist(adress);   //check if adress already exist, create new if not
             newUser.Adress = userAdress;
             var result = await userManager.CreateAsync(newUser);
             if (result.Succeeded)
             {
-                userManager.AddToRole(newUser.Id, ResolveUserRole(newUser.RoleNr));
+                userManager.AddToRole(newUser.Id, ResolveUserRole(newUser.RoleNr)); //add to role based on role number (3, fadder)
 
                 var provider = new DpapiDataProtectionProvider("ButterflyFriends");
-                userManager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(provider.Create("Passwordresetting"));
-                string code = await userManager.GeneratePasswordResetTokenAsync(newUser.Id);
-                var callbackUrl = Url.Action("SetPassword", "Account", new { userId = newUser.Id, code = code ,area=""}, protocol: Request.Url.Scheme);
-                var mailResult= SendEmail(req, callbackUrl, message);
+                userManager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(provider.Create("Passwordresetting"));  
+                string code = await userManager.GeneratePasswordResetTokenAsync(newUser.Id);    //create password reset token
+                var callbackUrl = Url.Action("SetPassword", "Account", new { userId = newUser.Id, code = code ,area=""}, protocol: Request.Url.Scheme); //url for password setting
+                var mailResult= SendEmail(req, callbackUrl, message);   //attempt to send email
                 if (!mailResult)
                 {
                     ViewBag.MailError = "Email ble ikke sendt";
@@ -143,6 +150,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("_AccordionPartial", requests.ToPagedList(pageNumber, pageSize));
         }
 
+        /// <summary>
+        /// Decline request, delete it and send email about the decline to applicant
+        /// </summary>
+        /// <returns>partial view with paged list</returns>
         [HttpPost]
         public ActionResult RequestDecline()
         {
@@ -184,7 +195,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
         }
 
-        public ActionResult RequestList(int? page)
+        /// <summary>
+        /// get request list pased on page and search criteria
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns>partial view with requests matchin search criteria</returns>
+        public ActionResult RequestList(int? page)  
         {
             var search = Request.Form["search"];
             int pageNumber = (page ?? 1);
@@ -217,6 +233,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("_AccordionPartial", requestsNoSearch.ToPagedList(pageNumber, pageSize));
 
         }
+
+        /// <summary>
+        /// Filter pased on search criteria
+        /// </summary>
+        /// <returns>list and partial view based on search criteria</returns>
         public ActionResult Filter()
         {
             int pageNumber = 1;
@@ -245,6 +266,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return PartialView("_AccordionPartial", requestsNoSearch.ToPagedList(pageNumber, pageSize));
         }
+        /// <summary>
+        /// check if adress exist
+        /// </summary>
+        /// <param name="adress">adress to check</param>
+        /// <returns>adress if it exist. otherwise just return the initial adress parameter</returns>
         public DbTables.Adresses AdressExist(DbTables.Adresses adress)
         {
             var adresses = _context.Set<DbTables.Adresses>();
@@ -259,6 +285,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return adress;
         }
 
+        /// <summary>
+        /// send email
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="callbackUrl"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public bool SendEmail(DbTables.MembershipRequest request,string callbackUrl, string message)
         {
             
@@ -273,7 +306,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     mailMsg.From = new MailAddress("noreply@butterflyfriends.com", "Butterfly Friends");
 
                 // Subject and multipart/alternative Body
-                    if (callbackUrl == null)
+                    if (callbackUrl == null)    //no callbackurl, request is declined
                     {
                         mailMsg.Subject = "Medlemskap avist";
                         if (message != "")
@@ -297,12 +330,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 }
                     else
                     {
-                    mailMsg.Subject = "Medlemskap akseptert";
+                    mailMsg.Subject = "Medlemskap akseptert";   //Request accepted
                         if (message != "")
                         {
                         string text = "Ditt medlemskap har blitt akseptert og vi er veldig glad for å ha deg med på laget! \n\nDitt passord kan settes her: "+ callbackUrl + "\nDette kan også byttes på dine profilsider.\n\n"+ message + "\n\nMvh, \nButterfly Friends";
                         string html = @"<p>Ditt medlemskap har blitt akseptert og vi er veldig glad for å ha deg med på laget!<br><br>Ditt passord kan settes <a href=" + callbackUrl + ">her</a>.<br>Dette kan ogsp byttes på dine profilsider.<br><br>" + message + "<br><br>Mvh,<br>Butterfly Friends</p>";
-                        mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(text, null,
+                        mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(text, null,  //add both html and normal bodies to email
                             MediaTypeNames.Text.Plain));
                         mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(html, null,
                             MediaTypeNames.Text.Html));
@@ -324,6 +357,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 if (SendGridAPIList.Any())
                 {
                     SendGridAPI = SendGridAPIList.First();
+                    if (!SendGridAPI.Enabeled)
+                    {
+                        return true;
+                    }
                 }
                 else
                 {
@@ -336,16 +373,21 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             SendGridAPI.PassWord);
                     smtpClient.Credentials = credentials;
 
-                    smtpClient.Send(mailMsg);
+                    smtpClient.Send(mailMsg);   //send email
                     
                 }
                 catch (Exception)
                 {
                     return false;
                 }
-            return true;
+            return true;    //email successfully sent
         }
 
+        /// <summary>
+        /// Resolve user role based on user number
+        /// </summary>
+        /// <param name="roleNr">rolenumber of user</param>
+        /// <returns>return the identity role</returns>
         public string ResolveUserRole(int roleNr)
         {
             if (roleNr == 3)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net.Mail;
+using System.Net.Mime;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -57,8 +59,9 @@ namespace ButterflyFriends.Controllers
         //
         // GET: /Account/Login
         [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        public ActionResult Login(string returnUrl, string message)
         {
+            ViewBag.message = message;
             var background = new DbTables.BackgroundImage();
             var backgroundList = _context.BackgroundImage.ToList();
             if (backgroundList.Any())
@@ -69,6 +72,13 @@ namespace ButterflyFriends.Controllers
                     ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
                                    "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
                     ViewBag.BackGround = "background-color:transparent;";
+                }
+            }
+            var sendgridList = _context.SendGridAPI.ToList();
+            if (sendgridList.Any())
+            {
+                if (sendgridList.First().Enabeled) { 
+                ViewBag.Sendgrid = "true";
                 }
             }
             ViewBag.ReturnUrl = returnUrl;
@@ -253,22 +263,90 @@ namespace ButterflyFriends.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+                if (user == null)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
+                var provider = new DpapiDataProtectionProvider("ButterflyFriends");
+                UserManager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(provider.Create("Passwordresetting"));
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code,area=""}, protocol: Request.Url.Scheme);
+                 if(!SendEmail(user, callbackUrl))
+                 {
+                    return RedirectToAction("Login", "Account",new {message = "Sendgrid er ikke konfigurert for applikasjonen eller slått av" });
 
-                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                }
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        /// <summary>
+        /// sends password resetting email
+        /// </summary>
+        /// <param name="user">user that needs password reset</param>
+        /// <param name="callbackUrl">url where he can reset password</param>
+        /// <returns>returns true or false based on success of sending the email</returns>
+        public bool SendEmail(ApplicationUser user, string callbackUrl)
+        {
+
+            try
+            {
+                MailMessage mailMsg = new MailMessage();
+
+                // To
+                mailMsg.To.Add(new MailAddress(user.Email, user.Fname + " " + user.Lname));
+
+                // From
+                mailMsg.From = new MailAddress("noreply@butterflyfriends.com", "Butterfly Friends");
+
+                // Subject and multipart/alternative Body
+               
+                    mailMsg.Subject = "Passord resetting";   //Request accepted
+
+                    
+                        string text = "Ditt passord kan resettes her: " + callbackUrl + "\nDersom du ikke ba om dette så ignorer denne mailen.\n\nMvh, \nButterfly Friends";
+                        string html = @"<p>Ditt passord kan resettes <a href=" + callbackUrl + ">her</a>.<br>Om du ikke ba om dette så ignorer denne mailen.<br><br>Mvh,<br>Butterfly Friends</p>";
+                        mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(text, null,
+                            MediaTypeNames.Text.Plain));
+                        mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(html, null,
+                            MediaTypeNames.Text.Html));
+                    
+                
+                // Init SmtpClient and send
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                var SendGridAPIList = _context.SendGridAPI.ToList();
+                var SendGridAPI = new DbTables.SendGridAPI();
+                if (SendGridAPIList.Any())
+                {
+                    SendGridAPI = SendGridAPIList.First();
+                    if (!SendGridAPI.Enabeled)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+
+                System.Net.NetworkCredential credentials =
+                        new System.Net.NetworkCredential(SendGridAPI.UserName,
+                            SendGridAPI.PassWord);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMsg);   //send email
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;    //email successfully sent
         }
 
         //
@@ -340,7 +418,6 @@ namespace ButterflyFriends.Controllers
                 // Don't reveal that the user does not exist
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
-            //var code = model.Code.Replace(" ", "+");
             var provider = new DpapiDataProtectionProvider("ButterflyFriends");
             UserManager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(provider.Create("Passwordresetting"));
             var result = await UserManager.ResetPasswordAsync(user.Id,model.Code, model.Password);

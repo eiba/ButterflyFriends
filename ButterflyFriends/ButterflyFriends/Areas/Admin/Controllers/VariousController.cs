@@ -17,6 +17,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         ApplicationDbContext _context = new ApplicationDbContext();
 
         // GET: Admin/Various
+        /// <summary>
+        /// Index view of various, check if various database elements are actually added and then add these to the model if they exist
+        /// </summary>
+        /// <returns>Various index view</returns>
         public ActionResult Index()
         {
 
@@ -50,6 +54,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             if (TwitterList.Any())
             {
                 Twitter = TwitterList.First();
+            }
+            var Disqus = new DbTables.Disqus();
+            var DisqusList = _context.Disqus.ToList();
+            if (DisqusList.Any())
+            {
+                Disqus = DisqusList.First();
             }
             var About = new DbTables.Info();
             var AboutList = _context.About.ToList();
@@ -85,11 +95,16 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 StripeAPI = Stripe,
                 Twitter = Twitter,
                 Facebook = Facebook,
-                Background = Background
+                Background = Background,
+                Disqus = Disqus
             };
             return View(model);
         }
 
+        /// <summary>
+        /// Enable the image carousel
+        /// </summary>
+        /// <returns>partial view for suksess or not</returns>
         public ActionResult EnableCarousel()
         {
             var enable = Request.Form["enable"];
@@ -97,7 +112,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 var carousel = _context.Carousel.ToList().First();
 
-                carousel.Enabeled = !carousel.Enabeled;
+                carousel.Enabeled = !carousel.Enabeled; //change the enabeled value to the opposite
                 _context.SaveChanges();
                 if (enable == "true")
                 {
@@ -118,6 +133,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
 
         }
+        /// <summary>
+        /// Enable background
+        /// </summary>
+        /// <returns>Succsess or failure view</returns>
         public ActionResult EnableBackground()
         {
             var enable = Request.Form["enable"];
@@ -146,6 +165,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
 
         }
+
+        /// <summary>
+        /// Enable terms of user function
+        /// </summary>
+        /// <returns>Succsess or failure view</returns>
         public ActionResult EnableTerms()
         {
             var enable = Request.Form["enable"];
@@ -174,6 +198,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
 
         }
+        /// <summary>
+        /// Enable Twitter
+        /// </summary>
+        /// <returns>Succsess or failure view</returns>
         public ActionResult EnableTwitter()
         {
             var enable = Request.Form["enable"];
@@ -202,6 +230,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
 
         }
+        /// <summary>
+        /// Enable Facebook
+        /// </summary>
+        /// <returns>Succsess or failure view</returns>
         public ActionResult EnableFacebook()
         {
             var enable = Request.Form["enable"];
@@ -230,6 +262,139 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
 
         }
+        /// <summary>
+        /// Enable stripe
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EnableStripe()
+        {
+            var enable = Request.Form["enable"];
+            try
+            {
+                var stripe = _context.StripeAPI.ToList().First();
+
+                stripe.Enabeled = !stripe.Enabeled;
+                _context.SaveChanges();
+                if (enable == "true")
+                {
+                    ViewBag.Success = "Funksjonen ble slått på";
+                }
+                else
+                {
+                    ViewBag.Success = "Funksjonen ble slått av";
+
+                }
+                return PartialView("_StripePartial", _context.StripeAPI.ToList().First());
+            }
+            catch (Exception ex)
+            {
+
+                ViewBag.Error = "Error: " + ex.Message;
+                return PartialView("_StripePartial", _context.StripeAPI.ToList().First());
+            }
+
+        }
+        /// <summary>
+        /// Enable sendgrid
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EnableSendgrid()
+        {
+            var enable = Request.Form["enable"];
+            try
+            {
+                var sendgrid = _context.SendGridAPI.ToList().First();
+
+                sendgrid.Enabeled = !sendgrid.Enabeled;
+                _context.SaveChanges();
+                if (enable == "true")
+                {
+                    ViewBag.Success = "Funksjonen ble slått på";
+                }
+                else
+                {
+                    ViewBag.Success = "Funksjonen ble slått av";
+
+                }
+                return PartialView("_SendGridPartial", _context.SendGridAPI.ToList().First());
+            }
+            catch (Exception ex)
+            {
+
+                ViewBag.Error = "Error: " + ex.Message;
+                return PartialView("_SendGridPartial", _context.SendGridAPI.ToList().First());
+            }
+
+        }
+        /// <summary>
+        /// Enable recaptcha
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EnableRecaptcha()
+        {
+            var enable = Request.Form["enable"];
+            try
+            {
+                var recaptcha = _context.GoogleCaptchaAPI.ToList().First();
+
+                recaptcha.Enabeled = !recaptcha.Enabeled;
+                _context.SaveChanges();
+                if (enable == "true")
+                {
+                    ViewBag.Success = "Funksjonen ble slått på";
+                }
+                else
+                {
+                    ViewBag.Success = "Funksjonen ble slått av";
+
+                }
+                return PartialView("_RecaptchaPartial", _context.GoogleCaptchaAPI.ToList().First());
+            }
+            catch (Exception ex)
+            {
+
+                ViewBag.Error = "Error: " + ex.Message;
+                return PartialView("_RecaptchaPartial", _context.GoogleCaptchaAPI.ToList().First());
+            }
+
+        }
+        /// <summary>
+        /// Enables or disables disqus
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EnableDisqus()
+        {
+            var enable = Request.Form["enable"];
+            try
+            {
+                var disqus = _context.Disqus.ToList().First();
+
+                disqus.Enabeled = !disqus.Enabeled;
+                _context.SaveChanges();
+                if (enable == "true")
+                {
+                    ViewBag.Success = "Funksjonen ble slått på";
+                }
+                else
+                {
+                    ViewBag.Success = "Funksjonen ble slått av";
+
+                }
+                return PartialView("_DisqusPartial", _context.Disqus.ToList().First());
+            }
+            catch (Exception ex)
+            {
+
+                ViewBag.Error = "Error: " + ex.Message;
+                return PartialView("_DisqusPartial", _context.Disqus.ToList().First());
+            }
+
+        }
+        /// <summary>
+        /// Edit sendgrid values
+        /// </summary>
+        /// <param name="model">Model values to change</param>
+        /// <returns>view with updated info and success/failure message</returns>
         [HttpPost]
         public ActionResult EditSendGrid(DbTables.SendGridAPI model)
         {
@@ -261,6 +426,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
         }
 
+        /// <summary>
+        /// Edit values
+        /// </summary>
+        /// <param name="model">Model values to change</param>
+        /// <returns>view with updated info and success/failure message</returns>
         public ActionResult EditFacebook(DbTables.Facebook model)
         {
             if (ModelState.IsValid) { 
@@ -296,7 +466,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 FacebookError = FacebookListError.First();
             }
-            string messages = string.Join("\r\n\r\n", ModelState.Values
+            string messages = string.Join("\r\n\r\n", ModelState.Values //validation failed, return errors
                                       .SelectMany(x => x.Errors)
                                       .Select(x => x.ErrorMessage));
 
@@ -305,6 +475,62 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("_FacebookPartial", FacebookError);
 
         }
+
+        /// <summary>
+        /// Edit values
+        /// </summary>
+        /// <param name="model">Model values to change</param>
+        /// <returns>view with updated info and success/failure message</returns>
+        public ActionResult EditDisqus(DbTables.Disqus model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var Disqus = new DbTables.Disqus();
+                    var DisqusList = _context.Disqus.ToList();
+                    if (DisqusList.Any())
+                    {
+                        Disqus = DisqusList.First();
+                        Disqus.DisqusUrl = model.DisqusUrl;
+                    }
+                    else
+                    {
+                        Disqus.DisqusUrl = model.DisqusUrl;
+                        Disqus.Enabeled = true;
+                        _context.Disqus.Add(Disqus);
+                    }
+
+                    _context.SaveChanges();
+                    ViewBag.Success = "Disqus variabler ble sukessfult oppdatert";
+                    return PartialView("_DisqusPartial", _context.Disqus.First());
+                }
+                catch (EntityException ex)
+                {
+                    ViewBag.Error = "Error:" + ex.Message;
+                    return PartialView("_DisqusPartial", _context.Disqus.First());
+                }
+            }
+            var DisqusError = new DbTables.Disqus();
+            var DisqusListError = _context.Disqus.ToList();
+            if (DisqusListError.Any())
+            {
+                DisqusError = DisqusListError.First();
+            }
+            string messages = string.Join("\r\n\r\n", ModelState.Values //validation failed
+                                      .SelectMany(x => x.Errors)
+                                      .Select(x => x.ErrorMessage));
+
+            ViewBag.Error = "Ugyldige verdier: " + messages;
+
+            return PartialView("_DisqusPartial", DisqusError);
+
+        }
+        /// <summary>
+        /// Edit values
+        /// </summary>
+        /// <param name="model">Model values to change</param>
+        /// <returns>view with updated info and success/failure message</returns>
         public ActionResult EditStripe(DbTables.StripeAPI model)
         {
             try
@@ -334,6 +560,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 return PartialView("_StripePartial", _context.StripeAPI.First());
             }
         }
+
+        /// <summary>
+        /// Edit values
+        /// </summary>
+        /// <param name="model">Model values to change</param>
+        /// <returns>view with updated info and success/failure message</returns>
         public ActionResult EditTwitter(DbTables.Twitter model)
         {
             if (ModelState.IsValid) { 
@@ -379,6 +611,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return PartialView("_TwitterPartial", TwitterError);
         }
+        /// <summary>
+        /// Edit values
+        /// </summary>
+        /// <param name="model">Model values to change</param>
+        /// <returns>view with updated info and success/failure message</returns>
         public ActionResult EditRecaptcha(DbTables.GoogleCaptchaAPI model)
         {
             try
@@ -408,7 +645,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             }
         }
-
+        /// <summary>
+        /// Edit values
+        /// </summary>
+        /// <param name="model">Model values to change</param>
+        /// <returns>view with updated info and success/failure message</returns>
         public ActionResult EditAbout(DbTables.Info model)
         {
             if (ModelState.IsValid) { 
@@ -416,7 +657,6 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 var About = new DbTables.Info();
                 var AboutList = _context.About.ToList();
-                //var adress = new DbTables.Adresses();
                 if (AboutList.Any())
                 {
                     About = AboutList.First();
@@ -437,7 +677,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 }
                 else
                 {
-                    About.Phone = model.Phone;
+                    About.Phone = model.Phone;  
                     About.About = model.About;
                     About.Email = model.Email;
                         About.DonateText = model.DonateText;
@@ -481,25 +721,29 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("_AboutPartial", ErrorAbout);
         }
 
+        /// <summary>
+        /// upload terms of use document
+        /// </summary>
+        /// <returns>Succsess or failure partial view</returns>
         public ActionResult TermsUpload()
         {
-            if (Request.Files.Count > 0)
+            if (Request.Files.Count > 0)    //check that there are actually files in the request
             {
                 try
                 {
                     var Terms = new DbTables.TermsOfUse();
                     var TermsList = _context.TermsOfUse.ToList();
-                    if (TermsList.Any())
+                    if (TermsList.Any())    //if it exist already, get it
                     {
                         Terms = TermsList.First();
                     }
                     //  Get all files from Request object  
                     HttpFileCollectionBase files = Request.Files;
-                    for (int i = 0; i < files.Count; i++)
+                    for (int i = 0; i < files.Count; i++)   //get the files object
                     {
 
                         HttpPostedFileBase file = files[i];
-                        if (Terms.Id == 0)
+                        if (Terms.Id == 0)  //add the file, it does not exist
                         {
                             var TermsFile = new DbTables.File
                             {
@@ -524,7 +768,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         }
                         else
                         {
-                            var TermsFile = Terms.Terms;
+                            var TermsFile = Terms.Terms;    //it exists, just change values
                             TermsFile.FileName = Path.GetFileName(file.FileName);
                             TermsFile.FileType = DbTables.FileType.PDF;
                             TermsFile.ContentType = file.ContentType;
@@ -563,15 +807,19 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("_TermsOfUserPartial", TermsError);
         }
 
+        /// <summary>
+        /// upload carousel images and videos
+        /// </summary>
+        /// <returns></returns>
         public ActionResult CarouselUpload()
         {
-            if (Request.Files.Count > 0)
+            if (Request.Files.Count > 0)    //check that there are files to get
             {
                 try
                 {
                     var carouselObj = new DbTables.Carousel();
                     var carousel = _context.Carousel.ToList();
-                    if (carousel.Any())
+                    if (carousel.Any()) //if it already exists, clear the current files and delete them
                     {
                         carouselObj = carousel.First();
                         carouselObj.CarouselItems.Clear();
@@ -582,7 +830,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                     s.FileType == DbTables.FileType.CarouselVideo);
                         if (deleteCarousel.Any())
                         {
-                            _context.Files.RemoveRange(deleteCarousel);
+                            _context.Files.RemoveRange(deleteCarousel); //remove many at once.
                         }
                     }
                     else
@@ -598,7 +846,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
 
                     //  Get all files from Request object  
-                    HttpFileCollectionBase files = Request.Files;
+                    HttpFileCollectionBase files = Request.Files;   
                     for (int i = 0; i < files.Count; i++)
                     {
 
@@ -612,20 +860,20 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         };
 
 
-                        using (var reader = new BinaryReader(file.InputStream))
+                        using (var reader = new BinaryReader(file.InputStream)) 
                         {
 
                             fileUpload.Content = reader.ReadBytes(file.ContentLength);
                         }
 
-                        if (file.ContentType.Contains("video"))
+                        if (file.ContentType.Contains("video")) //it's a video, add as video type
                         {
                             fileUpload.FileType = DbTables.FileType.CarouselVideo;
                         }
                         else
                         {
-                            fileUpload.FileType = DbTables.FileType.CarouselImage;
-
+                            fileUpload.FileType = DbTables.FileType.CarouselImage;  //it's and image
+                                
                         }
                         _context.Files.Add(fileUpload);
                         carouselObj.CarouselItems.Add(fileUpload);
@@ -664,6 +912,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// Upload background image
+        /// </summary>
+        /// <returns>Succsess or error view</returns>
         public ActionResult BackgroundUpload()
         {
             if (Request.Files.Count > 0)
@@ -691,7 +943,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
                     //  Get all files from Request object  
                     HttpFileCollectionBase files = Request.Files;
-                    for (int i = 0; i < files.Count; i++)
+                    for (int i = 0; i < files.Count; i++)   
                     {
 
                         HttpPostedFileBase file = files[i];
@@ -747,7 +999,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("_BackgroundImagePartial", backgroundError);
 
         }
-
+        
+        /// <summary>
+        /// Check if adress exist
+        /// </summary>
+        /// <param name="adress">adress to check</param>
+        /// <returns>returns null if no adress found, otherwise returns adress</returns>
         public DbTables.Adresses AdressExist(DbTables.Adresses adress)
         {
                 var adresses = _context.Set<DbTables.Adresses>();

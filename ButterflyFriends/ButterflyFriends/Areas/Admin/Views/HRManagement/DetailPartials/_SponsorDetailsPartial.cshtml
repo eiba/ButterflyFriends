@@ -131,6 +131,15 @@
                 <dd>
                     @HR.ResolveUserRole(Model.User.RoleNr)
                 </dd>
+                @if (!string.IsNullOrEmpty(Model.User.BirthNumber))
+                {
+                    <dt>
+                        Fødselsnummer:
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(modelItem => Model.User.BirthNumber)
+                    </dd>
+                }
                 @if (Model.User.InactiveSince != null)
                 {
                     <dt>

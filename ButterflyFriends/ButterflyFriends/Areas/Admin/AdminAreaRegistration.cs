@@ -11,7 +11,11 @@ namespace ButterflyFriends.Areas.Admin
                 return "Admin";
             }
         }
-
+        
+        /// <summary>
+        /// Registers the admin paths so that it can be used in routevalues
+        /// </summary>
+        /// <param name="context"></param>
         public override void RegisterArea(AreaRegistrationContext context) 
         {
             context.MapRoute(

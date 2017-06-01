@@ -100,7 +100,7 @@ namespace ButterflyFriends.Controllers
             {
                 ProfileImage = pictures.First();
             }
-            var profileModel = new changeProfileModel 
+            var profileModel = new changeProfileModel   //change profile user info
             {
                 Fname = user.Fname,
                 Lname = user.Lname,
@@ -118,7 +118,7 @@ namespace ButterflyFriends.Controllers
                 Index = indexModel,
                 Profile = profileModel
             };
-            return View(model);
+            return View(model); //return view with updated values
         }
 
         //
@@ -799,10 +799,10 @@ namespace ButterflyFriends.Controllers
         /// <summary>
         /// Rezises image so that it will be be compressed with smaller dimensions
         /// </summary>
-        /// <param name="image"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
+        /// <param name="image">the image to be resized</param>
+        /// <param name="width">width of image</param>
+        /// <param name="height">height of image</param>
+        /// <returns>Resized image in a bitmap</returns>
         private static Bitmap ResizeImage(Bitmap image, int width, int height)
         {
             Bitmap resizedImage = new Bitmap(width, height);
@@ -813,6 +813,11 @@ namespace ButterflyFriends.Controllers
             }
             return resizedImage;
         }
+        /// <summary>
+        /// Check if adress exist
+        /// </summary>
+        /// <param name="adress">address to check if exist</param>
+        /// <returns>The adress if it exist, null otherwise</returns>
         public DbTables.Adresses AdressExist(DbTables.Adresses adress)
         {
             var adresses = _context.Set<DbTables.Adresses>();

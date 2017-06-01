@@ -23,15 +23,18 @@ namespace ButterflyFriends.Areas.Admin.Controllers
     public class HomeController : Controller
     {
         ApplicationDbContext _context = new ApplicationDbContext();
-        public int pageSize = 3;
+        public int pageSize = 4;    //image per page
         // GET: Admin/Home
         public ActionResult Index()
         {
             return View();
         }
 
-
-        public ActionResult Images()
+        /// <summary>
+        /// get initial images, filter by upload date then filid initially
+        /// </summary>
+        /// <returns>return view with list</returns>
+        public ActionResult Images() 
         {
             ViewBag.page = 1;
             var images = from s in _context.Files
@@ -44,6 +47,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return View(images.ToPagedList(1, pageSize));
         }
 
+        /// <summary>
+        /// Get images based on filter
+        /// </summary>
+        /// <param name="page">current page</param>
+        /// <returns>filter image result</returns>
         [HttpPost]
         public ActionResult GetImages(int? page)
         {
@@ -62,6 +70,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// Get images based on filter
+        /// </summary>
+        /// <returns>filter image result</returns>
         [HttpPost]
         public ActionResult FilterImages()
         {
@@ -80,14 +92,27 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return FilterImagesResult(search, active, order, filter, date, sponsor,child, filename, pageNumber);
         }
 
+        /// <summary>
+        /// Filter the images based on parameters
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="active"></param>
+        /// <param name="order"></param>
+        /// <param name="filter"></param>
+        /// <param name="date"></param>
+        /// <param name="sponsor"></param>
+        /// <param name="child"></param>
+        /// <param name="filename"></param>
+        /// <param name="pageNumber"></param>
+        /// <returns>return partial view result containing image list</returns>
         public PartialViewResult FilterImagesResult(string search, string active, string order, string filter,
             string date, string sponsor, string child, string filename, int pageNumber)
         {
 
             DateTime? Date = new DateTime();
-            if (!string.IsNullOrEmpty(date))
+            if (!string.IsNullOrEmpty(date))    //date is not null
             {
-                Date = DateTime.Parse(date);
+                Date = DateTime.Parse(date);    //parse string date to actual datetime variable
             }
             else
             {
@@ -103,7 +128,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 images = images.Where(s => s.Caption.Contains(search));
             }
-            if (Date.HasValue)
+            if (Date.HasValue)  
             {
                 images = images.Where(s => s.UploadDate.Value.Equals(Date.Value));
             }
@@ -154,7 +179,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 List<DbTables.File> imageList = new List<DbTables.File>();
                 IList<int> ids = new List<int>();
-                if (!string.IsNullOrEmpty(sponsor))
+                if (!string.IsNullOrEmpty(sponsor)) //Get images with spesific sponsor
                 {
                     foreach (var image in images.ToList())
                     {
@@ -174,7 +199,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         }
                     }
                 }
-                if (!string.IsNullOrEmpty(child) && !string.IsNullOrEmpty(sponsor) && imageList.Any())
+                if (!string.IsNullOrEmpty(child) && !string.IsNullOrEmpty(sponsor) && imageList.Any())  //get images with both the sent in sponsor and child in it
                 {
                     List<DbTables.File> imageListChildren = new List<DbTables.File>();
                     IList<int> idsChildren = new List<int>();
@@ -197,7 +222,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     }
                     images = imageListChildren.AsQueryable();
                 }
-                else if (string.IsNullOrEmpty(sponsor) && !string.IsNullOrEmpty(child))
+                else if (string.IsNullOrEmpty(sponsor) && !string.IsNullOrEmpty(child)) //get images with child
                 {
                     foreach (var image in images.ToList())
                     {
@@ -224,7 +249,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     images = imageList.AsQueryable();
                 }
             }
-            if (pageNumber > 1 && images.Any() && (images.Count() <= pageSize*(pageNumber)))
+            if (pageNumber > 1 && images.Any() && (images.Count() <= pageSize*(pageNumber)))    //ensure that the page is not empty. Go to highest available page if empty page
             {
 
                 pageNumber = (int) Math.Ceiling((double) images.Count()/(double) pageSize);
@@ -232,7 +257,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 return PartialView("_ImagesPartial", images.ToPagedList(pageNumber, pageSize));
 
             }
-            if (!images.Any())
+            if (!images.Any())  //no images left, got to page 1
             {
                 ViewBag.page = 1;
                 pageNumber = 1;
@@ -240,18 +265,26 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("_ImagesPartial", images.ToPagedList(pageNumber, pageSize));
         }
 
+        /// <summary>
+        /// upload image view
+        /// </summary>
+        /// <returns>upload image view</returns>
         public ActionResult Upload()
         {
             return View();
         }
 
+        /// <summary>
+        /// Get current active users and children maching the search criteria
+        /// </summary>
+        /// <returns>Json list of database entities</returns>
         [HttpPost]
         public ActionResult GetUsers()
         {
             var body = Request.InputStream;
             var encoding = Request.ContentEncoding;
-            var reader = new StreamReader(body, encoding);
-            var json = reader.ReadToEnd();
+            var reader = new StreamReader(body, encoding);  
+            var json = reader.ReadToEnd();  //get JSON from request
 
 
             var enteties = new List<object>();
@@ -270,9 +303,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 orderby s.Lname
                 select s).ToList();
 
-            foreach (var user in users)
+            foreach (var user in users) 
             {
-                var imgId = 1;
+                var imgId = 1;  //if user has no profile image, return default image
                 if (user.Thumbnail != null)
                 {
                     imgId = user.Thumbnail.ThumbNailId;
@@ -289,7 +322,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
             foreach (var child in children)
             {
-                var imgId = 1;
+                var imgId = 1;  //if there is no profile image, return default profile image
                 if (child.Thumbnail != null)
                 {
                     imgId = child.Thumbnail.ThumbNailId;
@@ -307,6 +340,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return Json(enteties);
         }
 
+        /// <summary>
+        /// Publish image
+        /// </summary>
+        /// <returns>filter result based on parameters</returns>
         [HttpPost]
         public ActionResult PublishImage()
         {
@@ -355,6 +392,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// Deletes image
+        /// </summary>
+        /// <returns>image filter result</returns>
         [HttpPost]
         public ActionResult DeleteImage()
         {
@@ -407,7 +448,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
-
+        /// <summary>
+        /// edit image
+        /// </summary>
+        /// <returns>image filter result</returns>
         [HttpPost]
         public ActionResult EditImage()
         {
@@ -423,7 +467,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var page = Request.Form["page"];
             var caption = Request.Form["caption"];
             int pageNumber = 1;
-            List<DbTables.TagBox> list = JsonConvert.DeserializeObject<List<DbTables.TagBox>>(Request.Form["tags"]);
+            List<DbTables.TagBox> list = JsonConvert.DeserializeObject<List<DbTables.TagBox>>(Request.Form["tags"]);    //deserialize and turn json objects (the tags) into actual tag class
             if (!string.IsNullOrEmpty(page))
             {
                 pageNumber = int.Parse(page);
@@ -445,9 +489,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 image.Caption = caption;
                 _context.TagBoxs.RemoveRange(image.Tags);
                 image.Tags = list;
-                image.User.Clear();
+                image.User.Clear(); //clear current users and children, add new one
                 image.Children.Clear();
-                foreach (var tagBox in list)
+                foreach (var tagBox in list)    //get users in tag boxes
                 {
                     if (tagBox.type == "user")
                     {
@@ -463,8 +507,8 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         if (tagBox.Id != null)
                         {//if nothing is selected id comes in as null, do nothing then
 
-                            DbTables.Child Child = _context.Children.Find(int.Parse(tagBox.Id));
-                            if (Child != null)
+                            DbTables.Child Child = _context.Children.Find(int.Parse(tagBox.Id));    
+                            if (Child != null)  //add child
                             {
                                 image.Children.Add(Child);
                             }
@@ -487,6 +531,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
 
         }
+
+        /// <summary>
+        /// Upload images with tags
+        /// </summary>
+        /// <returns>return success or error message</returns>
         [HttpPost]
         public ActionResult UploadFiles()
         {
@@ -496,7 +545,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 try
                 {
 
-                    List<DbTables.TagBox> list = JsonConvert.DeserializeObject<List<DbTables.TagBox>>(Request.Form["tags"]);
+                    List<DbTables.TagBox> list = JsonConvert.DeserializeObject<List<DbTables.TagBox>>(Request.Form["tags"]);//deserialize and turn json objects (the tags) into actual tag class
 
                     //  Get all files from Request object  
                     HttpFileCollectionBase files = Request.Files;
@@ -521,7 +570,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         {
                             picture.Caption = caption;
                         }
-                        foreach (var tagBox in list)
+                        foreach (var tagBox in list)    //get users and children from tag boxes. add to the relations of the image
                         {
                             if (tagBox.type =="user") { 
                             ApplicationUser user = _context.Users.Find(tagBox.Id);

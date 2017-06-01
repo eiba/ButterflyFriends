@@ -1,0 +1,161 @@
+commit 6e4688938b637950a2737493e62437f7def314d9
+Author: Eirik Baug <Eirik Baug>
+Date:   Fri May 19 13:56:39 2017 +0200
+
+    Tweaking to design and donations
+
+commit 0f08c8ad95bda6a0aa812bdc748c6614e669961e
+Author: Eirik Baug <Eirik Baug>
+Date:   Wed May 17 07:38:35 2017 +0200
+
+    Degin and donations
+
+commit 05bbe66632084d55d16c19c9e2af77dff17d18dc
+Author: Eirik Baug <Eirik Baug>
+Date:   Tue May 16 07:04:44 2017 +0200
+
+    donations with stripe
+
+commit 258d6f10eb5dfb07df9db78ad337943bcb201c33
+Author: Eirik Baug <Eirik Baug>
+Date:   Mon May 15 04:09:52 2017 +0200
+
+    lots of changes to add dynamic content, design changes and social media
+
+commit 87f386dc2fd9355182b969743db8015952509234
+Author: Eirik Baug <Eirik Baug>
+Date:   Sun May 14 06:34:04 2017 +0200
+
+    socail media, design and dynamic content
+
+commit 7738828b91da156886e78f180bcf251584eb6aca
+Author: Eirik Baug <Eirik Baug>
+Date:   Fri May 12 08:49:23 2017 +0200
+
+    lots of design changes and cool image carousel feature on front page
+
+commit 901c566377b116853cbf601c16644f727aa7e792
+Author: Eirik Baug <Eirik Baug>
+Date:   Wed May 10 22:34:59 2017 +0200
+
+    new and improved features for showing and editing images
+
+commit 002abfc4014532095e4e75b8ea4e717996de3b4d
+Author: Eirik Baug <Eirik Baug>
+Date:   Fri May 5 22:41:20 2017 +0200
+
+    Lots of new changes and finishing touches
+
+commit a0b49bdeb05545a9bec3119da3a2800fa0faa479
+Author: Eirik Baug <Eirik Baug>
+Date:   Sat Apr 22 18:43:59 2017 +0200
+
+    changes to PR panel with functional email feature
+
+commit ccd0f0991d0c6c1dc9309a08568af9a3df179d17
+Author: Eirik Baug <Eirik Baug>
+Date:   Tue Apr 4 12:21:47 2017 +0200
+
+    added more to the text editor. you can now delete articles an publish them as you want. also did a lot of minor changes to make the the editor look and feel better
+
+commit e66ac29fd425fc9aea01079e5e47809c866f6f2d
+Author: Eirik Baug <Eirik Baug>
+Date:   Mon Apr 3 04:58:32 2017 +0200
+
+    Changed from one rich text editor to another. Now works and looks much better with imageuploads and the like. Can also at any time edit old articles, all updates and image handeling is done with ajax to and extensive degree
+
+commit de59061e5f723e3b6970fdbb9c0ba8cbebdb93e4
+Author: Eirik Baug <Eirik Baug>
+Date:   Tue Mar 28 17:59:36 2017 +0200
+
+    user acceptance/declining feature now complete with ability to send email with sengrid containing a password setting link
+
+commit 11eaae374f73c3642a2e298b042fc191a9c5360a
+Author: Eirik Baug <Eirik Baug>
+Date:   Mon Mar 27 03:26:28 2017 +0200
+
+    membershipt requesting more or less complete with ajax updates. still need email integration
+
+commit e79b7f5f37f1f435af703de772b8076d477c0993
+Author: Eirik Baug <Eirik Baug>
+Date:   Sun Mar 26 05:38:25 2017 +0200
+
+    you can now request membership by filling out a form at the front page. This can then be accepted in the admin panel. still have to integrate with mail
+
+commit 8215b169aab8c25e10d7029be0aec525a444bc36
+Author: Eirik Baug <Eirik Baug>
+Date:   Fri Mar 24 20:34:54 2017 +0100
+
+    Close to fineshed with the user administration panels, still needs a couple features but will put it a little aside for now
+
+commit 9588a7deaf511413a111cda2976b382a9f0b83f7
+Author: Eirik Baug <Eirik Baug>
+Date:   Mon Mar 20 05:49:37 2017 +0100
+
+    You can now add, edit and so on children same as with employees
+
+commit 6283c993d2514031dc5abd1925edf6f6ed2c95f0
+Author: Eirik Baug <Eirik Baug>
+Date:   Sat Mar 18 03:52:04 2017 +0100
+
+    Paging with ajax now works perfectly in the user administration panel. You can now also add profile pictures to accounts which also creates and saves a small thumbnail image of the profile picture to the database which is used when searching for users during image tagging. this solves the issue where you cant tell the difference between two users with the same name
+
+commit 65f1278cfe535ac69aa9692d7915721e44569a16
+Author: Eirik Baug <Eirik Baug>
+Date:   Wed Mar 15 16:48:01 2017 +0100
+
+    Added userhandeling page in admin, now functional for adding, editing, viewing and deactivating employees. Everything works with ajax and partial views for a smoother experience. same functionality for sponsors and children also needs to be added
+
+commit d87f670a02004de462a87f5dbc15c2042957ddf8
+Author: Eirik Baug <Eirik Baug>
+Date:   Tue Mar 14 16:18:58 2017 +0100
+
+    Functional prototype of the image tagging system is up. you can now tag images and then retrieve them from the database and display the images again regardless of the displayed size of the image. Still a lot can be done tomake it better, but it's working as intended
+
+commit 247ccd3010d6216f19c988c8dcb6785e9f7a6389
+Author: Eirik Baug <Eirik Baug>
+Date:   Sun Mar 12 03:44:01 2017 +0100
+
+    Significantly improved tag boxes look and feel. You can now add custom boxes by doubbleclicking on images and tagboxes can be resized and moved aswell as removed. when typing in the input field of tagboxes an ajax call goes to the server and gets the names that starts with what you typed. Clicking the detect faces button will attempt to detect and add tags automatically to the image. finally tags are now saved to the database and can be retrieved when the image is requested from the database again
+
+commit 7daab2a428c4972822f9c03d45913b10b5b18da4
+Author: Eirik Baug <Eirik Baug>
+Date:   Tue Mar 7 19:59:11 2017 +0100
+
+    after a lot of work and nothing working the tagging system still does not work, but at least I can now display images before uploading them and then upload them asynchronously with ajax to the database. can also display progress. this has turned out to be a lot harder than expected...
+
+commit 2b3ff1ab8c51339c17cdf5aeb087d0a1a1681cd2
+Author: Eirik Baug <Eirik Baug>
+Date:   Sat Feb 25 04:32:29 2017 +0100
+
+    set up admin panel and also added the option of changing profile info in profile page using axaj and vue to make it look and feel good
+
+commit 9194af65d7c66c1c90dbbc63cde8ffd22c0083dc
+Author: Eirik Baug <Eirik Baug>
+Date:   Wed Feb 22 16:31:41 2017 +0100
+
+    polished the design some more
+
+commit 261c78418a12bbdafc3aada59ba24e4448a646e7
+Author: Eirik Baug <Eirik Baug>
+Date:   Wed Feb 22 05:08:34 2017 +0100
+
+    simple start of design
+
+commit 90b1fe3fe957649954b2de47897677da749ba329
+Author: Eirik Baug <Eirik Baug>
+Date:   Wed Feb 22 00:37:52 2017 +0100
+
+    Designed and set up database with picture table
+
+commit b80db086f28ac2d66618a67bb570965b26c374a3
+Author: Eirik Baug <Eirik Baug>
+Date:   Tue Feb 21 14:48:54 2017 +0100
+
+    Initial project commit with updated packages
+
+commit d72def0b6487d4c0fc2ae79787639f9e69961c53
+Author: eiriba14 <eiriba14@users.noreply.github.com>
+Date:   Tue Feb 21 14:25:06 2017 +0100
+
+    Initial commit

@@ -44,6 +44,12 @@
                 @Html.Partial("_TwitterPartial", Model.Twitter)
             </div>
             <br />
+            <hr style="border: 1px solid black;" />
+            <br />
+            <div id="updateDisqus">
+                @Html.Partial("_DisqusPartial", Model.Disqus)
+            </div>
+            <br />
         </div>
     </div>
     <div id="Files" class="tab-pane fade">
@@ -116,6 +122,9 @@
         }
         function showFacebook() {
             facebookVue.showModal = true;
+        }
+        function showDisqus() {
+            disqusVue.showModal = true;
         }
         function showTwitter() {
             twitterVue.showModal = true;
@@ -434,6 +443,25 @@
                 }
             });
         }
+        function enableDisqus(enable) {
+            var formData = new FormData();
+            formData.append('enable', enable);
+            $.ajax({
+                url: '/Admin/Various/EnableDisqus',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                success: function (result) {
+                    $('#updateDisqus').html(result);
+                },
+                error: function (err) {
+                    $("#DisqusError").text(err.statusText);
+                    $("#DisqusSuccess").text("");
+                }
+            });
+        }
 
         function enableTerms(enable) {
             var formData = new FormData();
@@ -451,6 +479,63 @@
                 error: function (err) {
                     $("#TermsError").text(err.statusText);
                     $("#TermsSuccess").text("");
+                }
+            });
+        }
+        function enableStripe(enable) {
+            var formData = new FormData();
+            formData.append('enable', enable);
+            $.ajax({
+                url: '/Admin/Various/EnableStripe',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                success: function (result) {
+                    $('#updateStripe').html(result);
+                },
+                error: function (err) {
+                    $("#StripeError").text(err.statusText);
+                    $("#StripeSuccess").text("");
+                }
+            });
+        }
+        function enableSendgrid(enable) {
+            var formData = new FormData();
+            formData.append('enable', enable);
+            $.ajax({
+                url: '/Admin/Various/EnableSendgrid',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                success: function (result) {
+                    $('#upadteSendGrid').html(result);
+                },
+                error: function (err) {
+                    $("#SendgridError").text(err.statusText);
+                    $("#SendgridSuccess").text("");
+                }
+            });
+        }
+        function enableRecaptcha(enable) {
+            var formData = new FormData();
+            formData.append('enable', enable);
+            $.ajax({
+                url: '/Admin/Various/EnableRecaptcha',
+                async: true,
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                success: function (result) {
+                    $('#updateRecaptcha').html(result);
+                },
+                error: function (err) {
+                    $("#RecaptchaError").text(err.statusText);
+                    $("#RecaptchaSuccess").text("");
                 }
             });
         }

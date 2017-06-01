@@ -28,9 +28,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
     public class HRManagementController : Controller
     {
         private ApplicationDbContext _context = new ApplicationDbContext();
-        public int pageSize = 10;
+        public int pageSize = 10;   //entities per page
 
         // GET: Admin/HRManagement
+        /// <summary>
+        /// index page, show initial list elements
+        /// </summary>
+        /// <returns>model with list elements of all entities</returns>
         public ActionResult Index()
         {
             var users = from s in _context.Users
@@ -53,6 +57,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Upload profile picture
+        /// </summary>
+        /// <returns>returns and shows the new profile picture</returns>
         [HttpPost]
         public ActionResult ProfilePictureUpload()
         {
@@ -65,10 +73,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     var manager = new UserManager<ApplicationUser>(store);
                     ApplicationUser currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;  //the current user
                     var userId = Request.Form["userid"];
-                    var ProfileImageWidth = 300;
-                    var ThumbnailImageWidth = 40;
-                    var type = Request.Form["type"];
-                    //ApplicationUser user = _context.Users.Find(userId);
+                    var ProfileImageWidth = 300;    //max profile image width
+                    var ThumbnailImageWidth = 40;   //thumbnail width
+                    var type = Request.Form["type"];    //type of entity. User or child.
                     var fileId = 0;
                     var employee = new ApplicationUser();
                     var child = new DbTables.Child();
@@ -90,14 +97,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     }
                     else if (type == "child")
                     {
-                        child = _context.Children.Find(Int32.Parse(userId));
+                        child = _context.Children.Find(Int32.Parse(userId));    //get child id
                         pictures = child.Pictures;
                     }
 
-                    //var pictures = user.Pictures;
                     var profPic = new DbTables.File();
                     var thumbNail = new DbTables.ThumbNail();
-                    if (pictures.Any())
+                    if (pictures.Any()) //check if picture is already uploaded
                     {
                         foreach (var pic in pictures)
                         {
@@ -119,7 +125,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         {
                             var picture = new DbTables.File();
                             //save profile picture
-                            if (employee.Email != null)
+                            if (employee.Email != null) //check if entity is employee
                             {
                                 picture = new DbTables.File
                                 {
@@ -131,7 +137,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             }
                             else
                             {
-                                picture = new DbTables.File
+                                picture = new DbTables.File //entity is a child
                                 {
                                     FileName = Path.GetFileName(file.FileName),
                                     FileType = DbTables.FileType.Profile,
@@ -147,13 +153,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             }
 
                             Bitmap bmp;
-                            using (var ms = new MemoryStream(content))
+                            using (var ms = new MemoryStream(content))  //get bitmap of image
                             {
                                 bmp = new Bitmap(ms);
                             }
-                            double ratio = (double) ((double) bmp.Width/(double) bmp.Height);
+                            double ratio = (double) ((double) bmp.Width/(double) bmp.Height);   //get height width ratio
                             int height = (int) ((double) ProfileImageWidth/ratio);
-                            var newImg = ResizeImage(bmp, ProfileImageWidth, height);
+                            var newImg = ResizeImage(bmp, ProfileImageWidth, height);   //resize image so that it cannot exceed 300 pixels
 
                             byte[] cntnt;
                             using (var stream = new MemoryStream())
@@ -172,11 +178,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                 ContentType = file.ContentType,
                                 FileType = DbTables.FileType.Thumbnail,
                                 File = picture
-                                //User = new List<ApplicationUser> {user}
                             };
 
-                            int Theight = (int) ((double) ThumbnailImageWidth/ratio);
-                            var newThumb = ResizeImage(bmp, ThumbnailImageWidth, Theight);
+                            int Theight = (int) ((double) ThumbnailImageWidth/ratio);   
+                            var newThumb = ResizeImage(bmp, ThumbnailImageWidth, Theight);  //resize profile image to 40 pixels to create a thumbnail
                             byte[] Tcntnt;
                             using (var stream = new MemoryStream())
                             {
@@ -200,7 +205,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             fileId = picture.FileId;
                         }
                         else
-                        {
+                        {   //there already exist a profile image in database
                             //Profile picture
                             profPic.FileName = Path.GetFileName(file.FileName);
                             profPic.ContentType = file.ContentType;
@@ -217,9 +222,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             {
                                 bmp = new Bitmap(ms);
                             }
-                            double ratio = (double) ((double) bmp.Width/(double) bmp.Height);
+                            double ratio = (double) ((double) bmp.Width/(double) bmp.Height);   //ratio of width and height
                             int height = (int) ((double) ProfileImageWidth/ratio);
-                            var newImg = ResizeImage(bmp, ProfileImageWidth, height);
+                            var newImg = ResizeImage(bmp, ProfileImageWidth, height);       //resize image
 
                             byte[] cntnt;
                             using (var stream = new MemoryStream())
@@ -236,7 +241,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                             thumbNail.ContentType = file.ContentType;
 
                             int Theight = (int) ((double) ThumbnailImageWidth/ratio);
-                            var newThumb = ResizeImage(bmp, ThumbnailImageWidth, Theight);
+                            var newThumb = ResizeImage(bmp, ThumbnailImageWidth, Theight);  //resize image to thubnail
                             byte[] Tcntnt;
                             using (var stream = new MemoryStream())
                             {
@@ -283,6 +288,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return resizedImage;
         }
 
+        /// <summary>
+        /// returns employee list based on search criteria
+        /// </summary>
+        /// <param name="employeePage"></param>
+        /// <returns></returns>
         public ActionResult EmployeeList(int? employeePage)
         {
 
@@ -341,6 +351,14 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
         /****************Detail functions**************/
+
+            /// <summary>
+            /// gets and returns details modal partial view
+            /// </summary>
+            /// <param name="id">id of entity</param>
+            /// <param name="type">type of entity</param>
+            /// <param name="employeePage">employee list page</param>
+            /// <returns></returns>
         [HttpGet]
         public ActionResult showEmployeeDetails(string id, string type, int? employeePage)
         {
@@ -371,6 +389,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
 
         }
+        /// <summary>
+        /// show sponsor modal page
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="sponsorPage"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult showSponsorDetails(string id, string type, int? sponsorPage)
         {
@@ -400,6 +425,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
 
         }
+        /// <summary>
+        /// show child 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="childrenPage"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult showChildDetails(int id, string type, int? childrenPage)
         {
@@ -430,6 +462,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         }
 
         /************************************************/
+        /// <summary>
+        /// show edit modal for employee
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="employeePage"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult showEmployeeEdit(string id, int? employeePage)
         {
@@ -463,6 +501,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("EditPartials/_EmployeeEditPartial", model);
         }
 
+        /// <summary>
+        /// show sponsor edit modal
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="sponsorPage"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult showSponsorEdit(string id, int? sponsorPage)
         {
@@ -493,6 +537,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("EditPartials/_SponsorEditPartial", model);
         }
 
+        /// <summary>
+        /// show child edit modal
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="childrenPage"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult showChildEdit(int? id, int? childrenPage)
         {
@@ -526,6 +576,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// edit child entity
+        /// </summary>
+        /// <param name="model">child create model</param>
+        /// <param name="childrenPage">page of children list</param>
+        /// <returns>updated childrens list</returns>
         [HttpPost]
         public ActionResult ChildEdit(ChildCreateModel model, int? childrenPage)
         {
@@ -561,14 +617,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 child.DoB = model.Child.DoB;
                 child.Fname = model.Child.Fname;
                 child.Lname = model.Child.Lname;
-                if (model.Child.SponsorId != null && model.SponsorName != null)
+                if (model.Child.SponsorId != null && model.SponsorName != null) //try to add sponsor, if it exists
                 {
                     var user = _context.Users.Find(model.Child.SponsorId);
                     if (user != null)
                     {
                         if (user.Fname + " " + user.Lname != model.SponsorName)
                         {
-                            //child.SponsorId = null;
                             sponsormsg = ", men fant ikke bruker " + model.SponsorName;
                         }
                         else
@@ -610,6 +665,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
         }
+        /// <summary>
+        /// create employee modal
+        /// </summary>
+        /// <param name="employeePage"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult showEmployeeCreate(int? employeePage)
         {
@@ -617,6 +677,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return PartialView("CreatePartials/_EmployeeCreatePartial", new RegisterViewModel());
         }
+        /// <summary>
+        /// sponsor create modal
+        /// </summary>
+        /// <param name="sponsorPage"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult showSponsorCreate(int? sponsorPage)
         {
@@ -624,6 +689,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return PartialView("CreatePartials/_SponsorCreatePartial", new RegisterViewModel());
         }
+        /// <summary>
+        /// children create modal
+        /// </summary>
+        /// <param name="childrenPage"></param>
+        /// <returns></returns>
         public ActionResult showChildCreate(int? childrenPage)
         {
             ViewBag.childrenPage = (childrenPage ?? 1);
@@ -632,11 +702,18 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         }
 
         /************************deactivate functions**********************/
-
+        
+        /// <summary>
+        /// deactivate employee
+        /// </summary>
+        /// <param name="id">id to deactivate</param>
+        /// <param name="employeePage">page of employee list</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> employeeDeactivate(string id, int? employeePage)
         {
-            ViewBag.employeePage = (employeePage ?? 1);
+            //filter values
+            ViewBag.employeePage = (employeePage ?? 1); 
             var search = Request.Form["search"];
             var active = Request.Form["active"];
             var order = Request.Form["order"];
@@ -669,9 +746,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 return FilterResultEmployees(search, active, order, filter, employeePhone, EmployeeStreetadress, EmployeeZip, EmployeeCity, EmployeeCounty, EmployeePosition, employeeAccountNumber, pageNumber);
 
             }
-            user.LockoutEnabled = true;
-            user.LockoutEndDateUtc = new DateTime(9999, 12, 30);
-            user.InactiveSince = DateTime.Now;
+            user.LockoutEnabled = true; //lock out user
+            user.LockoutEndDateUtc = new DateTime(9999, 12, 30); //lock out until year 9999, which is basically forever
+            user.InactiveSince = DateTime.Now;  //deactivated since now
             user.IsEnabeled = false;
 
             var result = await manager.UpdateAsync(user);
@@ -693,6 +770,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// deactivate sponsor
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="sponsorPage"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> sponsorDeactivate(string id, int? sponsorPage)
         {
@@ -705,7 +788,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var SponsorStreetadress = Request.Form["SponsorStreetadress"];
             var SponsorZip = (Request.Form["SponsorZip"]);
             var SponsorCity = Request.Form["SponsorCity"];
-            var SponsorCounty = Request.Form["SponsorCounty"];
+            var SponsorCounty = Request.Form["SponsorCounty"];  //filter values
 
             int pageNumber = (sponsorPage ?? 1);
             if (id == null)
@@ -747,6 +830,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// deactivate child
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="childrenPage"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult childDeactivate(int id, int? childrenPage)
         {
@@ -795,6 +884,13 @@ namespace ButterflyFriends.Areas.Admin.Controllers
         /***************************************/
 
         /************************activate functions**********************/
+
+            /// <summary>
+            /// activate employee
+            /// </summary>
+            /// <param name="id">id to activate</param>
+            /// <param name="employeePage"></param>
+            /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> employeeActivate(string id, int? employeePage)
         {
@@ -828,7 +924,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var store = new UserStore<ApplicationUser>(_context);
             var manager = new UserManager<ApplicationUser>(store);
             ApplicationUser currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;
-            if (currentUser.RoleNr >= user.RoleNr)
+            if (currentUser.RoleNr >= user.RoleNr)  //lower or same in hiearchy. not allowed to perform this task
             {
                 ViewBag.Error = "Kan ikke aktivere en bruker på samme nivå eller lavere enn deg";
                 ViewBag.Id = user.Id;
@@ -836,9 +932,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 return FilterResultEmployees(search, active, order, filter, employeePhone, EmployeeStreetadress, EmployeeZip, EmployeeCity, EmployeeCounty, EmployeePosition, employeeAccountNumber, pageNumber);
 
             }
-            user.LockoutEnabled = false;
-            user.IsEnabeled = true;
-            user.InactiveSince = null;
+            user.LockoutEnabled = false;    //no longer locked out
+            user.IsEnabeled = true; //user is enabeled
+            user.InactiveSince = null;  //no longer inactive
 
             var result = await manager.UpdateAsync(user);
             _context.SaveChanges();
@@ -857,6 +953,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return FilterResultEmployees(search, active, order, filter, employeePhone, EmployeeStreetadress, EmployeeZip, EmployeeCity, EmployeeCounty, EmployeePosition, employeeAccountNumber, pageNumber);
 
         }
+        /// <summary>
+        /// activate sponsor
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="sponsorPage"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> sponsorActivate(string id, int? sponsorPage)
         {
@@ -910,6 +1012,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return FilterResultSponsors(search, active, order, filter, SponsorPhone, SponsorStreetadress, SponsorZip, SponsorCity, SponsorCounty, pageNumber);
         }
+        /// <summary>
+        /// activate child entity
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="childrenPage"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> childActivate(int id, int? childrenPage)
         {
@@ -955,10 +1063,17 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             }
         }
-
+        
+        /// <summary>
+        /// edit employee
+        /// </summary>
+        /// <param name="model">model with profile change info</param>
+        /// <param name="employeePage">employee page</param>
+        /// <returns>updated employee list partial view</returns>
         [HttpPost]
         public async Task<ActionResult> EditEmployee(changeUserInfo model, int? employeePage)
         {
+            //filter values
             ViewBag.employeePage = (employeePage ?? 1);
             var search = Request.Form["search"];
             var active = Request.Form["active"];
@@ -1087,7 +1202,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         var provider = new DpapiDataProtectionProvider("ButterflyFriends");
                         manager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(provider.Create("Passwordresetting"));
                         string resetToken = await manager.GeneratePasswordResetTokenAsync(model.Id);
-                        var Presult = await manager.ResetPasswordAsync(model.Id, resetToken, model.Password);
+                        var Presult = await manager.ResetPasswordAsync(model.Id, resetToken, model.Password);   //reset passwor with token
                         if (!Presult.Succeeded)
                         {
                             ViewBag.Error = "Passordet må matche kriteriene";
@@ -1126,6 +1241,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// edit sponsors, same as employee
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="sponsorPage"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> EditSponsor(changeUserInfo model, int? sponsorPage)
         {
@@ -1252,9 +1373,16 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// creates and employee
+        /// </summary>
+        /// <param name="model">values to edit</param>
+        /// <param name="employeePage">employee page</param>
+        /// <returns>returns updated partial view</returns>
         [HttpPost]
         public async Task<ActionResult> CreateEmployee(RegisterViewModel model, int? employeePage)
         {
+            //filter values
             ViewBag.employeePage = (employeePage ?? 1);
 
             var search = Request.Form["search"];
@@ -1275,7 +1403,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             {
                 var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
                 ApplicationUser currentUser = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;  //the current user
-                if (currentUser.RoleNr >= model.RoleNr)
+                if (currentUser.RoleNr >= model.RoleNr) //cannot create user with same or higher user level
                 {
                     ViewBag.Error = "Du kan ikke legge til en bruker på samme eller høyere brukernivå";
 
@@ -1287,7 +1415,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                   s.Email.Contains(model.Email)
                               select s).ToList();
                 
-                if (results.Any())
+                if (results.Any())  //email is already in use, return errormessage
                 {
 
                             
@@ -1298,6 +1426,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
 
                 }
+                //so far so good, create user object
                 var user = new ApplicationUser
                 {
                     UserName = model.Email,
@@ -1318,7 +1447,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     PostCode = model.PostCode
                 };
                 
-                var UserAdress = AdressExist(Adress);
+                var UserAdress = AdressExist(Adress);   //check if adress already exist in database
                 if (UserAdress == null)
                 {
                     UserAdress = Adress;
@@ -1338,15 +1467,14 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 }
                 user.Adress = UserAdress;
 
-                var result = await userManager.CreateAsync(user, model.Password);
+                var result = await userManager.CreateAsync(user, model.Password);   //create user
 
-                if (result.Succeeded)
+                if (result.Succeeded)   //creatinon succseeds
                 {
 
-                    userManager.AddToRole(user.Id, ResolveUserRole(model.RoleNr));
+                    userManager.AddToRole(user.Id, ResolveUserRole(model.RoleNr));  //add to appropriate role
                     ViewBag.Success = "Brukeren "+user.Email+" ble lagt til i databasen";
-                    ViewBag.Id = user.Id;
-                    //var users = _context.Users.ToList();
+                    ViewBag.Id = user.Id;   //return updated view
                     return FilterResultEmployees(search, active, order, filter, employeePhone, EmployeeStreetadress, EmployeeZip, EmployeeCity, EmployeeCounty, EmployeePosition, employeeAccountNumber, pageNumber);
 
                 }
@@ -1355,7 +1483,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             }
             var errormsg = "";
-            foreach (ModelState modelState in ViewData.ModelState.Values)
+            foreach (ModelState modelState in ViewData.ModelState.Values)   //modelstate errors. get the errors and return to view
             {
                 foreach (ModelError error in modelState.Errors)
                 {
@@ -1367,6 +1495,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// create sponsor, same procedure as employee creation
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="sponsorPage"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> CreateSponsor(RegisterViewModel model, int? sponsorPage)
         {
@@ -1468,6 +1602,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return FilterResultSponsors(search, active, order, filter, SponsorPhone, SponsorStreetadress, SponsorZip, SponsorCity, SponsorCounty, pageNumber);
         }
 
+        /// <summary>
+        /// create child
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="childrenPage"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult CreateChild(ChildCreateModel model, int? childrenPage)
         {
@@ -1481,17 +1621,17 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             int pageNumber = (childrenPage ?? 1);
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) //check if model values are valid
             {
                 var sponsormsg = "";
                 if (model.Child.SponsorId != null) { 
                 var user = _context.Users.Find(model.Child.SponsorId);
                 if (user != null)
                 {
-                    if (user.Fname +" "+user.Lname != model.SponsorName)
+                    if (user.Fname +" "+user.Lname != model.SponsorName)    
                     {
                         model.Child.SponsorId = null;
-                            sponsormsg = ", men fant ikke bruker " + model.SponsorName;
+                            sponsormsg = ", men fant ikke bruker " + model.SponsorName; //could not find sponsor
                         }
                 }
                 }
@@ -1500,9 +1640,9 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     sponsormsg = ", men fant ikke bruker " + model.SponsorName;
                 }
                 model.Child.isActive = true;
-                if (model.Child.DoB > DateTime.Now)
+                if (model.Child.DoB > DateTime.Now) 
                 {
-                    ViewBag.Error = "Barnet kan ikke være født i fremtiden!";
+                    ViewBag.Error = "Barnet kan ikke være født i fremtiden!";   //date of birth cannot be in the future
 
                     return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
                 }
@@ -1524,7 +1664,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
 
             var errormsg = "";
-            foreach (ModelState modelState in ViewData.ModelState.Values)
+            foreach (ModelState modelState in ViewData.ModelState.Values)   //add modelstate errors, return them to view
             {
                 foreach (ModelError error in modelState.Errors)
                 {
@@ -1537,6 +1677,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
         }
 
+        /// <summary>
+        /// shows employee delete partial modal
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="employeePage"></param>
+        /// <returns></returns>
         public ActionResult showEmployeeDelete(string id, int? employeePage)
         {
             ViewBag.employeePage = (employeePage ?? 1);
@@ -1569,8 +1715,15 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("DeletePartials/_DeleteEmployeePartial", user);
         }
 
+        /// <summary>
+        /// delete employee entity
+        /// </summary>
+        /// <param name="id">id of employee to delete</param>
+        /// <param name="employeePage">page og employee list</param>
+        /// <returns>filtered list result</returns>
         public ActionResult EmployeeDelete(string id, int? employeePage)
         {
+            //filter parameters
             ViewBag.employeePage = (employeePage ?? 1);
             var search = Request.Form["search"];
             var active = Request.Form["active"];
@@ -1606,19 +1759,19 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             if (currentUser.RoleNr >= user.RoleNr)
             {
                 
-                ViewBag.Error = "Du kan ikke slette noen som er på et høyere eller samme brukernivå";
+                ViewBag.Error = "Du kan ikke slette noen som er på et høyere eller samme brukernivå";   //user level too low
                 ViewBag.id = id;
                 return FilterResultEmployees(search, active, order, filter, employeePhone, EmployeeStreetadress, EmployeeZip, EmployeeCity, EmployeeCounty, EmployeePosition, employeeAccountNumber, pageNumber);
 
             }
             try
             {
-                DbTables.File profile = new DbTables.File();
+                DbTables.File profile = new DbTables.File();    
                 DbTables.ThumbNail thumbnail = new DbTables.ThumbNail();
                 var email = user.Email;
 
 
-                var images = (from s in _context.Files
+                var images = (from s in _context.Files      //check if the user has profile image. if so delete this too
                     where s.FileType == DbTables.FileType.Profile
                     select s).ToList();
 
@@ -1637,10 +1790,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 _context.Entry(thumbnail).State = EntityState.Deleted;
                 }
 
-                _context.Entry(user.Employee).State = EntityState.Deleted;
+                _context.Entry(user.Employee).State = EntityState.Deleted;  //delete related employee entity
                 _context.Entry(user).State = EntityState.Deleted;
 
-                _context.TagBoxs.RemoveRange(_context.TagBoxs.Where(x => x.Id == user.Id));
+                _context.TagBoxs.RemoveRange(_context.TagBoxs.Where(x => x.Id == user.Id)); //remove tagboxes of user from database
 
                 _context.SaveChanges();
 
@@ -1664,6 +1817,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// show sponsor delete
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="sponsorPage"></param>
+        /// <returns></returns>
         public ActionResult showSponsorDelete(string id, int? sponsorPage)
         {
             ViewBag.sponsorPage = (sponsorPage ?? 1);
@@ -1692,6 +1851,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("DeletePartials/_DeleteSponsorPartial", user);
         }
 
+        /// <summary>
+        /// delete sponsor. same proceduare as with employees
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="sponsorPage"></param>
+        /// <returns></returns>
         public ActionResult SponsorDelete(string id, int? sponsorPage)
         {
             ViewBag.sponsorPage = (sponsorPage ?? 1);
@@ -1785,6 +1950,12 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
         }
 
+        /// <summary>
+        /// show child delete modal
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="childrenPage"></param>
+        /// <returns></returns>
         public ActionResult showChildDelete(int id, int? childrenPage)
         {
             ViewBag.childrenPage = (childrenPage ?? 1);
@@ -1811,8 +1982,15 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return PartialView("DeletePartials/_DeleteChildPartial", child);
         }
 
+        /// <summary>
+        /// delete child, same procedure as with employees and sponsors
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="childrenPage"></param>
+        /// <returns></returns>
         public ActionResult ChildDelete(int id, int? childrenPage)
         {
+            //filter values
             ViewBag.childrenPage = (childrenPage ?? 1);
             var search = Request.Form["search"];
             var active = Request.Form["active"];
@@ -1880,7 +2058,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor, pageNumber);
             }
         }
-
+        /// <summary>
+        /// filter employees
+        /// </summary>
+        /// <returns>filter list resulst</returns>
         public ActionResult FilterEmployees()
         {
             var search = Request.Form["search"];
@@ -1901,6 +2082,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return FilterResultEmployees(search,active,order,filter,employeePhone,EmployeeStreetadress,EmployeeZip,EmployeeCity,EmployeeCounty,EmployeePosition,employeeAccountNumber,pageNumber);
         }
+        /// <summary>
+        /// filter sponsors
+        /// </summary>
+        /// <returns>filter list resulst</returns>
         public ActionResult FilterSponsors()
         {
             var search = Request.Form["search"];
@@ -1919,7 +2104,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return FilterResultSponsors(search, active, order, filter, SponsorPhone, SponsorStreetadress, SponsorZip, SponsorCity, SponsorCounty, pageNumber);
         }
-
+        /// <summary>
+        /// filter children
+        /// </summary>
+        /// <returns>filter list resulst</returns>
         public ActionResult FilterChildren()
         {
             var search = Request.Form["search"];
@@ -1936,6 +2124,17 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             return FilterResultChildren(search, active, order, filter, ChildDoB, ChildSponsor,pageNumber);
         }
+        /// <summary>
+        /// filter result based on parameters
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="active"></param>
+        /// <param name="order"></param>
+        /// <param name="filter"></param>
+        /// <param name="dob"></param>
+        /// <param name="sponsor"></param>
+        /// <param name="pageNumber"></param>
+        /// <returns>returns a partial view list with entities corresponding to search criteria</returns>
         public PartialViewResult FilterResultChildren(string search, string active, string order, string filter, string dob, string sponsor,int pageNumber)
         {
             DateTime? DoB = new DateTime();
@@ -1997,7 +2196,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             }
             if (pageNumber > 1 && children.Any())
             {
-                if (children.Count() <= pageSize * (pageNumber))
+                if (children.Count() <= pageSize * (pageNumber))    //chech that page is not empty. if so show highest available page
                 {
 
                     pageNumber = (int)Math.Ceiling((double)children.Count() / (double)pageSize);
@@ -2006,7 +2205,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                           new ChildrenModel { Children = children.ToPagedList(pageNumber, pageSize) });
                 }
             }
-            else if (!children.Any())
+            else if (!children.Any())   //no elements to show. show page 1.
             {
                 ViewBag.employeePage = 1;
                 return PartialView("ListPartials/_ChildrenPartial",
@@ -2016,6 +2215,22 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                           new ChildrenModel { Children = children.ToPagedList(pageNumber, pageSize) });
         }
 
+        /// <summary>
+        /// filter result for employees
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="active"></param>
+        /// <param name="order"></param>
+        /// <param name="filter"></param>
+        /// <param name="phone"></param>
+        /// <param name="streetadress"></param>
+        /// <param name="zipcode"></param>
+        /// <param name="city"></param>
+        /// <param name="county"></param>
+        /// <param name="position"></param>
+        /// <param name="accountnumber"></param>
+        /// <param name="pageNumber"></param>
+        /// <returns>returns a partial view result list with filtered employees</returns>
         public PartialViewResult FilterResultEmployees(string search, string active, string order, string filter, string phone, string streetadress, string zipcode, string city, string county, string position, string accountnumber, int pageNumber)
         {
             var employees = from s in _context.Users
@@ -2096,6 +2311,20 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                                           new EmployeeModel { Employees = employees.ToPagedList(pageNumber, pageSize) });
         }
 
+        /// <summary>
+        /// filter result for sponsors
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="active"></param>
+        /// <param name="order"></param>
+        /// <param name="filter"></param>
+        /// <param name="phone"></param>
+        /// <param name="streetadress"></param>
+        /// <param name="zipcode"></param>
+        /// <param name="city"></param>
+        /// <param name="county"></param>
+        /// <param name="pageNumber"></param>
+        /// <returns>returns filtered result based on parameters</returns>
         public PartialViewResult FilterResultSponsors(string search, string active, string order,string filter,string phone,string streetadress,string zipcode,string city,string county,int pageNumber)
         {
             var sponsors = from s in _context.Users
@@ -2153,7 +2382,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                         break;
                 }
             }
-            if (pageNumber > 1 && sponsors.Any())
+            if (pageNumber > 1 && sponsors.Any())   //make sure page is not empty
             {
                 if (sponsors.Count() <= pageSize * (pageNumber))
                 {
@@ -2185,6 +2414,10 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return null;
         }
 
+        /// <summary>
+        /// get users from database
+        /// </summary>
+        /// <returns>returns list of users to add as sponsors</returns>
         [HttpPost]
         public ActionResult GetUsers()
         {
@@ -2205,7 +2438,7 @@ namespace ButterflyFriends.Areas.Admin.Controllers
 
             foreach (var user in users)
             {
-                var imgId = 1;
+                var imgId = 1;  //default profile image
                 if (user.Thumbnail != null)
                 {
                     imgId = user.Thumbnail.ThumbNailId;
@@ -2215,6 +2448,11 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             return Json(enteties);
         }
 
+        /// <summary>
+        /// resolves role based on role number
+        /// </summary>
+        /// <param name="roleNr">role number in the hierarchy</param>
+        /// <returns>returns identity role</returns>
         public string ResolveUserRole(int? roleNr)
         {
             if (roleNr == 3)

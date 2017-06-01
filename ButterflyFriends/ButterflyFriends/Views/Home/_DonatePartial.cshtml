@@ -1,9 +1,14 @@
 ﻿@using Microsoft.AspNet.Identity
-@model ButterflyFriends.Models.DbTables.Info
+@model ButterflyFriends.Models.Donations
 
 <h1 style="text-align: center;">Støtt oss</h1>
 <hr style="border: 1px solid grey" />
 <h4 style="text-align: center;">Alle donasjoner hjelper å redde liv!</h4>
+@if (!string.IsNullOrEmpty(Model.DonationText))
+            {
+                <br />
+    <p>@Model.DonationText</p>
+}
 <hr style="border: 1px solid grey" />
 <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#DonateOnce">Donér en gang</a></li>
@@ -32,7 +37,15 @@
                     </div>
                 </div>
                 <hr/>
-                <a class="btn btn-primary btnNext" id="OnceAmountNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Steg 1 av 3</p>
+                    </div>
+                    <div class="col-md-8">
+                        <a class="btn btn-primary btnNext" id="OnceAmountNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                    </div>
+
+                </div>
 
             </div>
             @*------*@
@@ -92,11 +105,19 @@
                     </div>
                 </div>
                 <hr/>
-                <div class="btn-group" style="line-height: 0px; float: right;">
-                    <a class="btn btn-primary btnPrevious" onclick="PrevTab()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
-                    <a class="btn btn-primary btnNext" id="OnceContactNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
-                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Steg 2 av 3</p>
+                    </div>
+                    <div class="col-md-8">
 
+                        <div class="btn-group" style="line-height: 0px; float: right;">
+                            <a class="btn btn-primary btnPrevious" onclick="PrevTab()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
+                            <a class="btn btn-primary btnNext" id="OnceContactNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+
+                    </div>
                 @*------*@
 
 
@@ -143,25 +164,203 @@
                     </div>
                 </div>
                 <hr />
-                <a class="btn btn-primary btnPrevious" onclick="PrevTab()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Steg 3 av 3</p>
+                    </div>
+                    <div class="col-md-8">
+                        <a class="btn btn-primary btnPrevious" onclick="PrevTab()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
+                    </div>
+
+                </div>
             </div>
 
         </div>
 
     </div>
     <div id="DonateSubscription" class="tab-pane fade">
-        <h3>Menu 1</h3>
+        <ul class="nav nav-tabs tabSub" style="white-space: normal; visibility: hidden">
+            <li class="active"><a data-toggle="tab" href="#DonateSubAmount"></a></li>
+            <li><a data-toggle="tab" href="#DonateSubContact"></a></li>
+            <li><a data-toggle="tab" href="#DonateSubPayment"></a></li>
+
+        </ul>
+
+        <div class="tab-content">
+            <div id="DonateSubAmount" class="tab-pane fade in active">
+                @if (Model.Subscriptions.Any())
+                {
+                @*Donate sub amount*@
+                    <h3 style="text-align: center;">Hvor mye ønsker du å donere hver måned?</h3>
+                    <h5 class="text-danger" style="text-align: center;" id="SubAmountError"></h5>
+                    <div class="row">
+                        <div class="col-lg-offset-3 col-md-7">
+                            <div class="SubSelect">
+                                @foreach (var sub in Model.Subscriptions)
+                                {
+                                    <div class="SubSelect-info">
+                                        <input type="radio" name="radio" value="@sub.Id" id="@sub.Id" />
+                                        <label class="SubLabel" for="@sub.Id">@sub.Amount kroner</label>
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p>Steg 1 av 3</p>
+                        </div>
+                        <div class="col-md-8">
+
+                            <a class="btn btn-primary btnNext" id="SubAmountNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <br/>
+                    <p style="text-align: center;">Ingen donasjonsplaner konfigurert for øyeblikket.</p>
+                }
+            </div>
+            @*------*@
+
+
+            <div id="DonateSubContact" class="tab-pane fade">
+                @*Donate sub contact*@
+                <h3 style="text-align: center;">Kontaktinformasjon</h3>
+                <p style="text-align: center;">Det er opp til deg hvor mye informasjon du vil gi</p>
+                <br />
+                <h5 class="text-danger" id="SubContactError" style="white-space:pre-wrap"></h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label><input type="checkbox" onclick="checkAnonymous()" id="SubAnonymous"> Jeg ønsker å være anononym.</label>
+                    </div>
+                    <div class="col-md-6">
+                        @if (User.Identity.GetUserId() != null)
+                        {
+                            <label><input type="checkbox" onclick="checkUser()" id="SubUser">Link donasjonen til min bruker.</label>
+                        }
+                    </div>
+                </div>
+                <br />
+                <label class="control-label" for="SubDescription">Donasjonsmelding:</label>
+                <textarea class="form-control" id="SubDescription" style="min-width: 100%; max-width: 100%;"></textarea>
+
+                <br />
+                <div id="SubContact">
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="control-label DonateContactLabel" for="SubEmail">E-post: </label><br />
+                            <label class="control-label DonateContactLabel" for="SubName">Navn: </label>
+                            <br />
+                            <label class="control-label DonateContactLabel" for="SubPhone">Telefon: </label>
+                            <br />
+                            <label class="control-label DonateContactLabel" for="SubStreet">Gateadresse: </label>
+                            <br />
+                            <label class="control-label DonateContactLabel" for="SubPostCode">Postkode: </label>
+                            <br />
+                            <label class="control-label DonateContactLabel" for="SubCity">Kommune: </label>
+                            <br />
+                            <label class="control-label DonateContactLabel" for="SubBirthNumber">Fødselsnummer: </label>
+
+                        </div>
+                        <div class="col-md-8">
+                            <input class="form-control DonateContact" id="SubEmail" type="email" placeholder="navn@example.com" />
+                            <input class="form-control DonateContact" id="SubName" type="text" placeholder="Fornavn Etternavn" />
+                            <input class="form-control DonateContact" id="SubPhone" type="text" placeholder="" maxlength="12" />
+                            <input class="form-control DonateContact" id="SubStreet" type="text" placeholder="" />
+                            <input class="form-control DonateContact" id="SubPostCode" type="text" placeholder="" maxlength="4" />
+                            <input class="form-control DonateContact" id="SubCity" type="text" placeholder="" />
+                            <input class="form-control DonateContact" id="SubBirthNumber" type="text" placeholder="" title="Ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500." maxlength="11" />
+
+                        </div>
+
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Steg 2 av 3</p>
+                    </div>
+                    <div class="col-md-8">
+
+                        <div class="btn-group" style="line-height: 0px; float: right;">
+                            <a class="btn btn-primary btnPrevious" onclick="PrevTabSub()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
+                            <a class="btn btn-primary btnNext" id="SubContactNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+
+                </div>
+                @*------*@
+
+
+            </div>
+            <div id="DonateSubPayment" class="tab-pane fade">
+                <h3 style="text-align: center;">Betalingsinformasjon</h3>
+                <h5 class="text-danger" id="SubPaymentError" style="white-space:pre-wrap"></h5>
+                <br />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="SubCardNmber">Kortnummer (VISA / Mastercard)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
+                                        <input class="form-control" id="SubCardNmber" type="text" placeholder="0000 0000 0000 0000" maxlength="19" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <label class="control-label" for="SubExpiration">Utløper (MM/ÅÅ)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                        <input class="form-control" id="SubExpiration" type="text" placeholder="00/00" maxlength="5" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label class="control-label" for="SubCvc">CVC</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-check"></i></span>
+                                        <input class="form-control" id="SubCvc" type="text" placeholder="000" maxlength="3" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <em>Din betalingsinformasjon blir ikke sendt til oss, og behandles utelukkende av <a href="https://stripe.com/" target="_blank">Stripe</a>.</em>
+                        <button class="btn btn-success btn-block" onclick="SubDonate()">Donér penger</button>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Steg 3 av 3</p>
+                    </div>
+                    <div class="col-md-8">
+
+                        <a class="btn btn-primary btnPrevious" onclick="PrevTabSub()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
     </div>
 
 </div>
-@*
 
-@if (!string.IsNullOrEmpty(Model.DonateText))
-            {
-    <hr style="border: 1px solid grey" />
-
-                <p>@Model.DonateText</p>
-}*@
 
 <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 
@@ -277,8 +476,20 @@
         }
     });
 
+    $("#SubContactNext").click(function() {
+        $('.tabSub > .active').next('li').find('a').trigger('click');
+
+    });
+    $("#SubAmountNext").click(function() {
+        $('.tabSub > .active').next('li').find('a').trigger('click');
+
+    });
+
     function PrevTab() {
         $('.tabOnce > .active').prev('li').find('a').trigger('click');
+    }
+    function PrevTabSub() {
+        $('.tabSub > .active').prev('li').find('a').trigger('click');
     }
 
     function OnceDonate() {
