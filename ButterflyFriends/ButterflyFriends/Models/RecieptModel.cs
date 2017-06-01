@@ -10,6 +10,14 @@ namespace ButterflyFriends.Models
         public DbTables.Donations Donation { get; set; }
         public DbTables.Facebook Facebook { get; set; }
         public DbTables.Twitter Twitter { get; set; }
+        public SubReciept SubReciept { get; set; }
 
+    }
+
+    public class SubReciept
+    {
+        public string Id { get; set; }
+        public string referenceId { get; set; }
+        public int Amount { get; set; }
     }
 }

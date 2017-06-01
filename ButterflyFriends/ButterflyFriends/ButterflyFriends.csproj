@@ -314,6 +314,7 @@
     <Content Include="Content\themes\base\tabs.css" />
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
+    <Content Include="Content\Site.min.css" />
     <Content Include="defaultUserBig.png" />
     <Content Include="defautUser.png" />
     <Content Include="favicon.ico" />
@@ -327,6 +328,7 @@
     <Content Include="Scripts\ContentTools\content-tools.min.js" />
     <Content Include="Scripts\ContentTools\editor.css" />
     <Content Include="Scripts\ContentTools\editor.js" />
+    <Content Include="Scripts\ContentTools\editor.min.css" />
     <Content Include="Scripts\ContentTools\images\drop-horz.svg" />
     <Content Include="Scripts\ContentTools\images\drop-vert-above.svg" />
     <Content Include="Scripts\ContentTools\images\drop-vert-below.svg" />
@@ -490,6 +492,7 @@
     <Content Include="Areas\Admin\Views\Donations\_CreatePlanPartial.cshtml" />
     <Content Include="Areas\Admin\Views\Various\_DisqusPartial.cshtml" />
     <Content Include="Areas\Admin\Views\Donations\_PlanListPartial.cshtml" />
+    <Content Include="Areas\Admin\Views\Donations\_SubscriptionListPartial.cshtml" />
     <None Include="Properties\PublishProfiles\ButterflyFriends1 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\ButterflyFriends2017 - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\ButterflyFriends2017 - Web Deploy.pubxml" />

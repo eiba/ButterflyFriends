@@ -19,8 +19,7 @@
         </div>
     </div>
     <div id="Subscriptions" class="tab-pane fade">
-        <br/>
-        <p>Ingen abonnementer funnet</p>
+        @Html.Partial("_SubscriptionListPartial",Model.Subscriptions)
     </div>
     <div id="Donations" class="tab-pane fade">
         

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using ButterflyFriends.Areas.Admin.Models;
 using ButterflyFriends.Areas.Admin.Models.HRmanagementModels;
 using ButterflyFriends.Models;
@@ -38,6 +40,56 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                 Donations = donations.ToPagedList(1, pageSize),
                 Plans = plans.ToPagedList(1, pageSize)
             };
+            var stripeList = _context.StripeAPI.ToList();
+            if (stripeList.Any())
+            {
+                var client = new WebClient();
+                byte[] response;
+                client.UseDefaultCredentials = true;
+                client.Credentials = new NetworkCredential(stripeList.First().Secret, "");
+
+                try
+                {
+                    response = client.DownloadData("https://api.stripe.com/v1/subscriptions?limit=10");
+                }
+                catch (WebException exception)  //exepction happen when poisting to API
+                {
+                    string responseString;
+                    using (var reader = new StreamReader(exception.Response.GetResponseStream()))   //read the errorstring
+                    {
+                        responseString = reader.ReadToEnd();
+                    }
+                    ViewBag.Error = responseString; //error happened
+                    return View(model);
+
+                }
+                var json_serializer = new JavaScriptSerializer();
+                var JsonDict = (IDictionary<string, object>)json_serializer.DeserializeObject(client.Encoding.GetString(response));
+                var data = JsonDict["data"] as IEnumerable;
+                IList<Subscription> subs = new List<Subscription>();
+                foreach (var item in data)  //parse the data gotten from API
+                {
+                    var i = item as IDictionary;
+                    var plan = (i["plan"] as IDictionary);
+                    var id = i["id"].ToString();
+                    var customer = i["customer"].ToString();
+                    var planId = plan["id"].ToString();
+                    var planName = plan["name"].ToString();
+                    var amount = int.Parse(plan["amount"].ToString())/100;
+                    var Subscription = new Subscription //create subscription object
+                    {
+                        CustomerId = customer,
+                        PlanId = planId,
+                        PlanName = planName,
+                        SubId = id,
+                        Amount = amount
+                    };
+                    subs.Add(Subscription); //add subscription to list
+
+                }
+                model.Subscriptions = subs;
+
+            }
             return View(model);
         }
 

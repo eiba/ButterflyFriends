@@ -198,7 +198,7 @@
                             <div class="SubSelect">
                                 @foreach (var sub in Model.Subscriptions)
                                 {
-                                    <div class="SubSelect-info">
+                                    <div class="SubSelect-info" onclick="subAmount(@sub.Id)">
                                         <input type="radio" name="radio" value="@sub.Id" id="@sub.Id" />
                                         <label class="SubLabel" for="@sub.Id">@sub.Amount kroner</label>
                                     </div>
@@ -238,12 +238,12 @@
                 <h5 class="text-danger" id="SubContactError" style="white-space:pre-wrap"></h5>
                 <div class="row">
                     <div class="col-md-6">
-                        <label><input type="checkbox" onclick="checkAnonymous()" id="SubAnonymous"> Jeg ønsker å være anononym.</label>
+                        <label><input type="checkbox" onclick="checkSubAnonymous()" id="SubAnonymous"> Jeg ønsker å være anononym.</label>
                     </div>
                     <div class="col-md-6">
                         @if (User.Identity.GetUserId() != null)
                         {
-                            <label><input type="checkbox" onclick="checkUser()" id="SubUser">Link donasjonen til min bruker.</label>
+                            <label><input type="checkbox" onclick="checkSubUser()" id="SubUser">Link donasjonen til min bruker.</label>
                         }
                     </div>
                 </div>
@@ -339,7 +339,7 @@
                         </div>
                         <hr />
                         <em>Din betalingsinformasjon blir ikke sendt til oss, og behandles utelukkende av <a href="https://stripe.com/" target="_blank">Stripe</a>.</em>
-                        <button class="btn btn-success btn-block" onclick="SubDonate()">Donér penger</button>
+                        <button class="btn btn-success btn-block" onclick="SubDonate()">Donér månedlig</button>
                     </div>
                 </div>
                 <hr />
@@ -383,8 +383,27 @@
     var token = "";
     var description = "";
 
+    var subAnon = false;
+    var subUser = false;
+    var subId = 0;
+    var subName = "";
+    var subStreetadress = "";
+    var subPhone = "";
+    var subCity = "";
+    var subPostcode = "";
+    var subBirthnumber = "";
+    var subEmail = "";
+    var subCardnumber = 0;
+    var subExpiration = "";
+    var subCvc = 0;
+    var subToken = "";
+    var subDescription = "";
+
     $(function () {
         $("#OnceBirthNumber").tooltip();
+    });
+    $(function () {
+        $("SubBirthNumber").tooltip();
     });
 
     function checkAnonymous() {
@@ -396,6 +415,17 @@
 
         }else {
             $('#onceContact').css('display', "");
+
+        }
+    }
+    function checkSubAnonymous() {
+
+        if ($('#SubAnonymous').is(":checked")) {
+            $('#SubContact').css('display', "none");
+            $("#SubUser").prop("checked", false);
+
+        } else {
+            $('#SubContact').css('display', "");
 
         }
     }
@@ -411,6 +441,16 @@
 
         }
     }
+    function checkSubUser() {
+        if ($('#SubUser').is(":checked")) {
+            $('#SubContact').css('display', "none");
+            $("#SubAnonymous").prop("checked", false);
+
+        } else {
+            $('#SubContact').css('display', "");
+
+        }
+    }
 
     $("#OnceAmountNext").click(function () {
         if (parseInt($("#AmountOnce").val()) > 0) {
@@ -423,7 +463,7 @@
         }
     });
 
-    $("#OnceContactNext").click(function () {
+    $("#OnceContactNext").click(function () {   //get contact info and validate answers
         if ($('#OnceAnonymous').is(":checked")) {
             anon = true;
             user = false;
@@ -440,7 +480,7 @@
         }
         else if ($("#OnceEmail").val() !== "" || $("#OnceCity").val() !== "" || $("#OnceName").val() !== "" || $("#OncePhone").val() !== "" || $("#OnceStreet").val() !== "" || $("#OncePostCode").val() !== "" || $("#OnceBirthNumber").val() !== "") {
             var error = "";
-            var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/;
+            var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/;   //check for valid email
             if ($("#OnceEmail").val() !== "" && !regTest.test($("#OnceEmail").val())) {
                 error += "Ugyldig email \n";
 
@@ -477,14 +517,68 @@
     });
 
     $("#SubContactNext").click(function() {
-        $('.tabSub > .active').next('li').find('a').trigger('click');
+        if ($('#SubAnonymous').is(":checked")) {
+            subAnon = true;
+            subUser = false;
+            subDescription = $("#SubDescription").val();
+            $('.tabSub > .active').next('li').find('a').trigger('click');
+            $("#SubContactError").text("");
+
+        }else if ($('#SubUser').is(":checked")) {
+            subAnon = false;
+            subUser = true;
+            description = $("#SubDescription").val();
+            $('.tabSub > .active').next('li').find('a').trigger('click');
+            $("#SubContactError").text("");
+        } else if ($("#SubEmail").val() !== "" || $("#SubCity").val() !== "" || $("#SubName").val() !== "" || $("#SubPhone").val() !== "" || $("#SubStreet").val() !== "" || $("#SubPostCode").val() !== "" || $("#SubBirthNumber").val() !== "") {
+            var error = "";
+            var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/;
+            if ($("#SubEmail").val() !== "" && !regTest.test($("#SubEmail").val())) {
+                error += "Ugyldig email \n";
+
+            }
+            if ($("#SubBirthNumber").val() !== "" && (isNaN($("#SubBirthNumber").val()) || $("#SubBirthNumber").val().length < 11)) {
+                error += "Ugyldig fødselsnummer \n";
+
+            }
+            if ($("#SubPostCode").val() !== "" && (isNaN($("#SubPostCode").val()) || $("#SubPostCode").val().length < 4)) {
+                error += "Ugyldig postnummber \n";
+
+            }
+            if (error !== "") {
+                $("#SubContactError").text(error);
+                return;
+            }
+            else {
+                subAnon = false;
+                subEmail = $("#SubEmail").val();
+                subCity = $("#SubCity").val();
+                subName = $("#SubName").val();
+                subPhone = $("#SubPhone").val();
+                subStreetadress = $("#SubStreet").val();
+                subPostcode = $("#SubPostCode").val();
+                subBirthnumber = $("#SubBirthNumber").val();
+
+                $('.tabSub > .active').next('li').find('a').trigger('click');
+                $("#SubContactError").text("");
+            }
+        }
+        else {
+            $("#SubContactError").text("Du må skrive inn kontaktinformasjon, velge å være anonym eller bruke nettsidebrukeren");
+        }
 
     });
     $("#SubAmountNext").click(function() {
-        $('.tabSub > .active').next('li').find('a').trigger('click');
+        if (subId !== 0) {
+            $('.tabSub > .active').next('li').find('a').trigger('click');
+        } else {
+            $("#SubAmountError").text("Du må velge en plan");
+        }
 
     });
-
+    function subAmount(id) {
+        subId = id;
+    }
     function PrevTab() {
         $('.tabOnce > .active').prev('li').find('a').trigger('click');
     }
@@ -560,13 +654,78 @@
 
     }
 
-    function processPayment() {
+    function SubDonate() {
+        var error = "";
+        if (!(Stripe.card.validateCardNumber($("#SubCardNmber").val()))) {  //handle card validation 
+            
+            error += "Ugyldig kortnummer \n";
+        }
+        if (!(Stripe.card.validateCVC($("#SubCvc").val())))
+        {
+            error += "Ugyldig CVC \n";
+        }
+        var expParts = $("#SubExpiration").val().split('/');
+        if (!(Stripe.card.validateExpiry(parseInt(expParts[0]), parseInt('20' + expParts[1])))) {
+            error += "Ugyldig utløpsdato";
+
+        }
+        if (stripePublic === "") {
+            error += "Stripe er ikke konfigurert for nettsiden";
+        }
+
+        if (error !== "") {
+            $("#SubPaymentError").text(error);
+            return;
+        } else {
+            $("#SubPaymentError").text("");
+
+            subCardnumber = $("#SubCardNmber").val();
+            subCvc = $("#SubCvc").val();
+            subExpiration = $("#SubExpiration").val();
+
+            var paymentInfo = {
+                number: subCardnumber,
+                exp_month: parseInt(expParts[0]),
+                exp_year: parseInt('20' + expParts[1]),
+                cvc: subCvc
+            };
+            if (subName !== "") {
+                paymentInfo['name'] = subName;
+
+            }
+            if (subStreetadress !== "") {
+                paymentInfo['address_line1'] = subStreetadress;
+
+            }
+            if (subCity !== "") {
+                paymentInfo['address_city'] = subCity;
+
+            }
+            if (subPostcode !== "") {
+                paymentInfo['address_zip'] = subPostcode;
+
+            }
+            $(".loader").show();    //show loader as we're working
+            Stripe.card.createToken(paymentInfo, function (status, response) {  //get token from stripe
+                if (response.error) {
+                    $("#SubPaymentError").text(response.error.message);
+                    $(".loader").hide();    //failed hide error
+                    return;
+                } else {
+                    $("#SubPaymentError").text("");
+                    token = response.id;
+                    processSubPayment();
+                }
+
+            });
+        }
+
+    }
+
+    function processPayment() { //process one time payment
         var formData = new FormData();
         formData.append("token", token);
         formData.append("type", "once");
-        formData.append("cvc", cvc);
-        formData.append("cardnumber", cardnumber);
-        formData.append("expiration", expiration);
         formData.append("amount", amount);
         formData.append("anon", anon);
         formData.append("description", description);
@@ -596,6 +755,46 @@
                 }
                 else if (result.Success == "false" && result.striperesponse == "false") {
                     $("#OncePaymentError").text(result.Error);
+                }else {
+                    $("#Donations").html(result);
+                }
+
+            },
+            error: function (err) {
+                console.log("error " + err.Error);
+            }
+        });
+    }
+
+    function processSubPayment() { //process subscription payment
+        var formData = new FormData();
+        formData.append("token", token);
+        formData.append("subId", subId);
+        formData.append("anon", subAnon);
+        formData.append("description", subDescription);
+        formData.append("user", subUser);
+
+        if (!anon) {
+            formData.append("email", subEmail);
+            formData.append("phone", subPhone);
+            formData.append("birthnumber", subBirthnumber);
+            formData.append("name", subName);
+        }
+
+        $.ajax({
+            url: '/Home/HandleSubPayment',
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: formData
+        ,
+            success: function (result) {
+                if (result.Success == "false" && result.striperesponse == "true") {
+                    $("#SubPaymentError").text(JSON.parse(result.Error).error.message);
+                    
+                }
+                else if (result.Success == "false" && result.striperesponse == "false") {
+                    $("#SubPaymentError").text(result.Error);
                 }else {
                     $("#Donations").html(result);
                 }

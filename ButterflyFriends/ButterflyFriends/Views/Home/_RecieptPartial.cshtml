@@ -36,10 +36,21 @@ window.twttr = (function(d, s, id) {
 <h1 style="text-align: center;">Takk for ditt bidrag!</h1>
 <h5 class="text-danger" style="text-align: center;">@ViewBag.Error</h5>
 <hr/>
-<h3>Kvitering for donasjon #@Model.Donation.Id</h3>
-<br/>
-<h4>Referansenummer: @Model.Donation.Id</h4>
-<h4>Du har donert @Model.Donation.Amount kroner til Butterfly Friends.</h4>
+@if (Model.Donation != null)
+{
+    <h3>Kvitering for donasjon #@Model.Donation.Id</h3>
+    <br/>
+    <h4>Referansenummer: @Model.Donation.Id</h4>
+    <h4>Du har donert @Model.Donation.Amount kroner til Butterfly Friends.</h4>
+}
+else
+{
+    <h3>Kvitering på ditt abonnement #@Model.SubReciept.Id</h3>
+    <br />
+    <h4>Referansenummer: @Model.SubReciept.referenceId</h4>
+    <h4>Du har valgt å donere @Model.SubReciept.Amount kroner i måneden til Butterfly Friends.</h4>
+}
+
 <h4>Denne kviteringen vil også bli sendt til deg på mail dersom du har oppgitt en mailadresse.</h4>
 
 @if (Model.Facebook.Enabeled || Model.Twitter.Enabeled)

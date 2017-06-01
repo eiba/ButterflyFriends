@@ -458,7 +458,6 @@ namespace ButterflyFriends.Controllers
         public ActionResult HandlePayment()
         {
             
-            var type = Request.Form["type"];                //get info from request
             var amount = int.Parse(Request.Form["amount"]);
             var anon = Request.Form["anon"];
             var user = Request.Form["user"];
@@ -608,6 +607,150 @@ namespace ButterflyFriends.Controllers
             return PartialView("_RecieptPartial", model);    //return reciept view
         }
 
+        /// <summary>
+        /// Handles subscription payments. Creates user and subscribes to plan
+        /// </summary>
+        /// <returns>reciept</returns>
+        public ActionResult HandleSubPayment()
+        {
+            var subId =Request.Form["subId"];
+            var anon = Request.Form["anon"];
+            var user = Request.Form["user"];
+            var token = Request.Form["token"];
+            var email = Request.Form["email"];
+            var phone = Request.Form["phone"];
+            var birthnumber = Request.Form["birthnumber"];
+            var name = Request.Form["name"];
+            var description = Request.Form["description"];
+            var recieptemail = "";  //email to send reciept
+            var recieptname = "";   //name on reciept
+
+            var client = new WebClient();
+
+            var data = new NameValueCollection();
+            data["source"] = token;     //the payment token with user's credidentials
+            if (user == "true")
+            {
+                var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
+                var currentUser = manager.FindById(User.Identity.GetUserId());
+                recieptemail = currentUser.Email;
+                recieptname = currentUser.Fname + " " + currentUser.Lname;
+                data["email"] = currentUser.Email;
+                data["description"] = "User "+email+" in the database: "+description;   //set description of donation
+            }
+            else if (anon == "true" && !string.IsNullOrEmpty(description))
+            {
+                data["description"] = description;
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(email))
+                {
+                    data["email"] = email;
+                    recieptemail = email;
+                }
+                recieptname = name;
+                data["description"] = "Telefon: " + phone + " - Navn: " + name + " - Fødselsnummer: "+birthnumber+" - Beskrivelse: " + description;
+            }
+            client.UseDefaultCredentials = true;    //use default credidentials for API request
+
+            var stripeList = _context.StripeAPI.ToList();   //check if stripe actually exists in the database
+            byte[] response;
+            if (!stripeList.Any())
+            {
+                return Json(new { Error = "Stripe er ikke konfigurert for applikasjonen.", Succsess = "false", striperesponse = "false" });  //no stripe in database, return error
+            }
+            if (!stripeList.First().Enabeled)
+            {
+                return Json(new { Error = "Stripe er avslått for applikasjonen.", Succsess = "false", striperesponse = "false" });  //stripe disabeled
+
+            }
+            client.Credentials = new NetworkCredential(_context.StripeAPI.ToList().First().Secret, "");
+                
+            try
+            {
+                response = client.UploadValues("https://api.stripe.com/v1/customers", "POST", data);   // upload values and get response
+            }
+            catch (WebException exception)  //exepction happen when poisting to API
+            {
+                string responseString;
+                using (var reader = new StreamReader(exception.Response.GetResponseStream()))   //read the errorstring
+                {
+                    responseString = reader.ReadToEnd();
+                }
+
+                return Json(new { Error = responseString, Success = "false", striperesponse = "true" });  // return responsestring as error message
+            }
+            //if we get here customer was succsessfully created
+            var json_serializer = new JavaScriptSerializer();
+            var JsonDict = (IDictionary<string, object>)json_serializer.DeserializeObject(client.Encoding.GetString(response)); //deseroalize the response
+            var customer = JsonDict["id"].ToString(); //get id of customer returned by the API
+
+            data = new NameValueCollection();   //now create a collection for the plan and subscribe
+            data["plan"] = subId;
+            data["customer"] = customer;
+            try
+            {
+                response = client.UploadValues("https://api.stripe.com/v1/subscriptions", "POST", data);   // upload values and get response
+            }
+            catch (WebException exception)  //exepction happen when poisting to API
+            {
+                string responseString;
+                using (var reader = new StreamReader(exception.Response.GetResponseStream()))   //read the errorstring
+                {
+                    responseString = reader.ReadToEnd();
+                }
+
+                return Json(new { Error = responseString, Success = "false", striperesponse = "true" });  // return responsestring as error message
+            }
+            //customer successfully subscribed to plan
+            JsonDict = (IDictionary<string, object>)json_serializer.DeserializeObject(client.Encoding.GetString(response)); //deseroalize the response
+            var subscriptionId = JsonDict["id"].ToString();
+            Response.StatusCode = 200;
+
+            var sub = _context.Subscriptions.Find(int.Parse(subId));
+            if (!string.IsNullOrEmpty(recieptemail))   //send reciept email if reciept email is given
+            {
+                var subject = "Kvitering på donasjon";
+                var message = "Takk for din støtte! \n Du har started et abonement med id " + subId + " for "+sub.Amount+" kroner i måneden til Butterfly Friends. \n" + "Ditt referansenummer er " + subscriptionId + ". \n\n" + "Vennlig hilsen,\nButterfly Friends.";
+                var messageHTML = "<p>Takk for din støtte! <br> Du har startet et abonement med id " + subId + " for "+sub.Amount+" kroner i måneden til Butterfly Friends. <br>" + "Ditt referansenummer er: " + subscriptionId + ". <br><br>" + "Vennlig hilsen,<br>Butterfly Friends.</p>";
+                if (!SendEmail(message, messageHTML, subject, recieptemail, recieptname))    //returns true if sending of email was succsessful
+                {
+                    ViewBag.Error = "Emailkviteringen kunne ikke sendes, Sendgrid er ikke konfigurert.";
+                }
+            }
+
+            ViewBag.Share = "https://www." + Request.Url.Host + "/Home/Index";  //share link for twitter
+            ViewBag.ShareText = "Jeg donerer " + sub.Amount + " kr i måneden til Butterfly Friends!"; //share message
+
+            var TwitterList = _context.Twitter.ToList();    //check if facebook and twitter exist
+            var Twitter = new DbTables.Twitter();
+            if (TwitterList.Any())
+            {
+                Twitter = TwitterList.First();
+            }
+            var FacebookList = _context.Facebook.ToList();
+            var Facebook = new DbTables.Facebook();
+            if (FacebookList.Any())
+            {
+                Facebook = FacebookList.First();
+            }
+            var subReciept = new SubReciept
+            {
+                Amount = sub.Amount,
+                Id = subId,
+                referenceId = subscriptionId
+            };
+            var model = new RecieptModel
+            {
+                Facebook = Facebook,
+                Twitter = Twitter,
+                SubReciept = subReciept
+            };
+            
+            return PartialView("_RecieptPartial", model);    //return reciept view
+
+        }
         /// <summary>
         /// Sends an email with reciept information
         /// </summary>
