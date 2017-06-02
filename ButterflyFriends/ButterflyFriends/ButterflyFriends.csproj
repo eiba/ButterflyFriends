@@ -333,6 +333,11 @@
     <Content Include="Scripts\ContentTools\images\drop-vert-above.svg" />
     <Content Include="Scripts\ContentTools\images\drop-vert-below.svg" />
     <Content Include="Scripts\ContentTools\images\video.svg" />
+    <Content Include="Scripts\Donate.js" />
+    <Content Include="Scripts\Donate.min.js" />
+    <Content Include="Scripts\HRManagement.js" />
+    <Content Include="Scripts\HRManagement.min.js" />
+    <Content Include="Scripts\Images.js" />
     <Content Include="Scripts\jquery-ui-1.12.1.js" />
     <Content Include="Scripts\jquery-ui-1.12.1.min.js" />
     <Content Include="Scripts\jquery.facedetection.js" />
@@ -341,6 +346,8 @@
     <Content Include="Scripts\jquery.waypoints.min.js" />
     <Content Include="Scripts\MagicSuggest\magicsuggest-min.css" />
     <Content Include="Scripts\MagicSuggest\magicsuggest-min.js" />
+    <Content Include="Scripts\MembershipRequests.js" />
+    <Content Include="Scripts\MembershipRequests.min.js" />
     <Content Include="Scripts\tagEditor\jquery.tag-editor.css" />
     <Content Include="Scripts\tagEditor\jquery.tag-editor.min.js" />
     <Content Include="Scripts\Trumbowyg\dist\langs\ar.min.js" />
@@ -408,6 +415,10 @@
     <Content Include="Scripts\Trumbowyg\dist\ui\icons.svg" />
     <Content Include="Scripts\Trumbowyg\dist\ui\trumbowyg.css" />
     <Content Include="Scripts\Trumbowyg\dist\ui\trumbowyg.min.css" />
+    <Content Include="Scripts\Upload.js" />
+    <Content Include="Scripts\Upload.min.js" />
+    <Content Include="Scripts\Various.js" />
+    <Content Include="Scripts\Various.min.js" />
     <Content Include="Scripts\Vegas\overlays\01.png" />
     <Content Include="Scripts\Vegas\overlays\02.png" />
     <Content Include="Scripts\Vegas\overlays\03.png" />

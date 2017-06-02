@@ -1662,13 +1662,14 @@ namespace ButterflyFriends.Areas.Admin.Controllers
                     where s.FileType == DbTables.FileType.Profile
                     select s).ToList();
 
+                if (images.Any()) { 
                 foreach (var image in images)
                     if (image.User.First().Id == user.Id)
                     {
                         profile = image;
                         thumbnail = image.ThumbNail;
                     }
-
+                }
                 if (profile.Content != null)
                 {
                     _context.Entry(profile).State = EntityState.Deleted;
@@ -2268,7 +2269,6 @@ namespace ButterflyFriends.Areas.Admin.Controllers
             var encoding = Request.ContentEncoding;
             var reader = new StreamReader(body, encoding);
             var json = reader.ReadToEnd();
-
 
             var enteties = new List<object>();
 
