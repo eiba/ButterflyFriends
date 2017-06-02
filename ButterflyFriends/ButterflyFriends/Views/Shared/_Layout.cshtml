@@ -1,26 +1,25 @@
-﻿@using ButterflyFriends.Areas.Admin.Controllers
-@using ButterflyFriends.Models
+﻿@using ButterflyFriends.Models
 @using Microsoft.AspNet.Identity
 @using Microsoft.AspNet.Identity.EntityFramework
 <!DOCTYPE html>
 <html style="@ViewBag.Style">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Butterfly Friends - @ViewBag.Title</title>
-    
+
     @Styles.Render("~/Content/css")
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet"/>
     <script src="~/Scripts/jquery-3.1.1.min.js"></script>
     <script src="~/Scripts/jquery.waypoints.min.js"></script>
     @Scripts.Render("~/bundles/modernizr")
     <script src="~/Scripts/vue.min.js"></script>
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
-    
+
     @*recapthca*@
-    <script src='https://www.google.com/recaptcha/api.js'></script>
-    
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+
 </head>
 <body style="@ViewBag.BackGround">
 
@@ -54,7 +53,7 @@
                         }
 
                         var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-                        ApplicationUser currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;
+                        var currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;
                         if (currentUser != null)
                         {
                             if (currentUser.RoleNr < 3)
@@ -66,7 +65,6 @@
                                 </li>
                             }
                         }
-
                     }
                 }
             </ul>
@@ -90,7 +88,7 @@
     </div>*@
 </div>
 @Scripts.Render("~/bundles/bootstrap")
-@RenderSection("scripts", required: false)
+@RenderSection("scripts", false)
 
 
 </body>

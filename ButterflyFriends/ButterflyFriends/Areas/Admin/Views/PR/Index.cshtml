@@ -1,70 +1,72 @@
-﻿@using PagedList.Mvc
-@model PagedList.IPagedList<DbTables.Article>
+﻿@model PagedList.IPagedList<DbTables.Article>
 <div class="loader" style="top: 50% !important;" hidden></div>
 <div class="row">
     <h5 class="text-success statusText" style="padding-left: 55px;">@ViewBag.Message</h5>
     <div class="col-md-6 article-column article_show_encapsule">
         @if (Model.Any())
         {
-        <div class="searchFilter">
-            <div class="input-group" id="Search">
-                <input type="text" id="searchField" class="form-control max_width" placeholder="Søk etter dokumentnavn eller tittel..."/>
-                <div class="input-group-btn">
-                    <div class="btn-group" role="group">
-                        <div class="dropdown dropdown-lg" id="#dropDown">
-                            <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-                            <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                
-                                <form class="form-horizontal" role="form">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label>Filtrer etter</label>
-                                                <select class="form-control max_width" id="selected">
-                                                    <option id="lastSaved" value="0" selected>Sist lagret</option>
-                                                    <option value="1">Først publisert</option>
-                                                    <option value="2">Tittel</option>
-                                                    <option value="3">Dokumentnavn</option>
-                                                </select>
+            <div class="searchFilter">
+                <div class="input-group" id="Search">
+                    <input type="text" id="searchField" class="form-control max_width" placeholder="Søk etter dokumentnavn eller tittel..."/>
+                    <div class="input-group-btn">
+                        <div class="btn-group" role="group">
+                            <div class="dropdown dropdown-lg" id="#dropDown">
+                                <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <span class="caret"></span></button>
+                                <div class="dropdown-menu dropdown-menu-right" role="menu">
 
+                                    <form class="form-horizontal" role="form">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label>Filtrer etter</label>
+                                                    <select class="form-control max_width" id="selected">
+                                                        <option id="lastSaved" value="0" selected>Sist lagret</option>
+                                                        <option value="1">Først publisert</option>
+                                                        <option value="2">Tittel</option>
+                                                        <option value="3">Dokumentnavn</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4" style="padding-top: 2%">
+                                                <div id="orderFilter">
+                                                    <label class="radio-inline"><input type="radio" name="opt" value="ascending">Stigende</label>
+                                                    <br/>
+                                                    <label class="radio-inline"><input type="radio" id="orderDefault" name="opt" value="descending" checked>Synkende</label>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4" style="padding-top: 2%">
-                                            <div id="orderFilter">
-                                                <label class="radio-inline"><input type="radio" name="opt" value="ascending">Stigende</label>
-                                                <br />
-                                                <label class="radio-inline"><input type="radio" id="orderDefault" name="opt" value="descending" checked>Synkende</label>
-                                            </div>
-                                            </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Forfatter</label>
-                                        <input id="author" class="form-control max_width" type="text"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Inderholder</label>
-                                        <input id="content" class="form-control max_width" type="text"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Publisert
-                                            <div id="publishFilter">
-                                                <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
-                                                <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
-                                                <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="defaultRadio" checked>Uvesentlig</label>
-                                            </div>
-                                        </label>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Forfatter</label>
+                                            <input id="author" class="form-control max_width" type="text"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Inderholder</label>
+                                            <input id="content" class="form-control max_width" type="text"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>
+                                                Publisert
+                                                <div id="publishFilter">
+                                                    <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
+                                                    <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
+                                                    <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="defaultRadio" checked>Uvesentlig</label>
+                                                </div>
+                                            </label>
+                                        </div>
 
-                                </form>
-                                <button id="reset" class="btn btn-primary" style="float: right">Reset</button>
+                                    </form>
+                                    <button id="reset" class="btn btn-primary" style="float: right">Reset</button>
+                                </div>
                             </div>
+                            <button type="button" id="searchBtn" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                         </div>
-                        <button type="button" id="searchBtn" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                     </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
 
             <br/>
             <br/>
@@ -81,14 +83,14 @@
             <div class="col-md-6">
                 <a class="btn btn-lg btn-primary center-block home-button-link"
                    href='@Url.Action("New", "PR")'
-                   style="width: 14em; margin-top: 1em; margin-bottom: 1em;"
+                   style="margin-bottom: 1em; margin-top: 1em; width: 14em;"
                    v-on:mouseover="NewArticle"
                    v-on:mouseleave="MouseLeave">
                     Nytt innlegg
                 </a>
                 <a class="btn btn-lg btn-primary center-block home-button-link"
                    href='@Url.Action("Email", "PR")'
-                   style="width: 14em; margin-top: 1em; margin-bottom: 1em;"
+                   style="margin-bottom: 1em; margin-top: 1em; width: 14em;"
                    v-on:mouseover="SendEmail"
                    v-on:mouseleave="MouseLeave">
                     Skriv email
@@ -100,14 +102,17 @@
 
 
 <script>
-    $(document).ready(function () {
+    $(document)
+        .ready(function() {
 
-        $(document).ajaxStart(function () {
-            $(".loader").show();
-        }).ajaxStop(function () {
-            $(".loader").hide();
+            $(document)
+                .ajaxStart(function() {
+                    $(".loader").show();
+                })
+                .ajaxStop(function() {
+                    $(".loader").hide();
+                });
         });
-    });
     new Vue({
         el: 'body',
 
@@ -116,17 +121,17 @@
         },
 
         methods: {
-            NewArticle: function () {
+            NewArticle: function() {
                 this
                     .description =
                     "Skriv blogginlegg som kan legges ut på sidens forside";
             },
 
-            MouseLeave: function () {
+            MouseLeave: function() {
                 this.description = "";
             },
 
-            SendEmail: function () {
+            SendEmail: function() {
                 this
                     .description =
                     "Send email til registrerte brukere";
@@ -138,55 +143,66 @@
         location.href = '/Admin/PR/Article/' + e.id;
     }
 
-    $(document).on("click", "#Pager a[href]", function () {
-        var formData = new FormData();
-        formData.append('published', $('#publishFilter input:radio:checked').val());
-        formData.append('order', $('#orderFilter input:radio:checked').val());
-        formData.append('filter', $("#selected option:selected").val());
-        formData.append('search', $('#searchField').val());
-        formData.append('author', $('#author').val());
-        formData.append('content', $('#content').val());
-        $.ajax({
-            url: $(this).attr("href"),
-            type: 'POST',
-            async: true,
-            contentType: false,
-            processData: false,
-            data: formData,
-            cache: false,
-            success: function (result) {
-                $('#articleUpdate').html(result);
-            }
-        });
-        return false;
-    });
+    $(document)
+        .on("click",
+            "#Pager a[href]",
+            function() {
+                var formData = new FormData();
+                formData.append('published', $('#publishFilter input:radio:checked').val());
+                formData.append('order', $('#orderFilter input:radio:checked').val());
+                formData.append('filter', $("#selected option:selected").val());
+                formData.append('search', $('#searchField').val());
+                formData.append('author', $('#author').val());
+                formData.append('content', $('#content').val());
+                $.ajax({
+                    url: $(this).attr("href"),
+                    type: 'POST',
+                    async: true,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    cache: false,
+                    success: function(result) {
+                        $('#articleUpdate').html(result);
+                    }
+                });
+                return false;
+            });
 
-    $("#searchBtn").on('click', function () {
-        filter();
-        $(this).closest(".dropdown-menu").prev().dropdown("toggle");
-        return false;
-    });
-    $("#searchField").on('keydown', function () {
-        if (event.keyCode == 13) {
-            $(this).closest(".dropdown-menu").prev().dropdown("toggle");
-            filter();
-            return false;
-        }
-    });
-    $("#author").on('keydown', function () {
-        if (event.keyCode == 13) {
-            $(this).closest(".dropdown-menu").prev().dropdown("toggle");
-            filter();
-            return false;
-        }
-    });
-    $("#content").on('keydown', function () {
-        if (event.keyCode == 13) {
-            $(this).closest(".dropdown-menu").prev().dropdown("toggle");
-            filter();
-            return false;
-        }
-    });
+    $("#searchBtn")
+        .on('click',
+            function() {
+                filter();
+                $(this).closest(".dropdown-menu").prev().dropdown("toggle");
+                return false;
+            });
+    $("#searchField")
+        .on('keydown',
+            function() {
+                if (event.keyCode == 13) {
+                    $(this).closest(".dropdown-menu").prev().dropdown("toggle");
+                    filter();
+                    return false;
+                }
+            });
+    $("#author")
+        .on('keydown',
+            function() {
+                if (event.keyCode == 13) {
+                    $(this).closest(".dropdown-menu").prev().dropdown("toggle");
+                    filter();
+                    return false;
+                }
+            });
+    $("#content")
+        .on('keydown',
+            function() {
+                if (event.keyCode == 13) {
+                    $(this).closest(".dropdown-menu").prev().dropdown("toggle");
+                    filter();
+                    return false;
+                }
+            });
 
     function filter() {
         var formData = new FormData();
@@ -205,20 +221,22 @@
             contentType: false,
             processData: false,
             data: formData,
-            success: function (result) {
+            success: function(result) {
                 $('#articleUpdate').html(result);
             }
         });
     }
 
-    $("#reset").on('click', function () {
-        event.stopPropagation();
-        $('#searchField').val("");
-        $('#author').val("");
-        $('#content').val("");
-        document.getElementById("lastSaved").selected = "true";
-        $("#defaultRadio").prop("checked", true);
-        $("#orderDefault").prop("checked", true);
-    });
-    
+    $("#reset")
+        .on('click',
+            function() {
+                event.stopPropagation();
+                $('#searchField').val("");
+                $('#author').val("");
+                $('#content').val("");
+                document.getElementById("lastSaved").selected = "true";
+                $("#defaultRadio").prop("checked", true);
+                $("#orderDefault").prop("checked", true);
+            });
+
 </script>

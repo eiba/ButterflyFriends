@@ -20,15 +20,13 @@
                         <div class="row">
                             <div class="col-md-3"></div>
                             <div class="col-md-3">
-                                @using (Ajax.BeginForm("SponsorDelete", "HRManagement", new { id = Model.Id, sponsorPage = ViewBag.sponsorPage }, new AjaxOptions
+                                @using (Ajax.BeginForm("SponsorDelete", "HRManagement", new {id = Model.Id, ViewBag.sponsorPage}, new AjaxOptions
                                 {
                                     UpdateTargetId = "updateSponsors",
                                     InsertionMode = InsertionMode.Replace,
                                     HttpMethod = "POST"
-
-                                }, new { @class = "form-horizontal", id = formId }))
+                                }, new {@class = "form-horizontal", id = formId}))
                                 {
-
                                 }
                                 <button class="btn btn-success" v-on:click="submit">Ja <i class="fa fa-check-square" aria-hidden="true"></i></button>
 
@@ -47,94 +45,102 @@
 <div id="deletePrompt">
     <modal :show.sync="showModal">
 
-        <h5 slot="header" style="text-align: center;">Er du sikker på at du vil slette brukeren @Model.Email? <br /><b>Dette kan ikke angres.</b></h5>
+        <h5 slot="header" style="text-align: center;">Er du sikker på at du vil slette brukeren @Model.Email? <br/><b>Dette kan ikke angres.</b></h5>
 
     </modal>
 </div>
 <script>
     Vue.component('modal',
-{
-    template: '#@ModalId',
-    props: {
-        show: {
-            type: Boolean,
-            required: true,
-            twoWay: true
-        }
-    },
-    methods: {
-        close: function () {
-            this.show = false;
+    {
+        template: '#@ModalId',
+        props: {
+            show: {
+                type: Boolean,
+                required: true,
+                twoWay: true
+            }
         },
-        submit: function () {
+        methods: {
+            close: function() {
+                this.show = false;
+            },
+            submit: function() {
 
-            $('<input />').attr('type', 'hidden')
-               .attr('name', "search")
-               .attr('value', $('#SponsorsearchField').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', "search")
+                    .attr('value', $('#SponsorsearchField').val())
+                    .appendTo('#@formId');
 
-            $('<input />').attr('type', 'hidden')
-            .attr('name', "active")
-            .attr('value', $('#SponsorActive input:radio:checked').val())
-            .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', "active")
+                    .attr('value', $('#SponsorActive input:radio:checked').val())
+                    .appendTo('#@formId');
 
-            $('<input />').attr('type', 'hidden')
-           .attr('name', 'order')
-           .attr('value', $('#SponsorOrderFilter input:radio:checked').val())
-           .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'order')
+                    .attr('value', $('#SponsorOrderFilter input:radio:checked').val())
+                    .appendTo('#@formId');
 
-            $('<input />').attr('type', 'hidden')
-           .attr('name', 'filter')
-           .attr('value', $("#SponsorSelected option:selected").val())
-           .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'filter')
+                    .attr('value', $("#SponsorSelected option:selected").val())
+                    .appendTo('#@formId');
 
-            $('<input />').attr('type', 'hidden')
-           .attr('name', 'SponsorPhone')
-           .attr('value', $('#SponsorPhone').val())
-           .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'SponsorPhone')
+                    .attr('value', $('#SponsorPhone').val())
+                    .appendTo('#@formId');
 
-            $('<input />').attr('type', 'hidden')
-           .attr('name', 'SponsorStreetadress')
-           .attr('value', $('#SponsorStreetadress').val())
-           .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'SponsorStreetadress')
+                    .attr('value', $('#SponsorStreetadress').val())
+                    .appendTo('#@formId');
 
-            $('<input />').attr('type', 'hidden')
-                       .attr('name', 'SponsorZip')
-                       .attr('value', $('#SponsorZip').val())
-                       .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'SponsorZip')
+                    .attr('value', $('#SponsorZip').val())
+                    .appendTo('#@formId');
 
-            $('<input />').attr('type', 'hidden')
-                       .attr('name', 'SponsorCounty')
-                       .attr('value', $('#SponsorCounty').val())
-                       .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'SponsorCounty')
+                    .attr('value', $('#SponsorCounty').val())
+                    .appendTo('#@formId');
 
-            $('<input />').attr('type', 'hidden')
-           .attr('name', 'SponsorCity')
-           .attr('value', $('#SponsorCity').val())
-           .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'SponsorCity')
+                    .attr('value', $('#SponsorCity').val())
+                    .appendTo('#@formId');
 
 
-            $("form#@formId").submit();
-            this.show = false;
-            vueSponsorDetails.showModal = false;
+                $("form#@formId").submit();
+                this.show = false;
+                vueSponsorDetails.showModal = false;
+            }
+        },
+        ready: function() {
+            this.show = true;
+            document.addEventListener("keydown",
+                (e) => {
+                    if (this.show && e.keyCode == 27) {
+
+                        this.close();
+                    } else if (this.show && e.keyCode == 13) {
+                        this.submit();
+                    }
+
+
+                });
         }
-    }
-    ,
-    ready: function () {
-        this.show = true;
-        document.addEventListener("keydown", (e) => {
-            if (this.show && e.keyCode == 27) {
-
-                this.close();
-            }
-            else if (this.show && e.keyCode == 13) {
-                this.submit();
-            }
-
-
-        });
-    }
-});
+    });
 
     var deleteV = new Vue({
         el: '#deletePrompt',

@@ -10,37 +10,38 @@
 {
     <div class="searchFilter">
         <div class="input-group" id="Search">
-            <input type="text" id="searchField" class="form-control max_width" placeholder="Søk etter forespørsel..." />
+            <input type="text" id="searchField" class="form-control max_width" placeholder="Søk etter forespørsel..."/>
             <div class="input-group-btn">
                 <div class="btn-group" role="group">
-                    <button type="button" id="searchBtn" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                    <button type="button" id="searchBtn" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                 </div>
             </div>
         </div>
 
     </div>
-
 }
 <div id="updateAccordion">
-    @if (!Model.Any() && Model.PageCount == 0)
+    @if (!Model.Any() && (Model.PageCount == 0))
     {
         <h3 class="statusText">Administrer medlemskapsforespørseler</h3>
-        <br />
+        <br/>
         <h5 class="statusText">Ingen medlemskapsforespørseler</h5>
         <h5 class="text-success statusText">@ViewBag.Success</h5>
         <h5 id="error" class="text-danger statusText">@ViewBag.Error</h5>
         <h5 class="text-danger statusText">@ViewBag.MailError</h5>
-        <br />
+        <br/>
         return;
     }
-    <input id="page" value="@ViewBag.page" hidden />
-    <br />
-    
+    <input id="page" value="@ViewBag.page" hidden/>
+    <br/>
+
     <div class="panel panel-default panel-table">
         <div class="panel-heading">
             <div class="row">
                 <br/>
-                <h3 class="panel-title statusText"><b>Medlemskapsforespørsler</b>
+                <h3 class="panel-title statusText">
+                    <b>Medlemskapsforespørsler</b>
                 </h3>
 
                 <h5 class="text-success statusText">@ViewBag.Success</h5>
@@ -56,9 +57,9 @@
                     var mailto = "mailto:" + request.Email;
                     id += 1;
                     <h3>@request.Fname @request.Lname</h3>
-                    
+
                     <div>
-                        <br />
+                        <br/>
                         <h4>@request.Fname @request.Lname</h4>
                         <hr/>
                         <dl class="dl-horizontal">
@@ -133,10 +134,8 @@
                             </div>
                         </div>
                     </div>
-
-
-                        }
-                    </div>
+                }
+            </div>
         </div>
         @if (Model.PageCount > 0)
         {
@@ -147,11 +146,11 @@
                         Side @Model.PageNumber av @Model.PageCount
                     </div>
                     <div class="col col-xs-8">
-                            <div id="Pager">
-                                <ul class="pagination hidden-xs pull-right">
-                                    @Html.PagedListPager(Model, page => Url.Action("RequestList", "MemberRequests", new {page}))
-                                </ul>
-                            </div>
+                        <div id="Pager">
+                            <ul class="pagination hidden-xs pull-right">
+                                @Html.PagedListPager(Model, page => Url.Action("RequestList", "MemberRequests", new {page}))
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -160,23 +159,25 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document)
+        .ready(function() {
 
-    $(".loader").hide();
-    $(document).ajaxStart(function () {
-        $(".loader").show();
-    }).ajaxStop(function () {
-        $(".loader").hide();
-    });
+            $(".loader").hide();
+            $(document)
+                .ajaxStart(function() {
+                    $(".loader").show();
+                })
+                .ajaxStop(function() {
+                    $(".loader").hide();
+                });
 
-    $("#accordion").accordion({
-        collapsible: true,
-        active: false,
-        heightStyle: "content"
-    });
-    });
-
-
+            $("#accordion")
+                .accordion({
+                    collapsible: true,
+                    active: false,
+                    heightStyle: "content"
+                });
+        });
 
 
     function acceptRequest(id) {
@@ -193,19 +194,20 @@
             contentType: false, // Not to set any content header
             processData: false, // Not to process data
             data: formdata,
-            success: function (result) {
+            success: function(result) {
                 $("#updateAccordion").html(result);
 
                 //$("#accordion").accordion("destroy");
 
-                    $("#accordion").accordion({
+                $("#accordion")
+                    .accordion({
                         collapsible: true,
                         active: false,
                         heightStyle: "content"
                     });
             },
-            error: function (err) {
-                $("#error").text("Error: "+err.statusText);
+            error: function(err) {
+                $("#error").text("Error: " + err.statusText);
                 console.log(err);
             }
         });
@@ -223,33 +225,39 @@
             contentType: false, // Not to set any content header
             processData: false, // Not to process data
             data: formdata,
-            success: function (result) {
+            success: function(result) {
                 $("#updateAccordion").html(result);
 
-                $("#accordion").accordion({
-                    collapsible: true,
-                    active: false,
-                    heightStyle: "content"
-                });
+                $("#accordion")
+                    .accordion({
+                        collapsible: true,
+                        active: false,
+                        heightStyle: "content"
+                    });
             },
-            error: function (err) {
-                $("#error").text("Error: "+err.statusText);
+            error: function(err) {
+                $("#error").text("Error: " + err.statusText);
                 console.log(err);
             }
         });
 
     }
 
-    $("#searchBtn").on('click', function () {
-        filter();
-        return false;
-    });
-    $("#searchField").on('keydown', function () {
-        if (event.keyCode == 13) {
-            filter();
-            return false;
-        }
-    });
+    $("#searchBtn")
+        .on('click',
+            function() {
+                filter();
+                return false;
+            });
+    $("#searchField")
+        .on('keydown',
+            function() {
+                if (event.keyCode == 13) {
+                    filter();
+                    return false;
+                }
+            });
+
     function filter() {
         var formData = new FormData();
 
@@ -262,47 +270,53 @@
             contentType: false,
             processData: false,
             data: formData,
-            success: function (result) {
+            success: function(result) {
                 $('#updateAccordion').html(result);
 
-                $("#accordion").accordion({
-                    collapsible: true,
-                    active: false,
-                    heightStyle: "content"
-                });
+                $("#accordion")
+                    .accordion({
+                        collapsible: true,
+                        active: false,
+                        heightStyle: "content"
+                    });
             },
-            error: function (err) {
+            error: function(err) {
                 $("#error").text("Error: " + err.statusText);
             }
         });
-    
+
     }
-    $(document).on("click", "#Pager a[href]", function () {
-        var formData = new FormData();
-        formData.append('search', $('#searchField').val());
-        $.ajax({
-            url: $(this).attr("href"),
-            type: 'POST',
-            async: true,
-            contentType: false,
-            processData: false,
-            data: formData,
-            cache: false,
-            success: function (result) {
-                $('#updateAccordion').html(result);
 
-                $("#accordion").accordion({
-                    collapsible: true,
-                    active: false,
-                    heightStyle: "content"
+    $(document)
+        .on("click",
+            "#Pager a[href]",
+            function() {
+                var formData = new FormData();
+                formData.append('search', $('#searchField').val());
+                $.ajax({
+                    url: $(this).attr("href"),
+                    type: 'POST',
+                    async: true,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    cache: false,
+                    success: function(result) {
+                        $('#updateAccordion').html(result);
+
+                        $("#accordion")
+                            .accordion({
+                                collapsible: true,
+                                active: false,
+                                heightStyle: "content"
+                            });
+                    },
+                    error: function(err) {
+                        $("#error").text("Error: " + err.statusText);
+                    }
                 });
-            },
-            error: function (err) {
-                $("#error").text("Error: " + err.statusText);
-            }
-        });
-        return false;
-    });
+                return false;
+            });
 
 
 </script>

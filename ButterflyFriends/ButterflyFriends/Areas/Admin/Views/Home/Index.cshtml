@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Index";
 }
 <h2 style="text-align: center">Admin meny</h2>
@@ -7,49 +6,49 @@
     <div class="col-md-6 article-column">
         <a class="btn btn-lg btn-primary center-block home-button-link"
            href='@Url.Action("Upload", "Home")'
-           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           style="margin-bottom: 1em; margin-top: 1em; width: 14em;"
            v-on:mouseover="upload"
            v-on:mouseleave="MouseLeave">
             Last opp bilder
         </a>
         <a class="btn btn-lg btn-primary center-block home-button-link"
            href='@Url.Action("Images", "Home")'
-           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           style="margin-bottom: 1em; margin-top: 1em; width: 14em;"
            v-on:mouseover="images"
            v-on:mouseleave="MouseLeave">
             Bilder
         </a>
         <a class="btn btn-lg btn-primary center-block home-button-link"
            href='@Url.Action("Index", "HRManagement")'
-           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           style="margin-bottom: 1em; margin-top: 1em; width: 14em;"
            v-on:mouseover="hrmanagement"
            v-on:mouseleave="MouseLeave">
             Brukereadministrasjon
         </a>
         <a class="btn btn-lg btn-primary center-block home-button-link"
            href='@Url.Action("Index", "PR")'
-           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           style="margin-bottom: 1em; margin-top: 1em; width: 14em;"
            v-on:mouseover="pr"
            v-on:mouseleave="MouseLeave">
             PR
         </a>
         <a class="btn btn-lg btn-primary center-block home-button-link"
            href='@Url.Action("Index", "MemberRequests")'
-           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           style="margin-bottom: 1em; margin-top: 1em; width: 14em;"
            v-on:mouseover="requests"
            v-on:mouseleave="MouseLeave">
             Medlemskapsforespørsler
         </a>
         <a class="btn btn-lg btn-primary center-block home-button-link"
            href='@Url.Action("Index", "Donations")'
-           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           style="margin-bottom: 1em; margin-top: 1em; width: 14em;"
            v-on:mouseover="donations"
            v-on:mouseleave="MouseLeave">
             Donasjoner
         </a>
         <a class="btn btn-lg btn-primary center-block home-button-link"
            href='@Url.Action("Index", "Various")'
-           style="width:14em; margin-top:1em; margin-bottom:1em;"
+           style="margin-bottom: 1em; margin-top: 1em; width: 14em;"
            v-on:mouseover="various"
            v-on:mouseleave="MouseLeave">
             Diverse
@@ -69,41 +68,41 @@
         },
 
         methods: {
-            various: function () {
+            various: function() {
                 this
                     .description =
                     "Håndter diverse og sett sosiale medier og API nøkler";
             },
 
-            MouseLeave: function () {
+            MouseLeave: function() {
                 this.description = "";
             },
 
-            requests: function () {
+            requests: function() {
                 this
                     .description =
                     "Søk i, slett og aksepter forespørsler om medlemskap";
             },
 
-            pr: function () {
+            pr: function() {
                 this
                     .description =
                     "Skriv, rediger og håndter blogginlegg og skriv email til ansatte og faddere";
             },
 
-            hrmanagement: function () {
+            hrmanagement: function() {
                 this
                     .description =
                     "Rediger, legg til og se infomasjon om ansatte, fadder og fadderbarn";
             },
 
-            images: function () {
+            images: function() {
                 this
                     .description =
                     "Se og rediger bilder";
             },
 
-            upload: function () {
+            upload: function() {
                 this
                     .description =
                     "Last opp og tagg bilder med brukere og fadderbarn";

@@ -1,5 +1,5 @@
 ﻿@model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.ChildCreateModel
-    
+
 @{
 
     var formId = "childEditForm";
@@ -11,37 +11,35 @@
     <modal :show.sync="showModal">
         <h3 slot="header">Rediger fadderbarn</h3>
         <h5 slot="body">
-            @using (Ajax.BeginForm("ChildEdit", "HRManagement", new { childrenPage = @ViewBag.childrenPage }, new AjaxOptions
+            @using (Ajax.BeginForm("ChildEdit", "HRManagement", new {ViewBag.childrenPage}, new AjaxOptions
             {
-
                 UpdateTargetId = "updateChildren",
                 InsertionMode = InsertionMode.Replace,
-                HttpMethod = "POST",
-
-            }, new { @class = "form-horizontal", role = "form", id = formId }))
+                HttpMethod = "POST"
+            }, new {@class = "form-horizontal", role = "form", id = formId}))
             {
                 @Html.AntiForgeryToken()
 
                 <div class="form-horizontal">
                     @Html.ValidationSummary(true)
                     @Html.HiddenFor(model => model.Child.Id)
-                    
+
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Child.Fname, new { @class = "col-md-2 control-label" })
+                        @Html.LabelFor(m => m.Child.Fname, new {@class = "col-md-2 control-label"})
                         <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Child.Fname, new { @class = "form-control", required = "required" })
+                            @Html.TextBoxFor(m => m.Child.Fname, new {@class = "form-control", required = "required"})
 
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Child.Lname, new { @class = "col-md-2 control-label" })
+                        @Html.LabelFor(m => m.Child.Lname, new {@class = "col-md-2 control-label"})
                         <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Child.Lname, new { @class = "form-control", required = "required" })
+                            @Html.TextBoxFor(m => m.Child.Lname, new {@class = "form-control", required = "required"})
 
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Child.DoB, new { @class = "col-md-2 control-label" })
+                        @Html.LabelFor(m => m.Child.DoB, new {@class = "col-md-2 control-label"})
                         <div class="col-md-10">
                             <input type="text" id="datepicker" name="Child.DoB" value="@Model.Child.DoB.ToString("dd/MM/yyyy")" class="form-control" required>
                         </div>
@@ -57,8 +55,6 @@
                     <input type="hidden" id="hiddenId" name="Child.SponsorId" value="@Model.Child.SponsorId" class="form-control">
 
                 </div>
-
-
             }
         </h5>
     </modal>
@@ -94,7 +90,8 @@
 
 <script>
 
-    Vue.component('modal', {
+    Vue.component('modal',
+    {
         template: '#@ModalId',
         props: {
             show: {
@@ -108,37 +105,43 @@
             close: function() {
                 this.show = false;
             },
-            closeButton: function () {
+            closeButton: function() {
 
-                $('<input />').attr('type', 'hidden')
-                  .attr('name', "search")
-                  .attr('value', $('#ChildsearchField').val())
-                  .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', "search")
+                    .attr('value', $('#ChildsearchField').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-                .attr('name', "active")
-                .attr('value', $('#ChildActive input:radio:checked').val())
-                .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', "active")
+                    .attr('value', $('#ChildActive input:radio:checked').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'order')
-               .attr('value', $('#ChildOrderFilter input:radio:checked').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'order')
+                    .attr('value', $('#ChildOrderFilter input:radio:checked').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'filter')
-               .attr('value', $("#ChildSelected option:selected").val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'filter')
+                    .attr('value', $("#ChildSelected option:selected").val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'ChildDoB')
-               .attr('value', $('#ChildDoB').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'ChildDoB')
+                    .attr('value', $('#ChildDoB').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'ChildSponsor')
-               .attr('value', $('#ChildSponsor').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'ChildSponsor')
+                    .attr('value', $('#ChildSponsor').val())
+                    .appendTo('#@formId');
 
                 $("form#@formId").submit();
                 this.show = false;
@@ -147,106 +150,133 @@
         },
         ready: function() {
             this.show = true;
-            document.addEventListener("keydown", (e) => {
-                if (this.show && e.keyCode == 27) {
-                    this.close();
-                } else if (this.show && e.keyCode == 13) {
-                    e.preventDefault();
-                    this.closeButton();
-                    
-                }
-            });
+            document.addEventListener("keydown",
+                (e) => {
+                    if (this.show && e.keyCode == 27) {
+                        this.close();
+                    } else if (this.show && e.keyCode == 13) {
+                        e.preventDefault();
+                        this.closeButton();
+
+                    }
+                });
         }
     });
 
-        new Vue({
-            el: '#Box',
-            data: {
-                showModal: false,
-            },
-            methods: {
-                showModalf: function() {
-                    this.showModal = true;
-                }
-
+    new Vue({
+        el: '#Box',
+        data: {
+            showModal: false,
+        },
+        methods: {
+            showModalf: function() {
+                this.showModal = true;
             }
 
-        });
+        }
+
+    });
 
 
-        $(function () {
-            $("#datepicker").datepicker({
+    $(function() {
+        $("#datepicker")
+            .datepicker({
                 dateFormat: "dd.mm.yy"
             });
-        });
+    });
 
 
-        $("#sponsor").on('input', function () {
-            if (!($(this).val())) {
-                return;
-            }
-            var text = $("#sponsor").val();
-            $.ajax({
-                url: '/Admin/HRManagement/GetUsers',
-                async: true,
-                contentType: false,//"application/json; charset=utf-8",
-                processData: false,
-                type: "POST",
-                dataType: "json",
-                data: text,//JSON.stringify(data),
-                xhr: function () {  // Custom XMLHttpRequest
-                    var myXhr = $.ajaxSettings.xhr();
-                    if (myXhr.upload) { // Check if upload property exists
-
-                        // For handling the progress of the upload
-                        //myXhr.upload.id = id;
-                        //myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
-
-                    }
-                    return myXhr;
+    $("#sponsor")
+        .on('input',
+            function() {
+                if (!($(this).val())) {
+                    return;
                 }
-        ,
-                success: function (result) {
-                    var tags = [];
-                    for (var i = 0; i < result.length; i++) {
-                        var obj = { label: result[i].Name, id: result[i].Id, imgid: result[i].imgId, email: result[i].email }
-                        tags.push(obj);
+                var text = $("#sponsor").val();
+                $.ajax({
+                    url: '/Admin/HRManagement/GetUsers',
+                    async: true,
+                    contentType: false, //"application/json; charset=utf-8",
+                    processData: false,
+                    type: "POST",
+                    dataType: "json",
+                    data: text, //JSON.stringify(data),
+                    xhr: function() { // Custom XMLHttpRequest
+                        var myXhr = $.ajaxSettings.xhr();
+                        if (myXhr.upload) { // Check if upload property exists
 
+                            // For handling the progress of the upload
+                            //myXhr.upload.id = id;
+                            //myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
 
-                    }
-                    //console.log(tags);
-                    $("#sponsor")
-                        .autocomplete({
-                            source: tags,
-                            select: function (event, ui) {
-                                $("#hiddenId").attr("value", ui.item.id);
-
-                            },
-                            focus: function (event, ui) {
-                                $("#sponsor").val(ui.item.label);
-                                return false;
-                            }
-                        })
-                        .bind("keydown.autocomplete")
-                        .keydown(function (e) {
-                            if (e.keyCode == 13) {
-                                e.stopPropagation();
+                        }
+                        return myXhr;
+                    },
+                    success: function(result) {
+                        var tags = [];
+                        for (var i = 0; i < result.length; i++) {
+                            var obj = {
+                                label: result[i].Name,
+                                id: result[i].Id,
+                                imgid: result[i].imgId,
+                                email: result[i].email
                             };
-                        });
+                            tags.push(obj);
 
-                    $("#sponsor").data("ui-autocomplete")._renderItem = function (ul, item) {
 
-                        if (item.imgid === 0) {
+                        }
+                        //console.log(tags);
+                        $("#sponsor")
+                            .autocomplete({
+                                source: tags,
+                                select: function(event, ui) {
+                                    $("#hiddenId").attr("value", ui.item.id);
 
+                                },
+                                focus: function(event, ui) {
+                                    $("#sponsor").val(ui.item.label);
+                                    return false;
+                                }
+                            })
+                            .bind("keydown.autocomplete")
+                            .keydown(function(e) {
+                                if (e.keyCode == 13) {
+                                    e.stopPropagation();
+                                };
+                            });
+
+                        $("#sponsor").data("ui-autocomplete")._renderItem = function(ul, item) {
+
+                            if (item.imgid === 0) {
+
+                                var $li = $('<li>');
+
+                                var $div;
+                                if (item.email == "") {
+                                    $div =
+                                        $('<label class="autoLabel"><div class="row"><div class="col-md-3"><i class="fa fa-question-circle autoQuestionChild" aria-hidden="true"></i></div><div class="col-md-9">' + item.label + '</div></div></label>');
+
+                                } else {
+                                    $div =
+                                        $('<label class="autoLabel"><div class="row"><div class="col-md-3"><i class="fa fa-question-circle autoQuestion" aria-hidden="true"></i></div><div class="col-md-9">' + item.label + '<br><span class="autoEmailStyle">' + item.email + '</span></div></div></label>');
+
+                                }
+
+                                $li.attr('data-value', item.label);
+                                $li.append('<a>');
+                                $li.find('a').append($div);
+
+                                return $li.appendTo(ul);
+                            }
                             var $li = $('<li>');
 
                             var $div;
                             if (item.email == "") {
                                 $div =
-                                    $('<label class="autoLabel"><div class="row"><div class="col-md-3"><i class="fa fa-question-circle autoQuestionChild" aria-hidden="true"></i></div><div class="col-md-9">' + item.label + '</div></div></label>');
-
+                                    $('<label class="autoLabel"><div class="row"><div class="col-md-3"><img src="../FileAdmin?id=' + item.imgid + '" class="thumbnailShow"></div><div class="col-md-9">' + item.label + '</div></div></label>');
                             } else {
-                                $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><i class="fa fa-question-circle autoQuestion" aria-hidden="true"></i></div><div class="col-md-9">' + item.label + '<br><span class="autoEmailStyle">' + item.email + '</span></div></div></label>');
+                                $div =
+                                    $('<label class="autoLabel"><div class="row"><div class="col-md-3"><img src="../FileAdmin?id=' + item.imgid + '" class="thumbnailShow"></div><div class="col-md-9">' + item.label + '<br><span class="autoEmailStyle">' + item.email + '</span></div></div></label>');
 
                             }
 
@@ -255,33 +285,16 @@
                             $li.find('a').append($div);
 
                             return $li.appendTo(ul);
-                        }
-                        var $li = $('<li>');
 
-                        var $div;
-                        if (item.email == "") {
-                            $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><img src="../FileAdmin?id=' + item.imgid + '" class="thumbnailShow"></div><div class="col-md-9">' + item.label + '</div></div></label>');
-                        } else {
-                            $div = $('<label class="autoLabel"><div class="row"><div class="col-md-3"><img src="../FileAdmin?id=' + item.imgid + '" class="thumbnailShow"></div><div class="col-md-9">' + item.label + '<br><span class="autoEmailStyle">' + item.email + '</span></div></div></label>');
-
-                        }
-
-                        $li.attr('data-value', item.label);
-                        $li.append('<a>');
-                        $li.find('a').append($div);
-
-                        return $li.appendTo(ul);
-
-                    };
-                    $("#sponsor").autocomplete("search", text);
+                        };
+                        $("#sponsor").autocomplete("search", text);
 
 
-                },
-                error: function (err) {
-                    alert(err.statusText);
-                    console.log(err);
-                }
+                    },
+                    error: function(err) {
+                        alert(err.statusText);
+                        console.log(err);
+                    }
+                });
             });
-        });
 </script>
-

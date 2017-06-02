@@ -10,17 +10,17 @@
             <div class="panel-heading">
                 <div class="row">
                     <div class="col col-xs-6">
-                        <h3 class="panel-title listHeader"><b>Fadderbarn</b></h3>
+                        <h3 class="panel-title listHeader">
+                            <b>Fadderbarn</b>
+                        </h3>
                     </div>
                     <div class="col col-xs-6 text-right">
-                        @using (Ajax.BeginForm("showChildCreate", "HRManagement", new { childrenPage = ViewBag.childrenPage }, new AjaxOptions
+                        @using (Ajax.BeginForm("showChildCreate", "HRManagement", new {ViewBag.childrenPage}, new AjaxOptions
                         {
                             UpdateTargetId = "Modal",
                             InsertionMode = InsertionMode.Replace,
                             HttpMethod = "GET"
-
-
-                        }, new { @class = "form-horizontal" }))
+                        }, new {@class = "form-horizontal"}))
                         {
                             <button class="btn btn-sm btn-primary btn-create">Lag ny</button>
                         }
@@ -34,7 +34,9 @@
                 <table class="table table-striped table-bordered table-list table-hover">
                     <thead>
                     <tr>
-                        <th><em class="fa fa-cog"></em></th>
+                        <th>
+                            <em class="fa fa-cog"></em>
+                        </th>
                         <th class="hidden-xs">ID</th>
                         <th>Navn</th>
                         <th>Fødselsdag</th>
@@ -45,11 +47,11 @@
                     {
                         var fullName = child.Fname + " " + child.Lname;
                         var rowClass = "";
-                        if (ViewBag.Success != null && child.Id == ViewBag.Id)
+                        if ((ViewBag.Success != null) && (child.Id == ViewBag.Id))
                         {
                             rowClass = "success";
                         }
-                        else if (ViewBag.Error != null && child.Id == ViewBag.Id)
+                        else if ((ViewBag.Error != null) && (child.Id == ViewBag.Id))
                         {
                             rowClass = "danger";
                         }
@@ -58,60 +60,58 @@
                                 <div class="row">
                                     <div class="col-md-offset-2">
                                         <div class="col-md-3">
-                                            @using (Ajax.BeginForm("showChildDetails", "HRManagement", new { id = @child.Id, childrenPage = ViewBag.childrenPage }, new AjaxOptions
+                                            @using (Ajax.BeginForm("showChildDetails", "HRManagement", new {id = child.Id, ViewBag.childrenPage}, new AjaxOptions
                                             {
                                                 UpdateTargetId = "Modal",
                                                 InsertionMode = InsertionMode.Replace,
-                                                HttpMethod = "GET",
-
-
-                                            }, new { @class = "form-horizontal" }))
+                                                HttpMethod = "GET"
+                                            }, new {@class = "form-horizontal"}))
                                             {
-
-                                                <button class="btn btn-primary"><em class="fa fa-user-circle-o"></em></button>
+                                                <button class="btn btn-primary">
+                                                    <em class="fa fa-user-circle-o"></em>
+                                                </button>
                                             }
                                         </div>
                                         <div class="col-md-3">
-                                            @using (Ajax.BeginForm("showChildEdit", "HRManagement", new { id = @child.Id, childrenPage = ViewBag.childrenPage }, new AjaxOptions
+                                            @using (Ajax.BeginForm("showChildEdit", "HRManagement", new {id = child.Id, ViewBag.childrenPage}, new AjaxOptions
                                             {
                                                 UpdateTargetId = "Modal",
                                                 InsertionMode = InsertionMode.Replace,
-                                                HttpMethod = "GET",
-
-
-                                            }, new { @class = "form-horizontal" }))
+                                                HttpMethod = "GET"
+                                            }, new {@class = "form-horizontal"}))
                                             {
-                                                <button class="btn btn-default"><em class="fa fa-pencil"></em></button>
+                                                <button class="btn btn-default">
+                                                    <em class="fa fa-pencil"></em>
+                                                </button>
                                             }
                                         </div>
                                         <div class="col-md-3">
                                             @if (child.isActive)
                                             {
-                                                using (Ajax.BeginForm("childDeactivate", "HRManagement", new { id = @child.Id, childrenPage = ViewBag.childrenPage }, new AjaxOptions
+                                                using (Ajax.BeginForm("childDeactivate", "HRManagement", new {id = child.Id, ViewBag.childrenPage}, new AjaxOptions
                                                 {
                                                     UpdateTargetId = "updateChildren",
                                                     InsertionMode = InsertionMode.Replace,
-                                                    HttpMethod = "POST",
-
-
-                                                }, new { @class = "form-horizontal", id=count +"cd" }))
+                                                    HttpMethod = "POST"
+                                                }, new {@class = "form-horizontal", id = count + "cd"}))
                                                 {
-                                                    <button class="btn btn-danger" onclick="appendFilterChildren(event, this)"><em class="fa fa-lock"></em></button>
-
+                                                    <button class="btn btn-danger" onclick="appendFilterChildren(event, this)">
+                                                        <em class="fa fa-lock"></em>
+                                                    </button>
                                                 }
                                             }
                                             else
                                             {
-                                                using (Ajax.BeginForm("childActivate", "HRManagement", new { id = @child.Id, childrenPage = ViewBag.childrenPage }, new AjaxOptions
+                                                using (Ajax.BeginForm("childActivate", "HRManagement", new {id = child.Id, ViewBag.childrenPage}, new AjaxOptions
                                                 {
                                                     UpdateTargetId = "updateChildren",
                                                     InsertionMode = InsertionMode.Replace,
-                                                    HttpMethod = "POST",
-
-
-                                                }, new { @class = "form-horizontal",id=count +"ca" }))
+                                                    HttpMethod = "POST"
+                                                }, new {@class = "form-horizontal", id = count + "ca"}))
                                                 {
-                                                    <button class="btn btn-success" onclick="appendFilterChildren(event, this)"><em class="fa fa-unlock"></em></button>
+                                                    <button class="btn btn-success" onclick="appendFilterChildren(event, this)">
+                                                        <em class="fa fa-unlock"></em>
+                                                    </button>
                                                 }
                                             }
                                         </div>
@@ -131,7 +131,7 @@
             <div class="panel-footer">
                 <div class="row">
                     <div class="col col-xs-4">
-                        @if (@Model.Children.PageCount != 0)
+                        @if (Model.Children.PageCount != 0)
                         {
                             <p>Side @Model.Children.PageNumber av @Model.Children.PageCount</p>
                         }
@@ -144,7 +144,7 @@
 
                         <div id="childrenPager">
                             <ul class="pagination hidden-xs pull-right">
-                                @Html.PagedListPager(Model.Children, childrenPage => Url.Action("ChildrenList", "HRManagement", new { childrenPage }))
+                                @Html.PagedListPager(Model.Children, childrenPage => Url.Action("ChildrenList", "HRManagement", new {childrenPage}))
                             </ul>
                         </div>
 
@@ -161,35 +161,41 @@
         e.preventDefault();
         var formId = b.parentNode.id;
 
-        $('<input />').attr('type', 'hidden')
-          .attr('name', "search")
-          .attr('value', $('#ChildsearchField').val())
-          .appendTo('#'+formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', "search")
+            .attr('value', $('#ChildsearchField').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-        .attr('name', "active")
-        .attr('value', $('#ChildActive input:radio:checked').val())
-        .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', "active")
+            .attr('value', $('#ChildActive input:radio:checked').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'order')
-       .attr('value', $('#ChildOrderFilter input:radio:checked').val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'order')
+            .attr('value', $('#ChildOrderFilter input:radio:checked').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'filter')
-       .attr('value', $("#ChildSelected option:selected").val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'filter')
+            .attr('value', $("#ChildSelected option:selected").val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'ChildDoB')
-       .attr('value', $('#ChildDoB').val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'ChildDoB')
+            .attr('value', $('#ChildDoB').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'ChildSponsor')
-       .attr('value', $('#ChildSponsor').val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'ChildSponsor')
+            .attr('value', $('#ChildSponsor').val())
+            .appendTo('#' + formId);
 
         $("form#" + formId).submit();
 

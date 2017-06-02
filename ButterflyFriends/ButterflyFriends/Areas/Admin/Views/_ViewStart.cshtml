@@ -1,5 +1,5 @@
 ﻿@{
-    string CurrentName = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["action"]);
+    var CurrentName = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["action"]);
     //dynamic Layout;
     switch (CurrentName)
     {

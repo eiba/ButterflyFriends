@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace ButterflyFriends.Models
+﻿namespace ButterflyFriends.Models
 {
     /// <summary>
-    /// model for about page
+    ///     model for about page
     /// </summary>
     public class AboutModel
     {

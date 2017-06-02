@@ -1,4 +1,4 @@
-/* ===========================================================
+﻿/* ===========================================================
  * trumbowyg.preformatted.js v1.0
  * Preformatted plugin for Trumbowyg
  * http://alex-d.github.com/Trumbowyg
@@ -7,55 +7,57 @@
  */
 
 
-(function ($) {
-    'use strict';
+(function($) {
+    "use strict";
 
-    $.extend(true, $.trumbowyg, {
-        langs: {
-            // jshint camelcase:false
-            en: {
-                preformatted: 'Code sample <pre>'
+    $.extend(true,
+        $.trumbowyg,
+        {
+            langs: {
+                // jshint camelcase:false
+                en: {
+                    preformatted: "Code sample <pre>"
+                },
+                fr: {
+                    preformatted: "Exemple de code"
+                },
+                it: {
+                    preformatted: "Codice <pre>"
+                },
+                zh_cn: {
+                    preformatted: "代码示例 <pre>"
+                }
             },
-            fr: {
-                preformatted: 'Exemple de code'
-            },
-            it: {
-                preformatted: 'Codice <pre>'
-            },
-            zh_cn: {
-                preformatted: '代码示例 <pre>'
-            }
-        },
-        // jshint camelcase:true
+            // jshint camelcase:true
 
-        plugins: {
-            preformatted: {
-                init: function (trumbowyg) {
-                    var btnDef = {
-                        fn: function () {
-                            trumbowyg.saveRange();
-                            var text = trumbowyg.getRangeText();
-                            if (text.replace(/\s/g, '') !== '') {
-                                try {
-                                    var curtag = getSelectionParentElement().tagName.toLowerCase();
-                                    if (curtag === 'code' || curtag === 'pre') {
-                                        return unwrapCode();
+            plugins: {
+                preformatted: {
+                    init: function(trumbowyg) {
+                        var btnDef = {
+                            fn: function() {
+                                trumbowyg.saveRange();
+                                var text = trumbowyg.getRangeText();
+                                if (text.replace(/\s/g, "") !== "") {
+                                    try {
+                                        var curtag = getSelectionParentElement().tagName.toLowerCase();
+                                        if (curtag === "code" || curtag === "pre") {
+                                            return unwrapCode();
+                                        } else {
+                                            trumbowyg
+                                                .execCmd("insertHTML", "<pre><code>" + strip(text) + "</code></pre>");
+                                        }
+                                    } catch (e) {
                                     }
-                                    else {
-                                        trumbowyg.execCmd('insertHTML', '<pre><code>' + strip(text) + '</code></pre>');
-                                    }
-                                } catch (e) {
                                 }
-                            }
-                        },
-                        tag: 'pre'
-                    };
+                            },
+                            tag: "pre"
+                        };
 
-                    trumbowyg.addBtnDef('preformatted', btnDef);
+                        trumbowyg.addBtnDef("preformatted", btnDef);
+                    }
                 }
             }
-        }
-    });
+        });
 
     /*
      * GetSelectionParentElement
@@ -71,7 +73,7 @@
                     parentEl = parentEl.parentNode;
                 }
             }
-        } else if ((selection = document.selection) && selection.type !== 'Control') {
+        } else if ((selection = document.selection) && selection.type !== "Control") {
             parentEl = selection.createRange().parentElement();
         }
         return parentEl;
@@ -82,9 +84,9 @@
      * returns a text without HTML tags
      */
     function strip(html) {
-        var tmp = document.createElement('DIV');
+        var tmp = document.createElement("DIV");
         tmp.innerHTML = html;
-        return tmp.textContent || tmp.innerText || '';
+        return tmp.textContent || tmp.innerText || "";
     }
 
     /*
@@ -103,14 +105,14 @@
             }
         }
         //'paranoic' unwrap
-        var ispre = $(container).contents().closest('pre').length;
-        var iscode = $(container).contents().closest('code').length;
+        var ispre = $(container).contents().closest("pre").length;
+        var iscode = $(container).contents().closest("code").length;
         if (ispre && iscode) {
-            $(container).contents().unwrap('code').unwrap('pre');
+            $(container).contents().unwrap("code").unwrap("pre");
         } else if (ispre) {
-            $(container).contents().unwrap('pre');
+            $(container).contents().unwrap("pre");
         } else if (iscode) {
-            $(container).contents().unwrap('code');
+            $(container).contents().unwrap("code");
         }
     }
 

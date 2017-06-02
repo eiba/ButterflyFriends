@@ -11,33 +11,38 @@
 
 .trumbowyg-dropdown-foreColor,
 .trumbowyg-dropdown-backColor {
-  width: 276px;
-  padding: 7px 5px; }
-  .trumbowyg-dropdown-foreColor svg,
-  .trumbowyg-dropdown-backColor svg {
-    display: none !important; }
-  .trumbowyg-dropdown-foreColor button,
-  .trumbowyg-dropdown-backColor button {
-    display: block;
-    position: relative;
-    float: left;
-    text-indent: -9999px;
-    height: 20px;
-    width: 20px;
+    padding: 7px 5px;
+    width: 276px;
+}
+
+.trumbowyg-dropdown-foreColor svg,
+.trumbowyg-dropdown-backColor svg { display: none !important; }
+
+.trumbowyg-dropdown-foreColor button,
+.trumbowyg-dropdown-backColor button {
     border: 1px solid #333;
+    display: block;
+    float: left;
+    height: 20px;
+    margin: 2px;
     padding: 0;
-    margin: 2px; }
-    .trumbowyg-dropdown-foreColor button:hover::after, .trumbowyg-dropdown-foreColor button:focus::after,
-    .trumbowyg-dropdown-backColor button:hover::after,
-    .trumbowyg-dropdown-backColor button:focus::after {
-      content: " ";
-      display: block;
-      position: absolute;
-      top: -5px;
-      left: -5px;
-      height: 27px;
-      width: 27px;
-      background: inherit;
-      border: 1px solid #FFF;
-      box-shadow: #000 0 0 2px;
-      z-index: 10; }
+    position: relative;
+    text-indent: -9999px;
+    width: 20px;
+}
+
+.trumbowyg-dropdown-foreColor button:hover::after, .trumbowyg-dropdown-foreColor button:focus::after,
+.trumbowyg-dropdown-backColor button:hover::after,
+.trumbowyg-dropdown-backColor button:focus::after {
+    background: inherit;
+    border: 1px solid #FFF;
+    box-shadow: #000 0 0 2px;
+    content: " ";
+    display: block;
+    height: 27px;
+    left: -5px;
+    position: absolute;
+    top: -5px;
+    width: 27px;
+    z-index: 10;
+}

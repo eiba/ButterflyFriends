@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -13,20 +12,24 @@ using Microsoft.AspNet.Identity.EntityFramework;
 namespace ButterflyFriends.Models
 {
     /// <summary>
-    /// Application user table, for all users in the database, employee does in addition
-    /// have an employee table.
+    ///     Application user table, for all users in the database, employee does in addition
+    ///     have an employee table.
     /// </summary>
     [Table("ApplicationUser")]
     public class ApplicationUser : IdentityUser
     {
         [Display(Name = "Fornavn")]
         public string Fname { get; set; }
+
         [Display(Name = "Etternavn")]
         public string Lname { get; set; }
+
         [ForeignKey("Adress")]
         public int AdressId { get; set; }
+
         [ForeignKey("Employee")]
         public int EmployeeId { get; set; }
+
         [StringLength(12, ErrorMessage = "Telefonummer må være mellom 8 og 12 karakterer", MinimumLength = 8)]
         [RegularExpression(@"^[0-9+]+$", ErrorMessage = "Telefonummer kan kun vare karakterer mellom 0 og 9 og +")]
         [Display(Name = "Tlf")]
@@ -36,9 +39,12 @@ namespace ButterflyFriends.Models
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Fødselsnummer kan kun vare karakterer mellom 0 og 9")]
         [Display(Name = "Fødselsnr.")]
         public string BirthNumber { get; set; }
+
         public DateTime? InactiveSince { get; set; }
+
         [DefaultValue(true)]
         public bool IsEnabeled { get; set; }
+
         public int RoleNr { get; set; }
 
         public virtual DbTables.Adresses Adress { get; set; }
@@ -49,7 +55,7 @@ namespace ButterflyFriends.Models
         //public virtual IList<DbTables.TagBox> TagBoxs { get; set; }
 
         /// <summary>
-        /// Method for asynchronously generating unique and complex ids for the user accounts.
+        ///     Method for asynchronously generating unique and complex ids for the user accounts.
         /// </summary>
         /// <param name="manager">The manager gets and handles everything about the users in the database.</param>
         /// <remarks>Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType</remarks>
@@ -62,14 +68,15 @@ namespace ButterflyFriends.Models
     }
 
     /// <summary>
-    /// The database class, containing all the database tables
+    ///     The database class, containing all the database tables
     /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("DefaultConnection", false)
         {
         }
+
         //The database tables.
         public DbSet<DbTables.Adresses> Adresses { get; set; }
         public DbSet<DbTables.Employees> Employees { get; set; }
@@ -93,11 +100,8 @@ namespace ButterflyFriends.Models
         public DbSet<DbTables.Disqus> Disqus { get; set; }
 
 
-
-
-
         /// <summary>
-        /// Creates the database
+        ///     Creates the database
         /// </summary>
         /// <returns>Returns a new database object</returns>
         public static ApplicationDbContext Create()

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
@@ -35,14 +36,15 @@ namespace ButterflyFriends.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Gjenta passord")]
-        [Compare("NewPassword", ErrorMessage = "Det nye passordet og bekreftelsespassordet er ikke like")]
+        [System.ComponentModel.DataAnnotations.Compare("NewPassword",
+             ErrorMessage = "Det nye passordet og bekreftelsespassordet er ikke like")]
         public string ConfirmPassword { get; set; }
 
         [Required]
         public string userId { get; set; }
+
         [Required]
         public string Code { get; set; }
-
     }
 
     public class ChangePasswordViewModel
@@ -60,7 +62,7 @@ namespace ButterflyFriends.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Bekreft nytt passord")]
-        [Compare("NewPassword", ErrorMessage = "Passordene må være like.")]
+        [System.ComponentModel.DataAnnotations.Compare("NewPassword", ErrorMessage = "Passordene må være like.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -87,6 +89,6 @@ namespace ButterflyFriends.Models
     public class ConfigureTwoFactorViewModel
     {
         public string SelectedProvider { get; set; }
-        public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
+        public ICollection<SelectListItem> Providers { get; set; }
     }
 }

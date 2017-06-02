@@ -1,7 +1,6 @@
-﻿
-@{
-    string CurrentName = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["action"]);
-    string CurrentController = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["Controller"]);
+﻿@{
+    var CurrentName = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["action"]);
+    var CurrentController = Convert.ToString(HttpContext.Current.Request.RequestContext.RouteData.Values["Controller"]);
 
     //dynamic Layout;
     switch (CurrentName + CurrentController)

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ButterflyFriends.Areas.Admin.Models
 {
@@ -57,6 +53,7 @@ namespace ButterflyFriends.Areas.Admin.Models
 
         [Display(Name = "Stilling")]
         public string Position { get; set; }
+
         [Display(Name = "Bankonto")]
         public int? AccountNumber { get; set; }
 

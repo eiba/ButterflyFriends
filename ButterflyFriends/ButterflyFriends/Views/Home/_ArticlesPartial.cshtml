@@ -1,82 +1,84 @@
 ﻿@model IList<ButterflyFriends.Models.DbTables.Article>
-@if (Model == null || !Model.Any())
+@if ((Model == null) || !Model.Any())
 {
     return;
 }
 @foreach (var article in Model)
 {
     var date = "";
-    if (article.FirstPublisheDateTime.HasValue) {
+    if (article.FirstPublisheDateTime.HasValue)
+    {
         date = article.FirstPublisheDateTime.Value.Day + ". " + article.FirstPublisheDateTime.Value.ToString("MMMM") + " " + article.FirstPublisheDateTime.Value.Year;
-
     }
     <div class="articleRow frontPageDiv">
         <div class="row">
             @if (article.Images.Any())
-                {
+            {
                 <div class="col-md-2 "></div>
-                    <div class="col-md-4">
-                        @if (date != "")
-                        {
-                            <p style="float: right"><i>@date</i></p>
-                        }
-                        <h1 class="articleHeader">
-                            <a style="color: #3c3c3c;" href="@Url.Action("Article", "Home", new {id = article.Id, area = ""})">
-                                @Html.Raw(article.Title)
-                            </a>
-                        </h1>
-                        <hr style="border: 1px solid grey" />
-                        <h4 class="articlePreamble">
-                            @article.PreambleNoHTML
-                        </h4>
-                        <p><a style="float: right;" href="@Url.Action("Article", "Home", new {id = article.Id, area = ""})">
-                                Les mer
-                            </a>
+                <div class="col-md-4">
+                    @if (date != "")
+                    {
+                        <p style="float: right">
+                            <i>@date</i>
                         </p>
-                    </div>
-                    <div class="col-md-4">
-                        <img src="~/File/ArticleImage?id=@article.Images.First().FileId" class="articlePublishedImage" />
+                    }
+                    <h1 class="articleHeader">
+                        <a style="color: #3c3c3c;" href="@Url.Action("Article", "Home", new {id = article.Id, area = ""})">
+                            @Html.Raw(article.Title)
+                        </a>
+                    </h1>
+                    <hr style="border: 1px solid grey"/>
+                    <h4 class="articlePreamble">
+                        @article.PreambleNoHTML
+                    </h4>
+                    <p>
+                        <a style="float: right;" href="@Url.Action("Article", "Home", new {id = article.Id, area = ""})">
+                            Les mer
+                        </a>
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <img src="~/File/ArticleImage?id=@article.Images.First().FileId" class="articlePublishedImage"/>
 
-                    </div>
-                    <div class="col-md-2"></div>
-
+                </div>
+                <div class="col-md-2"></div>
             }
             else
             {
                 <div class="col-md-3"></div>
 
-                    <div class="col-md-6">
-                        @if (date != "")
-                        {
-                            <p style="float: right"><i>@date</i></p>
-                        }
-                        <h1 class="articleHeader">
-                            <a style="color: #3c3c3c;" href="@Url.Action("Article", "Home", new {id = article.Id, area = ""})">
-                                @Html.Raw(article.Title)
-                            </a>
-                        </h1>
-                        <hr style="border: 1px solid grey" />
-                        <h4 class="articlePreamble">
-                            @article.PreambleNoHTML
-                        </h4>
-                        <p>
-                            <a style="float: right;" href="@Url.Action("Article", "Home", new {id = article.Id, area = ""})">
-                                Les mer
-                            </a>
+                <div class="col-md-6">
+                    @if (date != "")
+                    {
+                        <p style="float: right">
+                            <i>@date</i>
                         </p>
-                    </div>
-                    <div class="col-md-3"></div>
-
+                    }
+                    <h1 class="articleHeader">
+                        <a style="color: #3c3c3c;" href="@Url.Action("Article", "Home", new {id = article.Id, area = ""})">
+                            @Html.Raw(article.Title)
+                        </a>
+                    </h1>
+                    <hr style="border: 1px solid grey"/>
+                    <h4 class="articlePreamble">
+                        @article.PreambleNoHTML
+                    </h4>
+                    <p>
+                        <a style="float: right;" href="@Url.Action("Article", "Home", new {id = article.Id, area = ""})">
+                            Les mer
+                        </a>
+                    </p>
+                </div>
+                <div class="col-md-3"></div>
             }
-           
+
         </div>
     </div>
 
-    <br />
-
+    <br/>
 }
 
-    <script>
-        countArticles(@Model.Count);
-        wayPoint();
-    </script>
+<script>
+    countArticles(@Model.Count);
+    wayPoint();
+</script>

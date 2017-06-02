@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace ButterflyFriends.Models
 {
@@ -11,14 +8,12 @@ namespace ButterflyFriends.Models
         public IList<CarouselObject> Carousel { get; set; }
         public DbTables.Info About { get; set; }
         public Donations Donations { get; set; }
-
     }
 
     public class CarouselObject
     {
         public string type { get; set; }
         public int id { get; set; }
-
     }
 
     public class Donations

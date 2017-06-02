@@ -3,23 +3,23 @@
 @{
     var id = 0;
 }
-@if (!Model.Any() && Model.PageCount == 0)
+@if (!Model.Any() && (Model.PageCount == 0))
 {
     <h3 class="statusText">Administrer medlemskapsforespørseler</h3>
-    <br />
+    <br/>
     <h5 class="text-success statusText">@ViewBag.Success</h5>
     <h5 id="error" class="text-danger statusText">@ViewBag.Error</h5>
     <h5 class="statusText">Ingen medlemskapsforespørseler</h5>
-    <br />
+    <br/>
     return;
 }
-<input id="page" value="@ViewBag.page" hidden />
+<input id="page" value="@ViewBag.page" hidden/>
 
-<br />
+<br/>
 <div class="panel panel-default panel-table">
     <div class="panel-heading">
         <div class="row">
-            <br />
+            <br/>
             <h3 class="panel-title statusText">
                 <b>Medlemskapsforespørsler</b>
             </h3>
@@ -35,98 +35,96 @@
 
             @foreach (var request in Model)
             {
-
                 var mailto = "mailto:" + request.Email;
                 id += 1;
                 <h3>@request.Fname @request.Lname</h3>
 
-                    <div>
-                        <br />
-                        <h4>@request.Fname @request.Lname</h4>
-                        <hr />
-                        <dl class="dl-horizontal">
+                <div>
+                    <br/>
+                    <h4>@request.Fname @request.Lname</h4>
+                    <hr/>
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Email:
+                        </dt>
+                        <dd>
+                            <a href="@mailto">@Html.DisplayFor(modelItem => request.Email)</a>
+                        </dd>
+                        <dt>
+                            Gateadresse:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => request.StreetAdress)
+                        </dd>
+                        <dt>
+                            Poststed:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => request.City)
+                        </dd>
+                        <dt>
+                            Postnummer:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => request.PostCode)
+                        </dd>
+                        <dt>
+                            Fylke:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => request.State)
+                        </dd>
+                        <dt>
+                            Tlf:
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(modelItem => request.Phone)
+                        </dd>
+                        @if (request.BirthNumber != null)
+                        {
                             <dt>
-                                Email:
+                                Fødselsnr.:
                             </dt>
                             <dd>
-                                <a href="@mailto">@Html.DisplayFor(modelItem => request.Email)</a>
+                                @Html.DisplayFor(modelItem => request.BirthNumber)
                             </dd>
-                            <dt>
-                                Gateadresse:
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(modelItem => request.StreetAdress)
-                            </dd>
-                            <dt>
-                                Poststed:
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(modelItem => request.City)
-                            </dd>
-                            <dt>
-                                Postnummer:
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(modelItem => request.PostCode)
-                            </dd>
-                            <dt>
-                                Fylke:
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(modelItem => request.State)
-                            </dd>
-                            <dt>
-                                Tlf:
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(modelItem => request.Phone)
-                            </dd>
-                            @if (request.BirthNumber != null)
-                            {
-                                <dt>
-                                    Fødselsnr.:
-                                </dt>
-                                <dd>
-                                    @Html.DisplayFor(modelItem => request.BirthNumber)
-                                </dd>
-                            }
-                            <br />
+                        }
+                        <br/>
 
-                            <hr />
-                            <label>Beskrivelse:</label>
-                            <p>
-                                @request.Description
-                            </p>
-                            <hr />
-                        </dl>
+                        <hr/>
+                        <label>Beskrivelse:</label>
+                        <p>
+                            @request.Description
+                        </p>
+                        <hr/>
+                    </dl>
 
-                        <input id="@id-requestid" value="@request.Id" hidden />
+                    <input id="@id-requestid" value="@request.Id" hidden/>
 
-                        <br />
-                        <p>Melding:</p>
-                        <textarea id="@id-ta" class="form-control" style="max-width: 100%"></textarea>
-                        <br />
+                    <br/>
+                    <p>Melding:</p>
+                    <textarea id="@id-ta" class="form-control" style="max-width: 100%"></textarea>
+                    <br/>
 
-                        <div class="row">
-                            <div class="col-sm-1">
-                                <button onclick="acceptRequest(@id)" class="btn btn-primary">Aksepter <span class="glyphicon glyphicon-ok-sign"></span></button>
-                            </div>
-                            <div class="col-sm-1" style="margin-left: 20px;">
-                                <button onclick="declineRequest(@id)" class="btn btn-danger">Avslå <span class="glyphicon glyphicon-minus-sign"></span></button>
-                            </div>
+                    <div class="row">
+                        <div class="col-sm-1">
+                            <button onclick="acceptRequest(@id)" class="btn btn-primary">Aksepter <span class="glyphicon glyphicon-ok-sign"></span></button>
+                        </div>
+                        <div class="col-sm-1" style="margin-left: 20px;">
+                            <button onclick="declineRequest(@id)" class="btn btn-danger">Avslå <span class="glyphicon glyphicon-minus-sign"></span></button>
                         </div>
                     </div>
-
+                </div>
             }
         </div>
     </div>
     @if (Model.PageCount > 0)
-            {
+    {
         <div class="panel-footer requestFooter">
             <div class="row">
-                <br />
+                <br/>
                 <div class="col col-xs-4">
-                    @if (@Model.PageCount != 0)
+                    @if (Model.PageCount != 0)
                     {
                         <p>Side @Model.PageNumber av @Model.PageCount</p>
                     }
@@ -136,14 +134,13 @@
                     }
                 </div>
                 <div class="col col-xs-8">
-                        <div id="Pager">
-                            <ul class="pagination hidden-xs pull-right">
-                                @Html.PagedListPager(Model, page => Url.Action("RequestList", "MemberRequests", new { page }))
-                            </ul>
-                        </div>
+                    <div id="Pager">
+                        <ul class="pagination hidden-xs pull-right">
+                            @Html.PagedListPager(Model, page => Url.Action("RequestList", "MemberRequests", new {page}))
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     }
 </div>
-

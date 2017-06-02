@@ -1,9 +1,9 @@
 ﻿@model ButterflyFriends.Models.DbTables.Article
 @{
-    var date = @Model.LastSavedDateTime.Day + ". " + Model.LastSavedDateTime.ToString("MMMM") + " " + Model.LastSavedDateTime.Year;
+    var date = Model.LastSavedDateTime.Day + ". " + Model.LastSavedDateTime.ToString("MMMM") + " " + Model.LastSavedDateTime.Year;
 }
-<link href="~/Scripts/ContentTools/editor.css" rel="stylesheet" />
- 
+<link href="~/Scripts/ContentTools/editor.css" rel="stylesheet"/>
+
 <div>
     <article class="article">
         <section class="article__content">
@@ -17,28 +17,31 @@
                 @Html.Raw(Model.Content)
             </div>
         </section>
-       
+
     </article>
-    <hr />
-    <p><i>Sist endret: </i><b>@date</b></p>
-    <br />
-    <hr style="border: 1px solid gray" />
+    <hr/>
+    <p>
+        <i>Sist endret: </i><b>@date</b>
+    </p>
+    <br/>
+    <hr style="border: 1px solid gray"/>
 
 </div>
 
-@if (ViewBag.Disqus != null) { 
-<div id="disqus_thread"></div>
-<script>
-    var disqus_config = function () {
-        this.page.url = location.href;
-        this.page.identifier = '@Model.Id';
-    };
+@if (ViewBag.Disqus != null)
+{
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function() {
+            this.page.url = location.href;
+            this.page.identifier = '@Model.Id';
+        };
 
-    (function () {
-        var d = document, s = d.createElement('script');
-        s.src = 'https://' + '@ViewBag.Disqus' + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://' + '@ViewBag.Disqus' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
 }

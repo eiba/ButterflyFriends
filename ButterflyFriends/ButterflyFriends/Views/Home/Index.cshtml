@@ -4,7 +4,7 @@
     ViewBag.Title = "Hjem";
     var carousel = 0;
     var imageCount = 0;
-    if(Model.Carousel != null && Model.Carousel.Any())
+    if ((Model.Carousel != null) && Model.Carousel.Any())
     {
         imageCount = Model.Carousel.Count;
     }
@@ -13,7 +13,7 @@
     var articleCount = 0;
     var inProgress = false;
     $(document)
-        .ready(function () {
+        .ready(function() {
             wayPoint();
 
         });
@@ -21,7 +21,7 @@
     function wayPoint() {
         var waypoints = $('#waypoint')
             .waypoint({
-                handler: function (direction) {
+                handler: function(direction) {
                     if (direction == 'down') {
                         if (!inProgress) {
                             inProgress = true;
@@ -33,12 +33,12 @@
                                 contentType: false, // Not to set any content header
                                 processData: false, // Not to process data
                                 data: formData,
-                                success: function (result) {
+                                success: function(result) {
                                     $("#articleContainer").append(result);
                                     inProgress = false;
 
                                 },
-                                error: function (err) {
+                                error: function(err) {
                                     console.log(err.statusText);
                                     inProgress = false;
                                 }
@@ -50,12 +50,14 @@
             });
     }
 
-    $(document).ajaxStart(function () {
-        $(".loader").show();
-    }).ajaxStop(function () {
-        $(".loader").hide();
-    });
-    
+    $(document)
+        .ajaxStart(function() {
+            $(".loader").show();
+        })
+        .ajaxStop(function() {
+            $(".loader").hide();
+        });
+
     function countArticles(num) {
         articleCount += parseInt(num);
     }
@@ -86,7 +88,7 @@
 
                     <a class="btn btn-lg btn-primary center-block home-button-link"
                        href='@Url.Action("RequestMembership", "Home")'
-                       style="width: 15em; margin-top: 1em; margin-bottom: 1em;">
+                       style="margin-bottom: 1em; margin-top: 1em; width: 15em;">
                         <h4>Forespør medlemskap</h4>
                     </a>
                 </div>
@@ -99,18 +101,18 @@
 
             <div class="col-md-4 frontPageDiv requetDiv">
                 <h1 style="text-align: center;">Bli medlem!</h1>
-                <hr style="border: 1px solid grey" />
-                <h4 style="text-align: center;">Bli medlem og hjelp ett eller flere fadderbarn!</h4><br />
+                <hr style="border: 1px solid grey"/>
+                <h4 style="text-align: center;">Bli medlem og hjelp ett eller flere fadderbarn!</h4><br/>
                 @if (!string.IsNullOrEmpty(Model.About.MembershipText))
                 {
                     <p>@Model.About.MembershipText</p>
                 }
                 <div>
-                    <hr style="border: 1px solid grey" />
+                    <hr style="border: 1px solid grey"/>
 
                     <a class="btn btn-lg btn-primary center-block home-button-link"
                        href='@Url.Action("RequestMembership", "Home")'
-                       style="width: 15em; margin-top: 1em; margin-bottom: 1em;">
+                       style="margin-bottom: 1em; margin-top: 1em; width: 15em;">
                         <h4>Forespør medlemskap</h4>
                     </a>
                 </div>
@@ -118,32 +120,32 @@
             <div class="col-md-4"></div>
         }
     }
-    else if(ViewBag.StripePublic != null)
-    {        <div class="col-md-4"></div>
-    
-        <div class="col-md-4 frontPageDiv donateDiv" id="Donations">
-            @Html.Partial("_DonatePartial",Model.Donations)
-        </div>
+    else if (ViewBag.StripePublic != null)
+    {
         <div class="col-md-4"></div>
 
+        <div class="col-md-4 frontPageDiv donateDiv" id="Donations">
+            @Html.Partial("_DonatePartial", Model.Donations)
+        </div>
+        <div class="col-md-4"></div>
     }
 </div>
-@if (Model.Carousel != null) { 
-foreach (var carouselFile in Model.Carousel)
+@if (Model.Carousel != null)
 {
-    <input id="@carousel" value="@carouselFile.id" type="@carouselFile.type" hidden />
-    carousel += 1;
-}
-}
-    @if (Model.Articles != null)
+    foreach (var carouselFile in Model.Carousel)
     {
-        <div id="articleContainer" style="margin-top: 280px;">
-
-            @Html.Partial("_ArticlesPartial", Model.Articles)
-
-        </div>
-
+        <input id="@carousel" value="@carouselFile.id" type="@carouselFile.type" hidden/>
+        carousel += 1;
     }
+}
+@if (Model.Articles != null)
+{
+    <div id="articleContainer" style="margin-top: 280px;">
+
+        @Html.Partial("_ArticlesPartial", Model.Articles)
+
+    </div>
+}
 
 
 <div id="waypoint">
@@ -163,18 +165,19 @@ foreach (var carouselFile in Model.Carousel)
                 video.push('/File/Carousel?id=' + $('#' + i).val());
             }
         }
-        if(video.length > 0) {
-            slides.push({ video: {src:video} });
+        if (video.length > 0) {
+            slides.push({ video: { src: video } });
         }
 
 
-            $('body').vegas({
+        $('body')
+            .vegas({
                 delay: 20000,
                 animation: 'random',
                 shuffle: true,
                 slides: slides
             });
     }
-    
-    
+
+
 </script>

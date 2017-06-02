@@ -4,22 +4,22 @@
 <dl class="dl-horizontal">
     <dt>@Html.LabelFor(m => Model.Fname):</dt>
     <dd>@Html.DisplayFor(m => Model.Fname)</dd>
-    
+
     <dt>@Html.LabelFor(m => Model.Lname):</dt>
     <dd>@Html.DisplayFor(m => Model.Lname)</dd>
-    
+
     <dt>@Html.LabelFor(m => Model.Phone):</dt>
     <dd>@Html.DisplayFor(m => Model.Phone)</dd>
-    
+
     <dt>@Html.LabelFor(m => Model.StreetAdress):</dt>
     <dd>@Html.DisplayFor(m => Model.StreetAdress)</dd>
-    
+
     <dt>@Html.LabelFor(m => Model.PostCode):</dt>
     <dd>@Html.DisplayFor(m => Model.PostCode)</dd>
-    
+
     <dt>@Html.LabelFor(m => Model.City):</dt>
     <dd>@Html.DisplayFor(m => Model.City)</dd>
-    
+
     <dt>@Html.LabelFor(m => Model.State):</dt>
     <dd>@Html.DisplayFor(m => Model.State)</dd>
     @if (Model.BirthNumber != null)
@@ -29,7 +29,11 @@
     }
     <dt></dt>
     <dd>
-        <p class="text-success"><b>@ViewBag.Success</b></p>
-        <p class="text-danger" style="white-space: pre-line;"><b>@ViewBag.Error</b></p>
+        <p class="text-success">
+            <b>@ViewBag.Success</b>
+        </p>
+        <p class="text-danger" style="white-space: pre-line;">
+            <b>@ViewBag.Error</b>
+        </p>
     </dd>
 </dl>

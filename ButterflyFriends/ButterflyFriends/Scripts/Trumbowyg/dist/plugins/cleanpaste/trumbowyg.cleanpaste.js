@@ -10,11 +10,11 @@
  * This plugin will perform a "cleaning" on any paste, in particular
  * it will clean pasted content of microsoft word document tags and classes.
  */
-(function ($) {
-    'use strict';
+(function($) {
+    "use strict";
 
     function reverse(sentString) {
-        var theString = '';
+        var theString = "";
         for (var i = sentString.length - 1; i >= 0; i -= 1) {
             theString += sentString.charAt(i);
         }
@@ -25,30 +25,34 @@
         var theString = snippet;
 
         // Replace uppercase element names with lowercase
-        theString = theString.replace(/<[^> ]*/g, function (match) {
-            return match.toLowerCase();
-        });
+        theString = theString.replace(/<[^> ]*/g,
+            function(match) {
+                return match.toLowerCase();
+            });
 
         // Replace uppercase attribute names with lowercase
-        theString = theString.replace(/<[^>]*>/g, function (match) {
-            match = match.replace(/ [^=]+=/g, function (match2) {
-                return match2.toLowerCase();
+        theString = theString.replace(/<[^>]*>/g,
+            function(match) {
+                match = match.replace(/ [^=]+=/g,
+                    function(match2) {
+                        return match2.toLowerCase();
+                    });
+                return match;
             });
-            return match;
-        });
 
         // Put quotes around unquoted attributes
-        theString = theString.replace(/<[^>]*>/g, function (match) {
-            match = match.replace(/( [^=]+=)([^"][^ >]*)/g, '$1\"$2\"');
-            return match;
-        });
+        theString = theString.replace(/<[^>]*>/g,
+            function(match) {
+                match = match.replace(/( [^=]+=)([^"][^ >]*)/g, '$1\"$2\"');
+                return match;
+            });
 
         return theString;
     }
 
     function cleanIt(htmlBefore, htmlAfter) {
-        var matchedHead = '';
-        var matchedTail = '';
+        var matchedHead = "";
+        var matchedTail = "";
         var afterStart;
         var afterFinish;
         var newSnippet;
@@ -60,11 +64,11 @@
 
         // If afterStart is inside a HTML tag, move to opening brace of tag
         for (var i = afterStart; i >= 0; i -= 1) {
-            if (htmlBefore.charAt(i) === '<') {
+            if (htmlBefore.charAt(i) === "<") {
                 afterStart = i;
                 matchedHead = htmlBefore.substring(0, afterStart);
                 break;
-            } else if (htmlBefore.charAt(i) === '>') {
+            } else if (htmlBefore.charAt(i) === ">") {
                 break;
             }
         }
@@ -80,11 +84,11 @@
 
         // If afterFinish is inside a HTML tag, move to closing brace of tag
         for (var j = afterFinish; j >= 0; j -= 1) {
-            if (htmlBefore.charAt(j) === '>') {
+            if (htmlBefore.charAt(j) === ">") {
                 afterFinish = j;
                 matchedTail = htmlBefore.substring(0, afterFinish);
                 break;
-            } else if (htmlBefore.charAt(j) === '<') {
+            } else if (htmlBefore.charAt(j) === "<") {
                 break;
             }
         }
@@ -103,49 +107,51 @@
         newSnippet = checkValidTags(newSnippet);
 
         // Replace opening bold tags with strong
-        newSnippet = newSnippet.replace(/<b(\s+|>)/g, '<strong$1');
+        newSnippet = newSnippet.replace(/<b(\s+|>)/g, "<strong$1");
         // Replace closing bold tags with closing strong
-        newSnippet = newSnippet.replace(/<\/b(\s+|>)/g, '</strong$1');
+        newSnippet = newSnippet.replace(/<\/b(\s+|>)/g, "</strong$1");
 
         // Replace italic tags with em
-        newSnippet = newSnippet.replace(/<i(\s+|>)/g, '<em$1');
+        newSnippet = newSnippet.replace(/<i(\s+|>)/g, "<em$1");
         // Replace closing italic tags with closing em
-        newSnippet = newSnippet.replace(/<\/i(\s+|>)/g, '</em$1');
+        newSnippet = newSnippet.replace(/<\/i(\s+|>)/g, "</em$1");
 
         // strip out comments -cgCraft
-        newSnippet = newSnippet.replace(/<!(?:--[\s\S]*?--\s*)?>\s*/g, '');
+        newSnippet = newSnippet.replace(/<!(?:--[\s\S]*?--\s*)?>\s*/g, "");
 
         // strip out &nbsp; -cgCraft
-        newSnippet = newSnippet.replace(/&nbsp;/gi, ' ');
+        newSnippet = newSnippet.replace(/&nbsp;/gi, " ");
         // strip out extra spaces -cgCraft
-        newSnippet = newSnippet.replace(/ <\//gi, '</');
+        newSnippet = newSnippet.replace(/ <\//gi, "</");
 
-        while (newSnippet.indexOf('  ') !== -1) {
-            var anArray = newSnippet.split('  ');
-            newSnippet = anArray.join(' ');
+        while (newSnippet.indexOf("  ") !== -1) {
+            var anArray = newSnippet.split("  ");
+            newSnippet = anArray.join(" ");
         }
 
         // strip &nbsp; -cgCraft
-        newSnippet = newSnippet.replace(/^\s*|\s*$/g, '');
+        newSnippet = newSnippet.replace(/^\s*|\s*$/g, "");
 
         // Strip out unaccepted attributes
-        newSnippet = newSnippet.replace(/<[^>]*>/g, function (match) {
-            match = match.replace(/ ([^=]+)="[^"]*"/g, function (match2, attributeName) {
-                if (['alt', 'href', 'src', 'title'].indexOf(attributeName) !== -1) {
-                    return match2;
-                }
-                return '';
+        newSnippet = newSnippet.replace(/<[^>]*>/g,
+            function(match) {
+                match = match.replace(/ ([^=]+)="[^"]*"/g,
+                    function(match2, attributeName) {
+                        if (["alt", "href", "src", "title"].indexOf(attributeName) !== -1) {
+                            return match2;
+                        }
+                        return "";
+                    });
+                return match;
             });
-            return match;
-        });
 
         // Final cleanout for MS Word crud
-        newSnippet = newSnippet.replace(/<\?xml[^>]*>/g, '');
-        newSnippet = newSnippet.replace(/<[^ >]+:[^>]*>/g, '');
-        newSnippet = newSnippet.replace(/<\/[^ >]+:[^>]*>/g, '');
+        newSnippet = newSnippet.replace(/<\?xml[^>]*>/g, "");
+        newSnippet = newSnippet.replace(/<[^ >]+:[^>]*>/g, "");
+        newSnippet = newSnippet.replace(/<\/[^ >]+:[^>]*>/g, "");
 
         // remove unwanted tags
-        newSnippet = newSnippet.replace(/<(div|span|style|meta|link){1}.*?>/gi, '');
+        newSnippet = newSnippet.replace(/<(div|span|style|meta|link){1}.*?>/gi, "");
 
         htmlAfter = matchedHead + newSnippet + matchedTail;
         return htmlAfter;
@@ -155,25 +161,26 @@
     // this will clean the inserted contents
     // it does a compare, before and after paste to determine the
     // pasted contents
-    $.extend(true, $.trumbowyg, {
-        plugins: {
-            cleanPaste: {
-                init: function (trumbowyg) {
-                    trumbowyg.pasteHandlers.push(function () {
-                        try {
-                            var contentBefore = trumbowyg.$ed.html();
-                            setTimeout(function () {
-                                var contentAfter = trumbowyg.$ed.html();
-                                contentAfter = cleanIt(contentBefore, contentAfter);
-                                trumbowyg.$ed.html(contentAfter);
-                            }, 0);
-                        } catch (c) {
-                        }
-                    });
+    $.extend(true,
+        $.trumbowyg,
+        {
+            plugins: {
+                cleanPaste: {
+                    init: function(trumbowyg) {
+                        trumbowyg.pasteHandlers.push(function() {
+                            try {
+                                var contentBefore = trumbowyg.$ed.html();
+                                setTimeout(function() {
+                                        var contentAfter = trumbowyg.$ed.html();
+                                        contentAfter = cleanIt(contentBefore, contentAfter);
+                                        trumbowyg.$ed.html(contentAfter);
+                                    },
+                                    0);
+                            } catch (c) {
+                            }
+                        });
+                    }
                 }
             }
-        }
-    });
+        });
 })(jQuery);
-
-

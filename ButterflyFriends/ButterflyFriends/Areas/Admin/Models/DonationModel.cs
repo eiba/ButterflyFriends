@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using ButterflyFriends.Models;
 using PagedList;
 
@@ -12,7 +9,6 @@ namespace ButterflyFriends.Areas.Admin.Models
         public IPagedList<DbTables.Donations> Donations { get; set; }
         public IPagedList<DbTables.Subscriptions> Plans { get; set; }
         public IList<Subscription> Subscriptions { get; set; }
-
     }
 
     public class Subscription

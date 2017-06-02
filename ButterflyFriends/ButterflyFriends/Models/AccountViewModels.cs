@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace ButterflyFriends.Models
 {
     /// <summary>
-    /// A set of identity view models
+    ///     A set of identity view models
     /// </summary>
-  
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
@@ -22,7 +22,7 @@ namespace ButterflyFriends.Models
     public class SendCodeViewModel
     {
         public string SelectedProvider { get; set; }
-        public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
+        public ICollection<SelectListItem> Providers { get; set; }
         public string ReturnUrl { get; set; }
         public bool RememberMe { get; set; }
     }
@@ -35,6 +35,7 @@ namespace ButterflyFriends.Models
         [Required]
         [Display(Name = "Code")]
         public string Code { get; set; }
+
         public string ReturnUrl { get; set; }
 
         [Display(Name = "Remember this browser?")]
@@ -111,19 +112,21 @@ namespace ButterflyFriends.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password",
+             ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         [Display(Name = "Posisjon")]
         public string Position { get; set; }
+
         [Display(Name = "Kontonummer")]
         public int? AccountNumber { get; set; }
+
         public int RoleNr { get; set; }
     }
 
     public class ResetPasswordViewModel
     {
-
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
@@ -132,7 +135,8 @@ namespace ButterflyFriends.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Gjenta passord")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password",
+             ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         public string Code { get; set; }

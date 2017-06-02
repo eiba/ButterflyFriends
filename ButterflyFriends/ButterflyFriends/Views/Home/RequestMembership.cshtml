@@ -5,19 +5,17 @@
 }
 
 <h2 style="text-align: center">Forespør medlemskap</h2>
-<hr style="border: 1px solid grey" />
+<hr style="border: 1px solid grey"/>
 
 
 @using (Ajax.BeginForm("RequestMembership", "Home", new AjaxOptions
-            {
-
-                UpdateTargetId = "updateTxt",
-                InsertionMode = InsertionMode.Replace,
-                HttpMethod = "POST",
-                OnSuccess = "success"
-
-            }, new { @class = "form-horizontal", role = "form",id="form"}))
-            {
+{
+    UpdateTargetId = "updateTxt",
+    InsertionMode = InsertionMode.Replace,
+    HttpMethod = "POST",
+    OnSuccess = "success"
+}, new {@class = "form-horizontal", role = "form", id = "form"}))
+{
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
@@ -28,89 +26,89 @@
             <div class="col-md-2"></div>
             <div class="col-md-8" style="margin-left: 4%">
                 <div class="form-group">
-                    @Html.LabelFor(m => m.MembershipRequest.Email, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.MembershipRequest.Email, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.MembershipRequest.Email, new { @class = "form-control", required = "required" })
+                        @Html.TextBoxFor(m => m.MembershipRequest.Email, new {@class = "form-control", required = "required"})
 
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.MembershipRequest.Fname, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.MembershipRequest.Fname, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.MembershipRequest.Fname, new { @class = "form-control", required = "required" })
+                        @Html.TextBoxFor(m => m.MembershipRequest.Fname, new {@class = "form-control", required = "required"})
 
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.MembershipRequest.Lname, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.MembershipRequest.Lname, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.MembershipRequest.Lname, new { @class = "form-control", required = "required" })
+                        @Html.TextBoxFor(m => m.MembershipRequest.Lname, new {@class = "form-control", required = "required"})
 
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.MembershipRequest.Phone, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.MembershipRequest.Phone, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.MembershipRequest.Phone, new { @class = "form-control", required = "required" })
+                        @Html.TextBoxFor(m => m.MembershipRequest.Phone, new {@class = "form-control", required = "required"})
 
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.MembershipRequest.BirthNumber, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.MembershipRequest.BirthNumber, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.MembershipRequest.BirthNumber, new { @class = "form-control", id= "BirthNumber", title = "Dette feltet er valgfritt, ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500.", maxlength="11" })
+                        @Html.TextBoxFor(m => m.MembershipRequest.BirthNumber, new {@class = "form-control", id = "BirthNumber", title = "Dette feltet er valgfritt, ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500.", maxlength = "11"})
 
                     </div>
                 </div>
             </div>
             <div class="col-md-2"></div>
 
-            </div>
+        </div>
         <br/>
         <h4 style="text-align: center;">Adresse</h4>
-        <hr style="border: 1px solid grey" />
+        <hr style="border: 1px solid grey"/>
 
         <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8" style="margin-left: 4%">
                 <div class="form-group">
-                    @Html.LabelFor(m => m.MembershipRequest.StreetAdress, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.MembershipRequest.StreetAdress, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.MembershipRequest.StreetAdress, new { @class = "form-control", required = "required" })
+                        @Html.TextBoxFor(m => m.MembershipRequest.StreetAdress, new {@class = "form-control", required = "required"})
 
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.MembershipRequest.PostCode, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.MembershipRequest.PostCode, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.MembershipRequest.PostCode, new { @class = "form-control", type = "number", required = "required" })
+                        @Html.TextBoxFor(m => m.MembershipRequest.PostCode, new {@class = "form-control", type = "number", required = "required"})
 
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.MembershipRequest.City, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.MembershipRequest.City, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.MembershipRequest.City, new { @class = "form-control", required = "required" })
+                        @Html.TextBoxFor(m => m.MembershipRequest.City, new {@class = "form-control", required = "required"})
 
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.MembershipRequest.State, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.MembershipRequest.State, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.MembershipRequest.State, new { @class = "form-control", required = "required" })
+                        @Html.TextBoxFor(m => m.MembershipRequest.State, new {@class = "form-control", required = "required"})
 
                     </div>
                 </div>
             </div>
             <div class="col-md-2"></div>
         </div>
-            <br />
-            <h4 style="text-align: center;">Beskrivelse</h4>
-            <p style="text-align: center;">Skriv litt om deg selv og hvorfor du vil bli fadder hos oss</p>
-            <hr style="border: 1px solid grey" />
+        <br/>
+        <h4 style="text-align: center;">Beskrivelse</h4>
+        <p style="text-align: center;">Skriv litt om deg selv og hvorfor du vil bli fadder hos oss</p>
+        <hr style="border: 1px solid grey"/>
 
-            @Html.TextAreaFor(m => m.MembershipRequest.Description, new { @class = "form-control", required = "required", @style = "height:200px; max-width:100%;" })
-        <hr style="border: 1px solid grey" />
+        @Html.TextAreaFor(m => m.MembershipRequest.Description, new {@class = "form-control", required = "required", style = "height:200px;max-width:100%;"})
+        <hr style="border: 1px solid grey"/>
         <br/>
         <div class="row">
             <div class="col-md-4"></div>
@@ -121,21 +119,19 @@
                 }
                 else
                 {
-                    <input type="hidden" id="CaptchaHidden" value="false" />
+                    <input type="hidden" id="CaptchaHidden" value="false"/>
                 }
                 @if (Model.TermsID != 0)
                 {
-
                     <div class="checkbox">
                         <label><input type="checkbox" id="termsCheck" onclick="checkTerms()" value="">Jeg samtykker til <a href="~/File/Terms?id=@Model.TermsID" target="_blank">sidens brukervilkår.</a></label>
                     </div>
-
                 }
                 else
                 {
-                    <input type="hidden" id="TermsHidden" value="false" />
+                    <input type="hidden" id="TermsHidden" value="false"/>
                 }
-                <br />
+                <br/>
                 <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Forespør medlemskap</button>
 
                 <div id="updateTxt">
@@ -144,26 +140,27 @@
             </div>
             <div class="col-md-4"></div>
         </div>
-        </div>
-
-
+    </div>
 }
 
 <script>
     var recaptchaCheck = false;
     var terms = false;
-    $(document).ready(function () {
-        $(".loader").hide();
-        $(document).ajaxStart(function () {
-            $(".loader").show();
-        }).ajaxStop(function () {
+    $(document)
+        .ready(function() {
             $(".loader").hide();
+            $(document)
+                .ajaxStart(function() {
+                    $(".loader").show();
+                })
+                .ajaxStop(function() {
+                    $(".loader").hide();
+                });
         });
-    });
 
     function recaptchaCallback() {
         recaptchaCheck = true;
-        
+
         if ((recaptcha && terms) || (recaptcha && typeof $('#TermsHidden').val() != 'undefined')) {
             $('#submitBtn').removeAttr('disabled');
 
@@ -176,16 +173,16 @@
             terms = true;
             if ((recaptchaCheck && terms) || (terms && typeof $('#CaptchaHidden').val() != 'undefined')) {
 
-                   $('#submitBtn').removeAttr('disabled');
+                $('#submitBtn').removeAttr('disabled');
 
             }
-        }else {
+        } else {
             terms = false;
-            $('#submitBtn').attr('disabled',true);
+            $('#submitBtn').attr('disabled', true);
         }
     }
 
-    $(function () {
+    $(function() {
         $("#BirthNumber").tooltip();
     });
 </script>

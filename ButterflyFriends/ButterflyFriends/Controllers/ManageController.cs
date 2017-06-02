@@ -2,26 +2,25 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using ButterflyFriends.Areas.Admin.Models.HRmanagementModels;
+using ButterflyFriends.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using ButterflyFriends.Models;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Owin.Security.DataProtection;
 
 namespace ButterflyFriends.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
-        ApplicationDbContext _context = new ApplicationDbContext();
+        private readonly ApplicationDbContext _context = new ApplicationDbContext();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -37,26 +36,14 @@ namespace ButterflyFriends.Controllers
 
         public ApplicationSignInManager SignInManager
         {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set 
-            { 
-                _signInManager = value; 
-            }
+            get { return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>(); }
+            private set { _signInManager = value; }
         }
 
         public ApplicationUserManager UserManager
         {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
+            get { return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>(); }
+            private set { _userManager = value; }
         }
 
         //
@@ -70,19 +57,25 @@ namespace ButterflyFriends.Controllers
                 background = backgroundList.First();
                 if (background.Enabeled)
                 {
-                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
-                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.Style = "background:url('/File/Background?id=" + background.Image.FileId +
+                                    "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
                     ViewBag.BackGround = "background-color:transparent;";
                 }
             }
             ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Ditt passord har blitt endred."
-                : message == ManageMessageId.SetPasswordSuccess ? "Ditt passord har blitt sett."
-                : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
-                : message == ManageMessageId.Error ? "En feil oppstod."
-                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
-                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
-                : "";
+                message == ManageMessageId.ChangePasswordSuccess
+                    ? "Ditt passord har blitt endred."
+                    : message == ManageMessageId.SetPasswordSuccess
+                        ? "Ditt passord har blitt sett."
+                        : message == ManageMessageId.SetTwoFactorSuccess
+                            ? "Your two-factor authentication provider has been set."
+                            : message == ManageMessageId.Error
+                                ? "En feil oppstod."
+                                : message == ManageMessageId.AddPhoneSuccess
+                                    ? "Your phone number was added."
+                                    : message == ManageMessageId.RemovePhoneSuccess
+                                        ? "Your phone number was removed."
+                                        : "";
 
             var userId = User.Identity.GetUserId();
             var indexModel = new IndexViewModel
@@ -93,14 +86,12 @@ namespace ButterflyFriends.Controllers
                 Logins = await UserManager.GetLoginsAsync(userId),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
-            var user =_context.Users.Find(userId);
+            var user = _context.Users.Find(userId);
             var ProfileImage = new DbTables.File();
             var pictures = user.Pictures.Where(s => s.FileType == DbTables.FileType.Profile);
             if (pictures.Any())
-            {
                 ProfileImage = pictures.First();
-            }
-            var profileModel = new changeProfileModel   //change profile user info
+            var profileModel = new changeProfileModel //change profile user info
             {
                 Fname = user.Fname,
                 Lname = user.Lname,
@@ -128,21 +119,22 @@ namespace ButterflyFriends.Controllers
         public async Task<ActionResult> RemoveLogin(string loginProvider, string providerKey)
         {
             ManageMessageId? message;
-            var result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
+            var result =
+                await
+                    UserManager.RemoveLoginAsync(User.Identity.GetUserId(),
+                        new UserLoginInfo(loginProvider, providerKey));
             if (result.Succeeded)
             {
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
                 if (user != null)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                }
+                    await SignInManager.SignInAsync(user, false, false);
                 message = ManageMessageId.RemoveLoginSuccess;
             }
             else
             {
                 message = ManageMessageId.Error;
             }
-            return RedirectToAction("ManageLogins", new { Message = message });
+            return RedirectToAction("ManageLogins", new {Message = message});
         }
 
         //
@@ -159,9 +151,7 @@ namespace ButterflyFriends.Controllers
         public async Task<ActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
             // Generate the token and send it
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), model.Number);
             if (UserManager.SmsService != null)
@@ -173,7 +163,7 @@ namespace ButterflyFriends.Controllers
                 };
                 await UserManager.SmsService.SendAsync(message);
             }
-            return RedirectToAction("VerifyPhoneNumber", new { PhoneNumber = model.Number });
+            return RedirectToAction("VerifyPhoneNumber", new {PhoneNumber = model.Number});
         }
 
         //
@@ -185,9 +175,7 @@ namespace ButterflyFriends.Controllers
             await UserManager.SetTwoFactorEnabledAsync(User.Identity.GetUserId(), true);
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user != null)
-            {
-                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-            }
+                await SignInManager.SignInAsync(user, false, false);
             return RedirectToAction("Index", "Manage");
         }
 
@@ -200,9 +188,7 @@ namespace ButterflyFriends.Controllers
             await UserManager.SetTwoFactorEnabledAsync(User.Identity.GetUserId(), false);
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user != null)
-            {
-                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-            }
+                await SignInManager.SignInAsync(user, false, false);
             return RedirectToAction("Index", "Manage");
         }
 
@@ -212,7 +198,9 @@ namespace ButterflyFriends.Controllers
         {
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), phoneNumber);
             // Send an SMS through the SMS provider to verify the phone number
-            return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
+            return phoneNumber == null
+                ? View("Error")
+                : View(new VerifyPhoneNumberViewModel {PhoneNumber = phoneNumber});
         }
 
         //
@@ -222,18 +210,15 @@ namespace ButterflyFriends.Controllers
         public async Task<ActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
-            var result = await UserManager.ChangePhoneNumberAsync(User.Identity.GetUserId(), model.PhoneNumber, model.Code);
+            var result =
+                await UserManager.ChangePhoneNumberAsync(User.Identity.GetUserId(), model.PhoneNumber, model.Code);
             if (result.Succeeded)
             {
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
                 if (user != null)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                }
-                return RedirectToAction("Index", new { Message = ManageMessageId.AddPhoneSuccess });
+                    await SignInManager.SignInAsync(user, false, false);
+                return RedirectToAction("Index", new {Message = ManageMessageId.AddPhoneSuccess});
             }
             // If we got this far, something failed, redisplay form
             ModelState.AddModelError("", "Failed to verify phone");
@@ -248,22 +233,17 @@ namespace ButterflyFriends.Controllers
         {
             var result = await UserManager.SetPhoneNumberAsync(User.Identity.GetUserId(), null);
             if (!result.Succeeded)
-            {
-                return RedirectToAction("Index", new { Message = ManageMessageId.Error });
-            }
+                return RedirectToAction("Index", new {Message = ManageMessageId.Error});
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user != null)
-            {
-                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-            }
-            return RedirectToAction("Index", new { Message = ManageMessageId.RemovePhoneSuccess });
+                await SignInManager.SignInAsync(user, false, false);
+            return RedirectToAction("Index", new {Message = ManageMessageId.RemovePhoneSuccess});
         }
 
         //
         // GET: /Manage/ChangePassword
         public ActionResult ChangePassword()
         {
-
             var background = new DbTables.BackgroundImage();
             var backgroundList = _context.BackgroundImage.ToList();
             if (backgroundList.Any())
@@ -271,8 +251,8 @@ namespace ButterflyFriends.Controllers
                 background = backgroundList.First();
                 if (background.Enabeled)
                 {
-                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
-                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.Style = "background:url('/File/Background?id=" + background.Image.FileId +
+                                    "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
                     ViewBag.BackGround = "background-color:transparent;";
                 }
             }
@@ -292,26 +272,22 @@ namespace ButterflyFriends.Controllers
                 background = backgroundList.First();
                 if (background.Enabeled)
                 {
-                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
-                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.Style = "background:url('/File/Background?id=" + background.Image.FileId +
+                                    "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
                     ViewBag.BackGround = "background-color:transparent;";
                 }
             }
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
-            var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+            var result =
+                await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
             if (result.Succeeded)
             {
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
 
                 if (user != null)
-                {
-
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                }
-                return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
+                    await SignInManager.SignInAsync(user, false, false);
+                return RedirectToAction("Index", new {Message = ManageMessageId.ChangePasswordSuccess});
             }
             AddErrors(result);
             return View(model);
@@ -328,8 +304,8 @@ namespace ButterflyFriends.Controllers
                 background = backgroundList.First();
                 if (background.Enabeled)
                 {
-                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
-                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.Style = "background:url('/File/Background?id=" + background.Image.FileId +
+                                    "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
                     ViewBag.BackGround = "background-color:transparent;";
                 }
             }
@@ -349,8 +325,8 @@ namespace ButterflyFriends.Controllers
                 background = backgroundList.First();
                 if (background.Enabeled)
                 {
-                    ViewBag.Style = "background:url('/File/Background?id=" + @background.Image.FileId +
-                                   "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
+                    ViewBag.Style = "background:url('/File/Background?id=" + background.Image.FileId +
+                                    "') no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cove;overflow-x: hidden;";
                     ViewBag.BackGround = "background-color:transparent;";
                 }
             }
@@ -361,10 +337,8 @@ namespace ButterflyFriends.Controllers
                 {
                     var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
                     if (user != null)
-                    {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                    }
-                    return RedirectToAction("Index", new { Message = ManageMessageId.SetPasswordSuccess });
+                        await SignInManager.SignInAsync(user, false, false);
+                    return RedirectToAction("Index", new {Message = ManageMessageId.SetPasswordSuccess});
                 }
                 AddErrors(result);
             }
@@ -378,17 +352,20 @@ namespace ButterflyFriends.Controllers
         public async Task<ActionResult> ManageLogins(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
-                message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-                : message == ManageMessageId.Error ? "En feil oppstod."
-                : "";
+                message == ManageMessageId.RemoveLoginSuccess
+                    ? "The external login was removed."
+                    : message == ManageMessageId.Error
+                        ? "En feil oppstod."
+                        : "";
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user == null)
-            {
                 return View("Error");
-            }
             var userLogins = await UserManager.GetLoginsAsync(User.Identity.GetUserId());
-            var otherLogins = AuthenticationManager.GetExternalAuthenticationTypes().Where(auth => userLogins.All(ul => auth.AuthenticationType != ul.LoginProvider)).ToList();
-            ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
+            var otherLogins =
+                AuthenticationManager.GetExternalAuthenticationTypes()
+                    .Where(auth => userLogins.All(ul => auth.AuthenticationType != ul.LoginProvider))
+                    .ToList();
+            ViewBag.ShowRemoveButton = (user.PasswordHash != null) || (userLogins.Count > 1);
             return View(new ManageLoginsViewModel
             {
                 CurrentLogins = userLogins,
@@ -403,7 +380,8 @@ namespace ButterflyFriends.Controllers
         public ActionResult LinkLogin(string provider)
         {
             // Request a redirect to the external login provider to link a login for the current user
-            return new AccountController.ChallengeResult(provider, Url.Action("LinkLoginCallback", "Manage"), User.Identity.GetUserId());
+            return new AccountController.ChallengeResult(provider, Url.Action("LinkLoginCallback", "Manage"),
+                User.Identity.GetUserId());
         }
 
         //
@@ -412,16 +390,16 @@ namespace ButterflyFriends.Controllers
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(XsrfKey, User.Identity.GetUserId());
             if (loginInfo == null)
-            {
-                return RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
-            }
+                return RedirectToAction("ManageLogins", new {Message = ManageMessageId.Error});
             var result = await UserManager.AddLoginAsync(User.Identity.GetUserId(), loginInfo.Login);
-            return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
+            return result.Succeeded
+                ? RedirectToAction("ManageLogins")
+                : RedirectToAction("ManageLogins", new {Message = ManageMessageId.Error});
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _userManager != null)
+            if (disposing && (_userManager != null))
             {
                 _userManager.Dispose();
                 _userManager = null;
@@ -432,18 +410,12 @@ namespace ButterflyFriends.Controllers
 
         public ActionResult ShowUserEdit(string id)
         {
-
-            if (id == null)                                             //Id is null, return bad request
-            {
+            if (id == null) //Id is null, return bad request
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ApplicationUser user = _context.Users.Find(id);              //get the requested user
+            var user = _context.Users.Find(id); //get the requested user
 
             if (user == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            }
             var changeProfileModel = new changeProfileModel
             {
                 Fname = user.Fname,
@@ -464,20 +436,15 @@ namespace ButterflyFriends.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditUser(changeProfileModel model)
         {
-
             if (ModelState.IsValid)
             {
                 var userId = User.Identity.GetUserId();
                 if (userId == null)
-                {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-                }
 
                 var store = new UserStore<ApplicationUser>(_context);
                 var manager = new UserManager<ApplicationUser>(store);
-                ApplicationUser user = manager.FindById(userId); //the current user
-
+                var user = manager.FindById(userId); //the current user
 
 
                 //so far so good, change the details of the user
@@ -501,8 +468,8 @@ namespace ButterflyFriends.Controllers
                     adress = newAdress;
                     _context.Adresses.Add(newAdress);
                     _context.SaveChanges();
-                    
-                }else if (user.Adress == adress)
+                }
+                else if (user.Adress == adress)
                 {
                     //do nothing
                 }
@@ -511,12 +478,11 @@ namespace ButterflyFriends.Controllers
                     user.Adress = adress;
                 }
 
-                IdentityResult result = await manager.UpdateAsync(user); //update the user in the databse
+                var result = await manager.UpdateAsync(user); //update the user in the databse
                 store.Context.SaveChanges();
 
                 if (result.Succeeded) //if update succeeds
                 {
-
                     if (Request.IsAjaxRequest()) //it succeeds, show success status message
                     {
                         ViewBag.Success = "Profilinformasjon oppdatert.";
@@ -536,7 +502,7 @@ namespace ButterflyFriends.Controllers
                     }
                 }
                 else
-                { 
+                {
                     var ProfileModel = new changeProfileModel
                     {
                         Id = user.Id,
@@ -554,7 +520,7 @@ namespace ButterflyFriends.Controllers
             }
             else
             {
-                ApplicationUser user = _context.Users.Find(User.Identity.GetUserId());
+                var user = _context.Users.Find(User.Identity.GetUserId());
                 var adress = _context.Adresses.Find(user.AdressId);
                 var ProfileModel = new changeProfileModel
                 {
@@ -567,9 +533,9 @@ namespace ButterflyFriends.Controllers
                     StreetAdress = adress.StreetAdress,
                     PostCode = adress.PostCode
                 };
-                string messages = string.Join("\n", ModelState.Values
-                                        .SelectMany(x => x.Errors)
-                                        .Select(x => x.ErrorMessage));
+                var messages = string.Join("\n", ModelState.Values
+                    .SelectMany(x => x.Errors)
+                    .Select(x => x.ErrorMessage));
 
                 ViewBag.Error = "Ugyldige verdier: " + messages;
 
@@ -578,18 +544,18 @@ namespace ButterflyFriends.Controllers
 
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
+
         [Authorize(Roles = "Eier, Admin, Fadder, Ansatt")]
         [HttpPost]
         public ActionResult ProfilePictureUpload()
         {
             // Checking no of files injected in Request object  
             if (Request.Files.Count > 0)
-            {
                 try
                 {
                     var store = new UserStore<ApplicationUser>(_context);
                     var manager = new UserManager<ApplicationUser>(store);
-                    ApplicationUser currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result;  //the current user
+                    var currentUser = manager.FindByIdAsync(User.Identity.GetUserId()).Result; //the current user
                     var userId = Request.Form["userid"];
                     var ProfileImageWidth = 300;
                     var ThumbnailImageWidth = 40;
@@ -602,21 +568,22 @@ namespace ButterflyFriends.Controllers
                     if (type == "employee")
                     {
                         employee = _context.Users.Find(userId);
-                        if (currentUser.RoleNr >= employee.RoleNr)   //user not the current user or rolenumber to high, not allowed to change profile picture
-                        {
+                        if (currentUser.RoleNr >= employee.RoleNr)
+                            //user not the current user or rolenumber to high, not allowed to change profile picture
                             if (currentUser.Id != userId)
-                            {
-                                return Json(new { error = "Du har ikke lov til å endre dette profilbildet", success = "false" });
-
-                            }
-
-                        }
+                                return
+                                    Json(
+                                        new
+                                        {
+                                            error = "Du har ikke lov til å endre dette profilbildet",
+                                            success = "false"
+                                        });
 
                         pictures = employee.Pictures;
                     }
                     else if (type == "child")
                     {
-                        child = _context.Children.Find(Int32.Parse(userId));
+                        child = _context.Children.Find(int.Parse(userId));
                         pictures = child.Pictures;
                     }
 
@@ -624,51 +591,41 @@ namespace ButterflyFriends.Controllers
                     var profPic = new DbTables.File();
                     var thumbNail = new DbTables.ThumbNail();
                     if (pictures.Any())
-                    {
                         foreach (var pic in pictures)
-                        {
                             if (pic.FileType == DbTables.FileType.Profile)
                             {
                                 profPic = pic;
                                 thumbNail = pic.ThumbNail;
                             }
-                        }
-                    }
                     //  Get all files from Request object  
-                    HttpFileCollectionBase files = Request.Files;
-                    for (int i = 0; i < files.Count; i++)
+                    var files = Request.Files;
+                    for (var i = 0; i < files.Count; i++)
                     {
-
-                        HttpPostedFileBase file = files[i];
+                        var file = files[i];
 
                         if (profPic.Content == null)
                         {
                             var picture = new DbTables.File();
                             //save profile picture
                             if (employee.Email != null)
-                            {
                                 picture = new DbTables.File
                                 {
                                     FileName = Path.GetFileName(file.FileName),
                                     FileType = DbTables.FileType.Profile,
                                     ContentType = file.ContentType,
-                                    User = new List<ApplicationUser> { employee }
+                                    User = new List<ApplicationUser> {employee}
                                 };
-                            }
                             else
-                            {
                                 picture = new DbTables.File
                                 {
                                     FileName = Path.GetFileName(file.FileName),
                                     FileType = DbTables.FileType.Profile,
                                     ContentType = file.ContentType,
-                                    Children = new List<DbTables.Child> { child }
+                                    Children = new List<DbTables.Child> {child}
                                 };
-                            }
                             byte[] content;
                             using (var reader = new BinaryReader(file.InputStream))
                             {
-
                                 content = reader.ReadBytes(file.ContentLength);
                             }
 
@@ -677,14 +634,14 @@ namespace ButterflyFriends.Controllers
                             {
                                 bmp = new Bitmap(ms);
                             }
-                            double ratio = (double)((double)bmp.Width / (double)bmp.Height);
-                            int height = (int)((double)ProfileImageWidth / ratio);
+                            var ratio = bmp.Width/(double) bmp.Height;
+                            var height = (int) (ProfileImageWidth/ratio);
                             var newImg = ResizeImage(bmp, ProfileImageWidth, height);
 
                             byte[] cntnt;
                             using (var stream = new MemoryStream())
                             {
-                                newImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                newImg.Save(stream, ImageFormat.Png);
                                 cntnt = stream.ToArray();
                             }
                             picture.Content = cntnt;
@@ -701,12 +658,12 @@ namespace ButterflyFriends.Controllers
                                 //User = new List<ApplicationUser> {user}
                             };
 
-                            int Theight = (int)((double)ThumbnailImageWidth / ratio);
+                            var Theight = (int) (ThumbnailImageWidth/ratio);
                             var newThumb = ResizeImage(bmp, ThumbnailImageWidth, Theight);
                             byte[] Tcntnt;
                             using (var stream = new MemoryStream())
                             {
-                                newThumb.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                newThumb.Save(stream, ImageFormat.Png);
                                 Tcntnt = stream.ToArray();
                             }
                             thumbnail.Content = Tcntnt;
@@ -734,7 +691,6 @@ namespace ButterflyFriends.Controllers
                             byte[] content;
                             using (var reader = new BinaryReader(file.InputStream))
                             {
-
                                 content = reader.ReadBytes(file.ContentLength);
                             }
 
@@ -743,14 +699,14 @@ namespace ButterflyFriends.Controllers
                             {
                                 bmp = new Bitmap(ms);
                             }
-                            double ratio = (double)((double)bmp.Width / (double)bmp.Height);
-                            int height = (int)((double)ProfileImageWidth / ratio);
+                            var ratio = bmp.Width/(double) bmp.Height;
+                            var height = (int) (ProfileImageWidth/ratio);
                             var newImg = ResizeImage(bmp, ProfileImageWidth, height);
 
                             byte[] cntnt;
                             using (var stream = new MemoryStream())
                             {
-                                newImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                newImg.Save(stream, ImageFormat.Png);
                                 cntnt = stream.ToArray();
                             }
                             profPic.Content = cntnt;
@@ -761,12 +717,12 @@ namespace ButterflyFriends.Controllers
                             thumbNail.ThumbNailName = Path.GetFileName(file.FileName);
                             thumbNail.ContentType = file.ContentType;
 
-                            int Theight = (int)((double)ThumbnailImageWidth / ratio);
+                            var Theight = (int) (ThumbnailImageWidth/ratio);
                             var newThumb = ResizeImage(bmp, ThumbnailImageWidth, Theight);
                             byte[] Tcntnt;
                             using (var stream = new MemoryStream())
                             {
-                                newThumb.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                newThumb.Save(stream, ImageFormat.Png);
                                 Tcntnt = stream.ToArray();
                             }
                             thumbNail.Content = Tcntnt;
@@ -775,15 +731,12 @@ namespace ButterflyFriends.Controllers
                             _context.SaveChanges();
                             //fileId = profPic.FileId;
                         }
-
                     }
                     var user = _context.Users.Find(userId);
                     var ProfileImage = new DbTables.File();
                     var Picture = user.Pictures.Where(s => s.FileType == DbTables.FileType.Profile);
                     if (Picture.Any())
-                    {
                         ProfileImage = Picture.First();
-                    }
                     // Returns message that successfully uploaded
                     return PartialView("_ProfileImagePartial", ProfileImage);
                     //return Json("Filopplastning var en suksess!");
@@ -792,12 +745,11 @@ namespace ButterflyFriends.Controllers
                 {
                     return Json("Ooops, det skjedde en feil: " + ex.Message);
                 }
-            }
             return Json("Ingen filer valgt");
         }
 
         /// <summary>
-        /// Rezises image so that it will be be compressed with smaller dimensions
+        ///     Rezises image so that it will be be compressed with smaller dimensions
         /// </summary>
         /// <param name="image">the image to be resized</param>
         /// <param name="width">width of image</param>
@@ -805,16 +757,17 @@ namespace ButterflyFriends.Controllers
         /// <returns>Resized image in a bitmap</returns>
         private static Bitmap ResizeImage(Bitmap image, int width, int height)
         {
-            Bitmap resizedImage = new Bitmap(width, height);
-            using (Graphics gfx = Graphics.FromImage(resizedImage))
+            var resizedImage = new Bitmap(width, height);
+            using (var gfx = Graphics.FromImage(resizedImage))
             {
                 gfx.DrawImage(image, new Rectangle(0, 0, width, height),
                     new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
             }
             return resizedImage;
         }
+
         /// <summary>
-        /// Check if adress exist
+        ///     Check if adress exist
         /// </summary>
         /// <param name="adress">address to check if exist</param>
         /// <returns>The adress if it exist, null otherwise</returns>
@@ -822,42 +775,34 @@ namespace ButterflyFriends.Controllers
         {
             var adresses = _context.Set<DbTables.Adresses>();
             foreach (var Adress in adresses)
-            {
-                if (adress.StreetAdress == Adress.StreetAdress && adress.PostCode == Adress.PostCode & adress.City == Adress.City && adress.County == Adress.County)
-                {
+                if ((adress.StreetAdress == Adress.StreetAdress) &&
+                    ((adress.PostCode == Adress.PostCode) & (adress.City == Adress.City)) &&
+                    (adress.County == Adress.County))
                     return Adress;
-                }
-            }
             return null;
         }
 
         #region Helpers
+
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
         private IAuthenticationManager AuthenticationManager
         {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
+            get { return HttpContext.GetOwinContext().Authentication; }
         }
 
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
-            {
                 ModelState.AddModelError("", error);
-            }
         }
 
         private bool HasPassword()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             if (user != null)
-            {
                 return user.PasswordHash != null;
-            }
             return false;
         }
 
@@ -865,9 +810,7 @@ namespace ButterflyFriends.Controllers
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
             if (user != null)
-            {
                 return user.PhoneNumber != null;
-            }
             return false;
         }
 
@@ -882,6 +825,6 @@ namespace ButterflyFriends.Controllers
             Error
         }
 
-#endregion
+        #endregion
     }
 }

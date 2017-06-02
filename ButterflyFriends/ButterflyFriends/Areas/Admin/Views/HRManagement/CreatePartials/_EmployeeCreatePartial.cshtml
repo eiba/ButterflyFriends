@@ -20,108 +20,107 @@
 
 
 
-            @using (Ajax.BeginForm("CreateEmployee", "HRManagement",new { employeePage = ViewBag.employeePage }, new AjaxOptions
+            @using (Ajax.BeginForm("CreateEmployee", "HRManagement", new {ViewBag.employeePage}, new AjaxOptions
             {
                 UpdateTargetId = "updateEmployees",
                 InsertionMode = InsertionMode.Replace,
-                HttpMethod = "POST",
-
-            }, new { @class = "form-horizontal", role = "form", id = @formId }))
+                HttpMethod = "POST"
+            }, new {@class = "form-horizontal", role = "form", id = formId}))
             {
                 @Html.AntiForgeryToken()
-                
-                    @Html.ValidationSummary("", new { @class = "text-danger" })
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Fname, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Fname, new { @class = "form-control", id = "Fname", required = "required" })
 
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Lname, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Lname, new { @class = "form-control", id = "Lname", required = "required" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.StreetAdress, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.StreetAdress, new { @class = "form-control", id = "StreetAdress", required = "required" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.City, new { @class = "form-control", id = "City", required = "required" })
-                        </div>
-                    </div>
+                @Html.ValidationSummary("", new {@class = "text-danger"})
                 <div class="form-group">
-                    @Html.LabelFor(m => m.PostCode, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.Fname, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.PostCode, new { @class = "form-control", id = "PostCode", required = "required" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.State, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.State, new { @class = "form-control", id = "State", required = "required" })
-                    </div>
-                </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Phone, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", id = "Phone", required = "required" })
-                        </div>
-                    </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "Email", required = "required" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Position, new { @class = "form-control", id = "Position"})
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.AccountNumber, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control", id = "AccountNumber" })
-                    </div>
-                </div>
-                    
-    var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-    ApplicationUser user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
-    var roleNr = user.RoleNr;
-    HRManagementController HR = new HRManagementController();
+                        @Html.TextBoxFor(m => m.Fname, new {@class = "form-control", id = "Fname", required = "required"})
 
-    <div class="form-group">
-        <label class="control-label col-md-2" for="RoleNr">Brukerrolle</label>
-        <div class="col-md-10">
-            <select name="RoleNr" class="form-control">
-                @for (int i = 2; i > roleNr; i--)
-                {
-                    <option value="@i">@HR.ResolveUserRole(i)</option>
-                }
-            </select>
-        </div>
-    </div>
-                    
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10">
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", Id = "Password", required = "required" })
-                        </div>
                     </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
-                        <div class="col-md-10">
-                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", id = "ConfirmPassword", required = "required" })
-                        </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Lname, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Lname, new {@class = "form-control", id = "Lname", required = "required"})
                     </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.StreetAdress, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.StreetAdress, new {@class = "form-control", id = "StreetAdress", required = "required"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.City, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.City, new {@class = "form-control", id = "City", required = "required"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.PostCode, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.PostCode, new {@class = "form-control", id = "PostCode", required = "required"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.State, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.State, new {@class = "form-control", id = "State", required = "required"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Phone, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Phone, new {@class = "form-control", id = "Phone", required = "required"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Email, new {@class = "form-control", id = "Email", required = "required"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Position, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Position, new {@class = "form-control", id = "Position"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.AccountNumber, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.AccountNumber, new {@class = "form-control", id = "AccountNumber"})
+                    </div>
+                </div>
+
+                var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+                var user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
+                var roleNr = user.RoleNr;
+                var HR = new HRManagementController();
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="RoleNr">Brukerrolle</label>
+                    <div class="col-md-10">
+                        <select name="RoleNr" class="form-control">
+                            @for (var i = 2; i > roleNr; i--) @*Add available roles to role select element*@
+                            {
+                                <option value="@i">@HR.ResolveUserRole(i)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.PasswordFor(m => m.Password, new {@class = "form-control", Id = "Password", required = "required"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ConfirmPassword, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.PasswordFor(m => m.ConfirmPassword, new {@class = "form-control", id = "ConfirmPassword", required = "required"})
+                    </div>
+                </div>
             }
 
 
@@ -161,7 +160,8 @@
 
 <script>
 
-    Vue.component('modal', {
+    Vue.component('modal',
+    {
         template: '#ModalId',
         props: {
             show: {
@@ -176,64 +176,75 @@
                 this.show = false;
 
             },
-            closeButton: function () {
-                $('<input />').attr('type', 'hidden')
-           .attr('name', "search")
-           .attr('value', $('#EmployeesearchField').val())
-           .appendTo('#@formId');
+            closeButton: function() { //append values to form
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', "search")
+                    .attr('value', $('#EmployeesearchField').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-                .attr('name', "active")
-                .attr('value', $('#employeeActive input:radio:checked').val())
-                .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', "active")
+                    .attr('value', $('#employeeActive input:radio:checked').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'order')
-               .attr('value', $('#EmployeeOrderFilter input:radio:checked').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'order')
+                    .attr('value', $('#EmployeeOrderFilter input:radio:checked').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'filter')
-               .attr('value', $("#EmployeeSelected option:selected").val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'filter')
+                    .attr('value', $("#EmployeeSelected option:selected").val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'employeePhone')
-               .attr('value', $('#employeePhone').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'employeePhone')
+                    .attr('value', $('#employeePhone').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'EmployeeStreetadress')
-               .attr('value', $('#EmployeeStreetadress').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'EmployeeStreetadress')
+                    .attr('value', $('#EmployeeStreetadress').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-                           .attr('name', 'EmployeeZip')
-                           .attr('value', $('#EmployeeZip').val())
-                           .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'EmployeeZip')
+                    .attr('value', $('#EmployeeZip').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-                           .attr('name', 'EmployeeCounty')
-                           .attr('value', $('#EmployeeCounty').val())
-                           .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'EmployeeCounty')
+                    .attr('value', $('#EmployeeCounty').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'EmployeeCity')
-               .attr('value', $('#EmployeeCity').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'EmployeeCity')
+                    .attr('value', $('#EmployeeCity').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'EmployeePosition')
-               .attr('value', $('#EmployeePosition').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'EmployeePosition')
+                    .attr('value', $('#EmployeePosition').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'employeeAccountNumber')
-               .attr('value', $('#employeeAccountNumber').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'employeeAccountNumber')
+                    .attr('value', $('#employeeAccountNumber').val())
+                    .appendTo('#@formId');
 
-                     $("form#@formId").submit();
-                    this.show = false;
+                $("form#@formId").submit();
+                this.show = false;
 
             },
             showMethod: function() {
@@ -242,16 +253,16 @@
         },
         ready: function() {
             this.show = true;
-            document.addEventListener("keydown", (e) => {
-                if (this.show && e.keyCode == 27) {
-                    this.close();
-                    e.preventDefault();
-                }
-                else if (this.show && e.keyCode == 13) {
-                    this.closeButton();
-                }
+            document.addEventListener("keydown",
+                (e) => {
+                    if (this.show && e.keyCode == 27) {
+                        this.close();
+                        e.preventDefault();
+                    } else if (this.show && e.keyCode == 13) {
+                        this.closeButton();
+                    }
 
-            });
+                });
 
         },
     });

@@ -39,20 +39,20 @@
 
     <modal :show.sync="showModal">
         <h3 slot="header">
-            
-            @using (Ajax.BeginForm("showChildDelete", "HRManagement", new { id = Model.Child.Id, childrenPage = ViewBag.childrenPage }, new AjaxOptions
+
+            @using (Ajax.BeginForm("showChildDelete", "HRManagement", new {id = Model.Child.Id, ViewBag.childrenPage}, new AjaxOptions
             {
-            UpdateTargetId = "DeleteModal",
-            InsertionMode = InsertionMode.Replace,
-            HttpMethod = "GET",
-
-
-            }, new { @class = "form-horizontal", id = formId }))
+                UpdateTargetId = "DeleteModal",
+                InsertionMode = InsertionMode.Replace,
+                HttpMethod = "GET"
+            }, new {@class = "form-horizontal", id = formId}))
             {
             }
             <div class="row">
                 <div calss="col-md-11" style="float: right">
-                    <button class="btn btn-danger" onclick="submitForm()"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                    <button class="btn btn-danger" onclick="submitForm()">
+                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                    </button>
 
                 </div>
                 <div calss="col-md-1">
@@ -107,173 +107,175 @@
 </div>
 
 <script>
-                            Vue.component('modal', {
-                                template: '#@ModalId',
-                                props: {
-                                    show: {
-                                        type: Boolean,
-                                        required: true,
-                                        twoWay: true
+    Vue.component('modal',
+    {
+        template: '#@ModalId',
+        props: {
+            show: {
+                type: Boolean,
+                required: true,
+                twoWay: true
 
-                                    }
-                                },
-                                methods: {
-                                    close: function() {
-                                        this.show = false;
-                                    }
-                                },
-                                ready: function () {
-                                    this.show = true;
-                                    document.addEventListener("keydown", (e) => {
-                                        if (this.show && e.keyCode == 27) {
+            }
+        },
+        methods: {
+            close: function() {
+                this.show = false;
+            }
+        },
+        ready: function() {
+            this.show = true;
+            document.addEventListener("keydown",
+                (e) => {
+                    if (this.show && e.keyCode == 27) {
 
-                                            this.close();
-                                        }
-                                        else if (this.show && e.keyCode == 13) {
-                                            e.preventDefault();
-                                            this.close();
-                                        }
+                        this.close();
+                    } else if (this.show && e.keyCode == 13) {
+                        e.preventDefault();
+                        this.close();
+                    }
 
 
-                                    });
-                                }
-                            });
+                });
+        }
+    });
     var vueChildDetails = new Vue({
-                                el: '#Box',
-                                data: {
-                                    showModal: false
-                                }
-                            });
+        el: '#Box',
+        data: {
+            showModal: false
+        }
+    });
 
-                            function handleFileSelect(evt) {
-                                var files = evt.target.files; // FileList object
+    function handleFileSelect(evt) {
+        var files = evt.target.files; // FileList object
 
-                                var output = document.getElementById("output");
-                                while (output.firstChild) {
-                                    output.removeChild(output.firstChild);
-                                }
+        var output = document.getElementById("output");
+        while (output.firstChild) {
+            output.removeChild(output.firstChild);
+        }
 
-                                // Loop through the FileList and render image files as thumbnails.
-                                for (var i = 0, f; f = files[i]; i++) {
-                                    //f.num = i;
+        // Loop through the FileList and render image files as thumbnails.
+        for (var i = 0, f; f = files[i]; i++) {
+            //f.num = i;
 
-                                    $("#success").text('');
-                                    // Only process image files.
-                                    if (!f.type.match('image.*')) {
-                                        $("#error").text('Profilbildet må være et bilde');
-                                        document.getElementById("files").value = "";
-                                        continue;
-                                    }
-                                    $("#error").text('');
+            $("#success").text('');
+            // Only process image files.
+            if (!f.type.match('image.*')) {
+                $("#error").text('Profilbildet må være et bilde');
+                document.getElementById("files").value = "";
+                continue;
+            }
+            $("#error").text('');
 
-                                    var reader = new FileReader();
+            var reader = new FileReader();
 
-                                    // Closure to capture the file information.
-                                    reader.onload = (function (theFile) {
-                                        return function (e) {
-                                            // Render thumbnail.
-                                            var span = document.createElement('span');
-                                            var id = "img"; //theFile.num;
-                                            span.innerHTML = [
-                                                '<img class="profileImageShow" id="', id, '" src="', e.target.result,
-                                                '" title="', escape(theFile.name), '"/><btn id="', id + "b",
-                                                '" class="btn btn-primary"><span class="glyphicon glyphicon-open"></span> Last opp</btn><br/><br/><div class="statustxt" id="', id + "t", '">0%</div><div class="progress"><div id="', id + 'p', '" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div></div>'
-                                            ].join('');
-                                            document.getElementById('output').insertBefore(span, null);
+            // Closure to capture the file information.
+            reader.onload = (function(theFile) {
+                return function(e) {
+                    // Render thumbnail.
+                    var span = document.createElement('span');
+                    var id = "img"; //theFile.num;
+                    span.innerHTML = [
+                        '<img class="profileImageShow" id="', id, '" src="', e.target.result,
+                        '" title="', escape(theFile.name), '"/><btn id="', id + "b",
+                        '" class="btn btn-primary"><span class="glyphicon glyphicon-open"></span> Last opp</btn><br/><br/><div class="statustxt" id="', id + "t", '">0%</div><div class="progress"><div id="', id + 'p', '" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div></div>'
+                    ].join('');
+                    document.getElementById('output').insertBefore(span, null);
 
-                                            addHandeler(id);
+                    addHandeler(id);
 
-                                        };
-                                    })(f);
+                };
+            })(f);
 
-                                    // Read in the image file as a data URL.
-                                    reader.readAsDataURL(f);
-                                }
-                            }
+            // Read in the image file as a data URL.
+            reader.readAsDataURL(f);
+        }
+    }
 
-                            document.getElementById('files').addEventListener('change', handleFileSelect, false);
+    document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
-                            function addHandeler(id) {
-                                $("#" + id + "b").on('click', function () {
-                                    var fileUpload = $("#files").get(0);
-                                    var files = fileUpload.files;
-                                    if (files[0].type.match('image.*')) {
-                                        sendFile(id);
-                                    } else {
-                                        alert("Du kan kun laste opp bilder");
-                                    }
-                                });
-                            }
+    function addHandeler(id) {
+        $("#" + id + "b")
+            .on('click',
+                function() {
+                    var fileUpload = $("#files").get(0);
+                    var files = fileUpload.files;
+                    if (files[0].type.match('image.*')) {
+                        sendFile(id);
+                    } else {
+                        alert("Du kan kun laste opp bilder");
+                    }
+                });
+    }
 
-                            function sendFile(id) {
-
-
-
-                                // Checking whether FormData is available in browser
-                                if (window.FormData !== undefined) {
-
-                                    var fileUpload = $("#files").get(0);
-                                    var files = fileUpload.files;
-
-                                    // Create FormData object
-                                    var fileData = new FormData();
-
-                                    // Looping over all files and add it to FormData object
-                                    //there will only be one image, but let's just loop over just incase we want to expand the code in the future
-                                    for (var i = 0; i < files.length; i++) {
-                                        fileData.append(files[i].name, files[i]);
-                                    }
-                                    fileData.append('userid', "@Model.Child.Id");
-                                    fileData.append('type', "@Model.File.Type");
-                                    $.ajax({
-                                        url: '/Admin/HRManagement/ProfilePictureUpload',
-                                        type: "POST",
-                                        contentType: false, // Not to set any content header
-                                        processData: false, // Not to process data
-                                        data: fileData,
-                                        xhr: function () {  // Custom XMLHttpRequest
-                                            var myXhr = $.ajaxSettings.xhr();
-                                            if (myXhr.upload) { // Check if upload property exists
-
-                                                // For handling the progress of the upload
-                                                myXhr.upload.id = id;
-                                                myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
-
-                                            }
-                                            return myXhr;
-                                        }
-                                        ,
-                                        success: function (result) {
-                                            $('#success').text('Profilbildet ble suksessfullt lastet opp');
-                                            $("#profilePicture").html(result);
-                                            var output = document.getElementById("output");
-                                            while (output.firstChild) {
-                                                output.removeChild(output.firstChild);
-                                            }
-                                            document.getElementById("files").value = "";
+    function sendFile(id) {
 
 
-                                        },
-                                        error: function (err) {
-                                            $('#' + id + "t").text(err.statusText);
-                                        }
-                                    });
-                                } else {
-                                    alert("FormData er ikke støttet.");
-                                }
-                            }
+        // Checking whether FormData is available in browser
+        if (window.FormData !== undefined) {
 
-                            function progressHandlingFunction(e) {
-                                var id = e.target.id;
-                                if (e.lengthComputable) {
-                                    var percentage = Math.floor((e.loaded / e.total) * 100);
-                                    //update progressbar percent complete
-                                    $('#' + id + "t").text(percentage + '%');
-                                    $('#' + id + "p").css("width", percentage + '%');
-                                }
-                            }
-                            function submitForm() {
-                                    $("form#@formId").submit();
+            var fileUpload = $("#files").get(0);
+            var files = fileUpload.files;
 
-                            }
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            //there will only be one image, but let's just loop over just incase we want to expand the code in the future
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+            }
+            fileData.append('userid', "@Model.Child.Id");
+            fileData.append('type', "@Model.File.Type");
+            $.ajax({
+                url: '/Admin/HRManagement/ProfilePictureUpload',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                xhr: function() { // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) { // Check if upload property exists
+
+                        // For handling the progress of the upload
+                        myXhr.upload.id = id;
+                        myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+
+                    }
+                    return myXhr;
+                },
+                success: function(result) {
+                    $('#success').text('Profilbildet ble suksessfullt lastet opp');
+                    $("#profilePicture").html(result);
+                    var output = document.getElementById("output");
+                    while (output.firstChild) {
+                        output.removeChild(output.firstChild);
+                    }
+                    document.getElementById("files").value = "";
+
+
+                },
+                error: function(err) {
+                    $('#' + id + "t").text(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData er ikke støttet.");
+        }
+    }
+
+    function progressHandlingFunction(e) {
+        var id = e.target.id;
+        if (e.lengthComputable) {
+            var percentage = Math.floor((e.loaded / e.total) * 100);
+            //update progressbar percent complete
+            $('#' + id + "t").text(percentage + '%');
+            $('#' + id + "p").css("width", percentage + '%');
+        }
+    }
+
+    function submitForm() {
+        $("form#@formId").submit();
+
+    }
 </script>

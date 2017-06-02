@@ -6,72 +6,76 @@
  * Author : Adam Hess (AdamHess)
  */
 
-(function ($) {
-    'use strict';
+(function($) {
+    "use strict";
 
     var insertAudioOptions = {
         src: {
-            label: 'URL',
+            label: "URL",
             required: true
         },
         autoplay: {
-            label: 'AutoPlay',
+            label: "AutoPlay",
             required: false,
-            type: 'checkbox'
+            type: "checkbox"
         },
         muted: {
-            label: 'Muted',
+            label: "Muted",
             required: false,
-            type: 'checkbox'
+            type: "checkbox"
         },
         preload: {
-            label: 'preload options',
+            label: "preload options",
             required: false
         }
     };
 
 
-    $.extend(true, $.trumbowyg, {
-        langs: {
-            en: {
-                insertAudio: 'Insert Audio'
-            }
-        },
-        plugins: {
-            insertAudio: {
-                init: function (trumbowyg) {
-                    var btnDef = {
-                        fn: function () {
-                            var insertAudioCallback = function (v) {
-                                // controls should always be show otherwise the audio will
-                                // be invisible defeating the point of a wysiwyg
-                                var html = '<audio controls';
-                                if (v.src) {
-                                    html += ' src=\'' + v.src + '\'';
-                                }
-                                if (v.autoplay) {
-                                    html += ' autoplay';
-                                }
-                                if (v.muted) {
-                                    html += ' muted';
-                                }
-                                if (v.preload) {
-                                    html += ' preload=\'' + v + '\'';
-                                }
-                                html += '></audio>';
-                                var node = $(html)[0];
-                                trumbowyg.range.deleteContents();
-                                trumbowyg.range.insertNode(node);
-                                return true;
-                            };
+    $.extend(true,
+        $.trumbowyg,
+        {
+            langs: {
+                en: {
+                    insertAudio: "Insert Audio"
+                }
+            },
+            plugins: {
+                insertAudio: {
+                    init: function(trumbowyg) {
+                        var btnDef = {
+                            fn: function() {
+                                var insertAudioCallback = function(v) {
+                                    // controls should always be show otherwise the audio will
+                                    // be invisible defeating the point of a wysiwyg
+                                    var html = "<audio controls";
+                                    if (v.src) {
+                                        html += " src='" + v.src + "'";
+                                    }
+                                    if (v.autoplay) {
+                                        html += " autoplay";
+                                    }
+                                    if (v.muted) {
+                                        html += " muted";
+                                    }
+                                    if (v.preload) {
+                                        html += " preload='" + v + "'";
+                                    }
+                                    html += "></audio>";
+                                    var node = $(html)[0];
+                                    trumbowyg.range.deleteContents();
+                                    trumbowyg.range.insertNode(node);
+                                    return true;
+                                };
 
-                            trumbowyg.openModalInsert(trumbowyg.lang.insertAudio, insertAudioOptions, insertAudioCallback);
-                        }
-                    };
+                                trumbowyg.openModalInsert(trumbowyg.lang.insertAudio,
+                                    insertAudioOptions,
+                                    insertAudioCallback);
+                            }
+                        };
 
-                    trumbowyg.addBtnDef('insertAudio', btnDef);
+                        trumbowyg.addBtnDef("insertAudio", btnDef);
+                    }
                 }
             }
-        }
-    });
+        });
 })(jQuery);

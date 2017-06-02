@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ButterflyFriends.Models
 {
     /// <summary>
-    /// model used to change profile information
+    ///     model used to change profile information
     /// </summary>
     public class changeProfileModel
     {

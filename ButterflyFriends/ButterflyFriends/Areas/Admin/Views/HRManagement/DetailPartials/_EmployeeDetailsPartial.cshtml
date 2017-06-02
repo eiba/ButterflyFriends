@@ -10,9 +10,9 @@
     var mailto = "mailto:" + Model.User.Email;
     var ModalId = Model.User.Id + "e";
     var formId = "deleteEmployeeShowForm";
-    HRManagementController HR = new HRManagementController();
+    var HR = new HRManagementController();
     var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-    ApplicationUser user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
+    var user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
     var currentUserRoleNr = user.RoleNr;
     var RoleNr = Model.User.RoleNr;
 }
@@ -50,20 +50,20 @@
     <modal :show.sync="showModal">
         <h3 slot="header">
             @if (currentUserRoleNr < RoleNr)
-            { 
-                using (Ajax.BeginForm("showEmployeeDelete", "HRManagement", new { id = Model.User.Id, employeePage = ViewBag.employeePage }, new AjaxOptions
-                    {
-                        UpdateTargetId = "DeleteModal",
-                        InsertionMode = InsertionMode.Replace,
-                        HttpMethod = "GET",
-
-
-                    }, new { @class = "form-horizontal", id = formId }))
-                    {
-                    }
+            {
+                using (Ajax.BeginForm("showEmployeeDelete", "HRManagement", new {id = Model.User.Id, ViewBag.employeePage}, new AjaxOptions
+                {
+                    UpdateTargetId = "DeleteModal",
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "GET"
+                }, new {@class = "form-horizontal", id = formId}))
+                {
+                }
                 <div class="row">
                     <div calss="col-md-11" style="float: right">
-                        <button class="btn btn-danger" onclick="submitForm()"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                        <button class="btn btn-danger" onclick="submitForm()">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </button>
 
                     </div>
                     <div calss="col-md-1">
@@ -168,18 +168,20 @@
                     </dd>
                 }
             </dl>
-            @if (currentUserRoleNr < RoleNr || user.Id == Model.User.Id) {
-            <hr/>
-            <p>Velg et nytt profilbilde</p>
-            <input type="file" id="files" name="files[]"/>
-            <output id="output"></output>
+            @if ((currentUserRoleNr < RoleNr) || (user.Id == Model.User.Id))
+            {
+                <hr/>
+                <p>Velg et nytt profilbilde</p>
+                <input type="file" id="files" name="files[]"/>
+                <output id="output"></output>
             }
         </h5>
     </modal>
 </div>
 
 <script>
-    Vue.component('modal', {
+    Vue.component('modal',
+    {
         template: '#@ModalId',
         props: {
             show: {
@@ -190,27 +192,27 @@
             }
         },
         methods: {
-            close: function () {
+            close: function() {
                 this.show = false;
             }
         },
-        ready: function () {
+        ready: function() {
             this.show = true;
-            document.addEventListener("keydown", (e) => {
-                if (this.show && e.keyCode == 27) {
+            document.addEventListener("keydown",
+                (e) => {
+                    if (this.show && e.keyCode == 27) {
 
-                    this.close();
-                }
-                else if (this.show && e.keyCode == 13) {
-                    e.preventDefault();
-                    this.close();
-                }
+                        this.close();
+                    } else if (this.show && e.keyCode == 13) {
+                        e.preventDefault();
+                        this.close();
+                    }
 
 
-            });
+                });
         }
     });
-    var vueEmployeeDetails= new Vue({
+    var vueEmployeeDetails = new Vue({
         el: '#Box',
         data: {
             showModal: false
@@ -227,7 +229,6 @@
 
         // Loop through the FileList and render image files as thumbnails.
         for (var i = 0, f; f = files[i]; i++) {
-            //f.num = i;
 
             $("#success").text('');
             // Only process image files.
@@ -241,8 +242,8 @@
             var reader = new FileReader();
 
             // Closure to capture the file information.
-            reader.onload = (function (theFile) {
-                return function (e) {
+            reader.onload = (function(theFile) {
+                return function(e) {
                     // Render thumbnail.
                     var span = document.createElement('span');
                     var id = "img"; //theFile.num;
@@ -266,19 +267,20 @@
     document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
     function addHandeler(id) {
-        $("#" + id + "b").on('click', function () {
-            var fileUpload = $("#files").get(0);
-            var files = fileUpload.files;
-            if (files[0].type.match('image.*')) {
-                sendFile(id);
-            } else {
-                alert("Du kan kun laste opp bilder");
-            }
-        });
+        $("#" + id + "b")
+            .on('click',
+                function() {
+                    var fileUpload = $("#files").get(0);
+                    var files = fileUpload.files;
+                    if (files[0].type.match('image.*')) {
+                        sendFile(id);
+                    } else {
+                        alert("Du kan kun laste opp bilder");
+                    }
+                });
     }
 
     function sendFile(id) {
-
 
 
         // Checking whether FormData is available in browser
@@ -303,7 +305,7 @@
                 contentType: false, // Not to set any content header
                 processData: false, // Not to process data
                 data: fileData,
-                xhr: function () {  // Custom XMLHttpRequest
+                xhr: function() { // Custom XMLHttpRequest
                     var myXhr = $.ajaxSettings.xhr();
                     if (myXhr.upload) { // Check if upload property exists
 
@@ -313,9 +315,8 @@
 
                     }
                     return myXhr;
-                }
-                ,
-                success: function (result) {
+                },
+                success: function(result) {
                     if (result.success != 'false') {
                         $('#success').text('Profilbildet ble suksessfullt lastet opp');
                         $("#profilePicture").html(result);
@@ -327,11 +328,10 @@
                     } else {
                         $('#error').text(result.error);
                     }
-                    
 
 
                 },
-                error: function (err) {
+                error: function(err) {
                     $('#' + id + "t").text(err.statusText);
                 }
             });

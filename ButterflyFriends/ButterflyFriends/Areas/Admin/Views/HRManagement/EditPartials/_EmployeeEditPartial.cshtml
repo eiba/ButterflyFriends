@@ -13,14 +13,12 @@
     <modal :show.sync="showModal">
         <h3 slot="header">Rediger ansatt</h3>
         <h5 slot="body">
-            @using (Ajax.BeginForm("EditEmployee", "HRManagement",new { employeePage = @ViewBag.employeePage }, new AjaxOptions
+            @using (Ajax.BeginForm("EditEmployee", "HRManagement", new {ViewBag.employeePage}, new AjaxOptions
             {
-
                 UpdateTargetId = "updateEmployees",
                 InsertionMode = InsertionMode.Replace,
-                HttpMethod = "POST",
-
-            }, new { @class = "form-horizontal", role = "form", id = formId }))
+                HttpMethod = "POST"
+            }, new {@class = "form-horizontal", role = "form", id = formId}))
             {
                 @Html.AntiForgeryToken()
 
@@ -29,14 +27,14 @@
                     @Html.HiddenFor(model => model.Id)
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.Email, new {@class = "control-label col-md-2"})
                         <div class="col-md-10">
                             <input name="Email" value="@Model.Email" class="form-control" id="model" required>
                             @Html.ValidationMessageFor(model => model.Email)
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Fname, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.Fname, new {@class = "control-label col-md-2"})
                         <div class="col-md-10">
                             <input name="Fname" value="@Model.Fname" class="form-control" id="model" required>
                             @Html.ValidationMessageFor(model => model.Fname)
@@ -44,7 +42,7 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Lname, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.Lname, new {@class = "control-label col-md-2"})
                         <div class="col-md-10">
                             <input name="Lname" value="@Model.Lname" class="form-control" required>
                             @Html.ValidationMessageFor(model => model.Lname)
@@ -52,12 +50,12 @@
                     </div>
                     @{
                         var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-                        ApplicationUser user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
+                        var user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
                         var roleNr = user.RoleNr;
-                        HRManagementController HR = new HRManagementController();
-
+                        var HR = new HRManagementController();
                     }
-                    @if (user.Id != Model.Id && user.RoleNr < Model.RoleNr) { 
+                    @if ((user.Id != Model.Id) && (user.RoleNr < Model.RoleNr))
+                    {
                         <div class="form-group">
                             <label class="control-label col-md-2" for="RoleNr">Brukerrolle</label>
                             <div class="col-md-10">
@@ -65,11 +63,11 @@
 
                                     <option value="@Model.RoleNr" selected>@HR.ResolveUserRole(Model.RoleNr)</option>
 
-                                    @for (int i = 2; i > roleNr; i--)
+                                    @for (var i = 2; i > roleNr; i--)
                                     {
                                         if (i != Model.RoleNr)
                                         {
-                                        <option value="@i">@HR.ResolveUserRole(i)</option>
+                                            <option value="@i">@HR.ResolveUserRole(i)</option>
                                         }
                                     }
                                 </select>
@@ -78,35 +76,35 @@
                         </div>
                     }
                     <div class="form-group">
-                        @Html.LabelFor(model => model.StreetAdress, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.StreetAdress, new {@class = "control-label col-md-2"})
                         <div class="col-md-10">
                             <input name="StreetAdress" value="@Model.StreetAdress" class="form-control" required>
                             @Html.ValidationMessageFor(model => model.StreetAdress)
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.PostCode, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.PostCode, new {@class = "control-label col-md-2"})
                         <div class="col-md-10">
                             <input name="PostCode" value="@Model.PostCode" class="form-control" required>
                             @Html.ValidationMessageFor(model => model.PostCode)
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.City, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.City, new {@class = "control-label col-md-2"})
                         <div class="col-md-10">
                             <input name="City" value="@Model.City" class="form-control" required>
                             @Html.ValidationMessageFor(model => model.City)
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.State, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.State, new {@class = "control-label col-md-2"})
                         <div class="col-md-10">
                             <input name="State" value="@Model.State" class="form-control" required>
                             @Html.ValidationMessageFor(model => model.State)
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Phone, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.Phone, new {@class = "control-label col-md-2"})
                         <div class="col-md-10">
                             <input name="Phone" value="@Model.Phone" class="form-control" required pattern="[0-9]{8,12}">
                             @Html.ValidationMessageFor(model => model.Phone)
@@ -114,14 +112,14 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
+                        @Html.LabelFor(m => m.Position, new {@class = "col-md-2 control-label"})
                         <div class="col-md-10">
                             <input name="Position" value="@Model.Position" class="form-control">
                             @Html.ValidationMessageFor(model => model.Position)
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(m => m.AccountNumber, new { @class = "col-md-2 control-label" })
+                        @Html.LabelFor(m => m.AccountNumber, new {@class = "col-md-2 control-label"})
                         <div class="col-md-10">
                             <input name="AccountNumber" value="@Model.AccountNumber" class="form-control">
                             @Html.ValidationMessageFor(model => model.AccountNumber)
@@ -129,21 +127,20 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                        @Html.LabelFor(m => m.Password, new {@class = "col-md-2 control-label"})
                         <div class="col-md-10">
                             <input name="Password" value="" class="form-control" type="password">
                             @Html.ValidationMessageFor(model => model.Password)
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+                        @Html.LabelFor(m => m.ConfirmPassword, new {@class = "col-md-2 control-label"})
                         <div class="col-md-10">
                             <input name="ConfirmPassword" value="" class="form-control" type="password">
                             @Html.ValidationMessageFor(model => model.ConfirmPassword)
                         </div>
                     </div>
                 </div>
-
             }
         </h5>
     </modal>
@@ -179,7 +176,8 @@
 
 <script>
 
-    Vue.component('modal', {
+    Vue.component('modal',
+    {
         template: '#@ModalId',
         props: {
             show: {
@@ -193,63 +191,73 @@
             close: function() {
                 this.show = false;
             },
-            closeButton: function () {
+            closeButton: function() {
 
-                $('<input />').attr('type', 'hidden')
-                .attr('name', "search")
-                .attr('value', $('#EmployeesearchField').val())
-                .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', "search")
+                    .attr('value', $('#EmployeesearchField').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-                .attr('name', "active")
-                .attr('value', $('#employeeActive input:radio:checked').val())
-                .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', "active")
+                    .attr('value', $('#employeeActive input:radio:checked').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'order')
-               .attr('value', $('#EmployeeOrderFilter input:radio:checked').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'order')
+                    .attr('value', $('#EmployeeOrderFilter input:radio:checked').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'filter')
-               .attr('value', $("#EmployeeSelected option:selected").val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'filter')
+                    .attr('value', $("#EmployeeSelected option:selected").val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'employeePhone')
-               .attr('value', $('#employeePhone').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'employeePhone')
+                    .attr('value', $('#employeePhone').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'EmployeeStreetadress')
-               .attr('value', $('#EmployeeStreetadress').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'EmployeeStreetadress')
+                    .attr('value', $('#EmployeeStreetadress').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-                           .attr('name', 'EmployeeZip')
-                           .attr('value', $('#EmployeeZip').val())
-                           .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'EmployeeZip')
+                    .attr('value', $('#EmployeeZip').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-                           .attr('name', 'EmployeeCounty')
-                           .attr('value', $('#EmployeeCounty').val())
-                           .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'EmployeeCounty')
+                    .attr('value', $('#EmployeeCounty').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'EmployeeCity')
-               .attr('value', $('#EmployeeCity').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'EmployeeCity')
+                    .attr('value', $('#EmployeeCity').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'EmployeePosition')
-               .attr('value', $('#EmployeePosition').val())
-               .appendTo('#@formId');
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'EmployeePosition')
+                    .attr('value', $('#EmployeePosition').val())
+                    .appendTo('#@formId');
 
-                $('<input />').attr('type', 'hidden')
-               .attr('name', 'employeeAccountNumber')
-               .attr('value', $('#employeeAccountNumber').val())
-               .appendTo('#@formId');
-
+                $('<input />')
+                    .attr('type', 'hidden')
+                    .attr('name', 'employeeAccountNumber')
+                    .attr('value', $('#employeeAccountNumber').val())
+                    .appendTo('#@formId');
 
 
                 $("form#@formId").submit();
@@ -259,31 +267,31 @@
         },
         ready: function() {
             this.show = true;
-            document.addEventListener("keydown", (e) => {
-                if (this.show && e.keyCode == 27) {
-                    this.close();
-                } else if (this.show && e.keyCode == 13) {
-                    e.preventDefault();
-                    this.closeButton();
-                }
-            });
+            document.addEventListener("keydown",
+                (e) => {
+                    if (this.show && e.keyCode == 27) {
+                        this.close();
+                    } else if (this.show && e.keyCode == 13) {
+                        e.preventDefault();
+                        this.closeButton();
+                    }
+                });
         }
     });
 
-        new Vue({
-            el: '#Box',
-            data: {
-                showModal: false,
-            },
-            methods: {
-                showModalf: function() {
-                    this.showModal = true;
-                }
-
+    new Vue({
+        el: '#Box',
+        data: {
+            showModal: false,
+        },
+        methods: {
+            showModalf: function() {
+                this.showModal = true;
             }
 
-        });
+        }
 
+    });
 
 
 </script>

@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Email";
 }
 
@@ -75,50 +74,60 @@
     var res;
 
     $(function() {
-        res = $('#recipients').magicSuggest({
-            selectionRenderer: function (data) {
-                if (typeof data.fullname !== 'undefined') {
-                    return data.fullname + " (" + data.id + ")";
-                } else {
-                    return data.id;
-                }
-            },
-            renderer: function (data) {
-                console.log(data);
-                return '<div style="padding: 5px; overflow:hidden;">' +
-                    '<div style="float: left;"><img src="../FileAdmin?id=' + data.imgid + '" class="thumbnailShow"></div>' +
-                    '<div style="float: left; margin-left: 5px">' +
-                    '<div style="font-weight: bold; color: #333; font-size: 10px; line-height: 11px">' + data.fullname + '</div>' +
-                    '<div style="color: #999; font-size: 9px">' + data.id + '</div>' +
-                    '</div>' +
-                    '</div><div style="clear:both;"></div>';
-            },
-            selectionStacked: true,
-            selectionPosition: 'bottom',
-            placeholder:'Skriv inn navn og velg motakere',
-            allowFreeEntries: true,
-            highlight: true,
-            typeDelay: 0,
-            minChars: 2,
-            maxSelection:null,
-            data: '/Admin/PR/GetUsers'
-        });
-        $(res).on('selectionchange', function (e, cb, s) {
-            var selected = (this.getSelection()[this.getSelection().length-1]);
-            if (typeof selected.email == 'undefined') {
-                var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/;
-                if (!regTest.test(selected.name)) {
-                    this.removeFromSelection(selected, true);
-                    $("#resError").text("Mottaker må være en gyldig emailadresse");
-                    $("#resError").removeClass("fadeOut");
-                    setTimeout(function () {
-                        $("#resError").addClass("fadeOut");
-                    }, 500);
-                }
-            }
+        res = $('#recipients')
+            .magicSuggest({
+                selectionRenderer: function(data) {
+                    if (typeof data.fullname !== 'undefined') {
+                        return data.fullname + " (" + data.id + ")";
+                    } else {
+                        return data.id;
+                    }
+                },
+                renderer: function(data) {
+                    console.log(data);
+                    return '<div style="padding: 5px; overflow:hidden;">' +
+                        '<div style="float: left;"><img src="../FileAdmin?id=' +
+                        data.imgid +
+                        '" class="thumbnailShow"></div>' +
+                        '<div style="float: left; margin-left: 5px">' +
+                        '<div style="font-weight: bold; color: #333; font-size: 10px; line-height: 11px">' +
+                        data.fullname +
+                        '</div>' +
+                        '<div style="color: #999; font-size: 9px">' +
+                        data.id +
+                        '</div>' +
+                        '</div>' +
+                        '</div><div style="clear:both;"></div>';
+                },
+                selectionStacked: true,
+                selectionPosition: 'bottom',
+                placeholder: 'Skriv inn navn og velg motakere',
+                allowFreeEntries: true,
+                highlight: true,
+                typeDelay: 0,
+                minChars: 2,
+                maxSelection: null,
+                data: '/Admin/PR/GetUsers'
+            });
+        $(res)
+            .on('selectionchange',
+                function(e, cb, s) {
+                    var selected = (this.getSelection()[this.getSelection().length - 1]);
+                    if (typeof selected.email == 'undefined') {
+                        var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/;
+                        if (!regTest.test(selected.name)) {
+                            this.removeFromSelection(selected, true);
+                            $("#resError").text("Mottaker må være en gyldig emailadresse");
+                            $("#resError").removeClass("fadeOut");
+                            setTimeout(function() {
+                                    $("#resError").addClass("fadeOut");
+                                },
+                                500);
+                        }
+                    }
 
-  }
-);
+                }
+            );
     });
 
     Vue.component('modal',
@@ -132,10 +141,10 @@
             }
         },
         methods: {
-            close: function () {
+            close: function() {
                 this.show = false;
             },
-            submit: function () {
+            submit: function() {
                 if ($("#emailSubject").val() !== "") {
                     sendEmail();
                     this.show = false;
@@ -144,18 +153,18 @@
                 }
             }
         },
-        ready: function () {
-            document.addEventListener("keydown", (e) => {
-                if (this.show && e.keyCode == 27) {
+        ready: function() {
+            document.addEventListener("keydown",
+                (e) => {
+                    if (this.show && e.keyCode == 27) {
 
-                    this.close();
-                }
-                else if (this.show && e.keyCode == 13) {
-                    this.submit();
-                }
+                        this.close();
+                    } else if (this.show && e.keyCode == 13) {
+                        this.submit();
+                    }
 
 
-            });
+                });
         }
     });
 
@@ -166,40 +175,42 @@
         }
     });
 
-    $('#editor').trumbowyg({
-        lang:'no_nb',
-        btnsDef: {
-            // Customizables dropdowns
-            image: {
-                dropdown: ['insertImage', 'upload', 'noembed'],
-                ico: 'insertImage'
-            }
+    $('#editor')
+        .trumbowyg({
+            lang: 'no_nb',
+            btnsDef: {
+                // Customizables dropdowns
+                image: {
+                    dropdown: ['insertImage', 'upload', 'noembed'],
+                    ico: 'insertImage'
+                }
 
-        },
-        btns: [
-            ['undo', 'redo'],
-            ['formatting'],
-            'btnGrp-design',
-            ['link'],
-            ['image'],
-            'btnGrp-justify',
-            'btnGrp-lists',
-            ['foreColor', 'backColor'],
-            ['preformatted'],
-            ['horizontalRule'],
-            ['fullscreen']        ],
-        plugins: {
-            // Add imagur parameters to upload plugin
-            upload: {
-                serverPath: 'https://api.imgur.com/3/image',
-                fileFieldName: 'image',
-                headers: {
-                    'Authorization': 'Client-ID 9e57cb1c4791cea'
-                },
-                urlPropertyName: 'data.link'
+            },
+            btns: [
+                ['undo', 'redo'],
+                ['formatting'],
+                'btnGrp-design',
+                ['link'],
+                ['image'],
+                'btnGrp-justify',
+                'btnGrp-lists',
+                ['foreColor', 'backColor'],
+                ['preformatted'],
+                ['horizontalRule'],
+                ['fullscreen']
+            ],
+            plugins: {
+                // Add imagur parameters to upload plugin
+                upload: {
+                    serverPath: 'https://api.imgur.com/3/image',
+                    fileFieldName: 'image',
+                    headers: {
+                        'Authorization': 'Client-ID 9e57cb1c4791cea'
+                    },
+                    urlPropertyName: 'data.link'
+                }
             }
-        }
-    });
+        });
 
     function sendEmail() {
         var formData = new FormData();
@@ -220,25 +231,23 @@
         if (sponsorCheck && employeeCheck) {
             formData.append('allsponsors', 'true');
             formData.append('allemployees', 'true');
-            for (var i = 0; i < selection.length ; i++) {
-                if (typeof  selection[i].employee == 'undefined') {
+            for (var i = 0; i < selection.length; i++) {
+                if (typeof selection[i].employee == 'undefined') {
                     recipients.push(selection[i].id);
                 }
             }
             formData.append('recipients', recipients);
-        }
-        else if (sponsorCheck) {
+        } else if (sponsorCheck) {
             formData.append('allsponsors', 'true');
-            for (var i = 0; i < selection.length ; i++) {
+            for (var i = 0; i < selection.length; i++) {
                 if (typeof selection[i].employee == 'undefined' || selection[i].employee) {
                     recipients.push(selection[i].id);
                 }
             }
             formData.append('recipients', recipients);
-        }
-        else if (employeeCheck) {
+        } else if (employeeCheck) {
             formData.append('allemployees', 'true');
-            for (var i = 0; i < selection.length ; i++) {
+            for (var i = 0; i < selection.length; i++) {
                 if (typeof selection[i].employee == 'undefined' || !selection[i].employee) {
                     recipients.push(selection[i].id);
                 }
@@ -259,22 +268,22 @@
             processData: false,
             type: "POST",
             data: formData,
-            success: function (result) {
+            success: function(result) {
                 if (result.error == true) {
                     $("#error").text(result.message);
                     $("#success").text("");
-                }
-                else if (result.success == true) {
+                } else if (result.success == true) {
                     $("#success").text(result.message);
                     $("#success").removeClass("fadeOut");
-                    setTimeout(function () {
-                        $("#success").addClass("fadeOut");
-                    }, 2000);
+                    setTimeout(function() {
+                            $("#success").addClass("fadeOut");
+                        },
+                        2000);
                     $("#error").text("");
                 }
 
             },
-            error: function (err) {
+            error: function(err) {
                 $("#error").text(err.statusText);
                 $("#success").text("");
             },
@@ -284,7 +293,9 @@
         });
     }
 
-    $("#sendBtn").on('click', function () {
-        v.showModal = true;
-    });
+    $("#sendBtn")
+        .on('click',
+            function() {
+                v.showModal = true;
+            });
 </script>

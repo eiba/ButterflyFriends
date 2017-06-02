@@ -1,45 +1,150 @@
-/* surrounding tag container */
+﻿/* surrounding tag container */
 .tag-editor {
-    list-style-type: none; padding: 0 5px 0 0; margin: 0; overflow: hidden; border: 1px solid #eee; cursor: text;
-    font: normal 14px sans-serif; color: #555; background: #fff; line-height: 20px;
+    background: #fff;
+    border: 1px solid #eee;
+    color: #555;
+    cursor: text;
+    font: normal 14px sans-serif;
+    line-height: 20px;
+    list-style-type: none;
+    margin: 0;
+    overflow: hidden;
+    padding: 0 5px 0 0;
 }
 
 /* core styles usually need no change */
-.tag-editor li { display: block; float: left; overflow: hidden; margin: 3px 0; }
-.tag-editor div { float: left; padding: 0 4px; }
-.tag-editor .placeholder { padding: 0 8px; color: #bbb; }
-.tag-editor .tag-editor-spacer { padding: 0; width: 8px; overflow: hidden; color: transparent; background: none; }
-.tag-editor input {
-    vertical-align: inherit; border: 0; outline: none; padding: 0; margin: 0; cursor: text;
-    font-family: inherit; font-weight: inherit; font-size: inherit; font-style: inherit;
-    box-shadow: none; background: none; color: #444;
+
+.tag-editor li {
+    display: block;
+    float: left;
+    margin: 3px 0;
+    overflow: hidden;
 }
+
+.tag-editor div {
+    float: left;
+    padding: 0 4px;
+}
+
+.tag-editor .placeholder {
+    color: #bbb;
+    padding: 0 8px;
+}
+
+.tag-editor .tag-editor-spacer {
+    background: none;
+    color: transparent;
+    overflow: hidden;
+    padding: 0;
+    width: 8px;
+}
+
+.tag-editor input {
+    background: none;
+    border: 0;
+    box-shadow: none;
+    color: #444;
+    cursor: text;
+    font-family: inherit;
+    font-size: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+    margin: 0;
+    outline: none;
+    padding: 0;
+    vertical-align: inherit;
+}
+
 /* hide original input field or textarea visually to allow tab navigation */
-.tag-editor-hidden-src { position: absolute !important; left: -99999px; }
+
+.tag-editor-hidden-src {
+    left: -99999px;
+    position: absolute !important;
+}
+
 /* hide IE10 "clear field" X */
+
 .tag-editor ::-ms-clear { display: none; }
 
 /* tag style */
+
 .tag-editor .tag-editor-tag {
-    padding-left: 5px; color: #46799b; background: #e0eaf1; white-space: nowrap;
-    overflow: hidden; cursor: pointer; border-radius: 2px 0 0 2px;
+    background: #e0eaf1;
+    border-radius: 2px 0 0 2px;
+    color: #46799b;
+    cursor: pointer;
+    overflow: hidden;
+    padding-left: 5px;
+    white-space: nowrap;
 }
 
 /* delete icon */
-.tag-editor .tag-editor-delete { background: #e0eaf1; cursor: pointer; border-radius: 0 2px 2px 0; padding-left: 3px; padding-right: 4px; }
-.tag-editor .tag-editor-delete i { line-height: 18px; display: inline-block; }
-.tag-editor .tag-editor-delete i:before { font-size: 16px; color: #8ba7ba; content: "×"; font-style: normal; }
+
+.tag-editor .tag-editor-delete {
+    background: #e0eaf1;
+    border-radius: 0 2px 2px 0;
+    cursor: pointer;
+    padding-left: 3px;
+    padding-right: 4px;
+}
+
+.tag-editor .tag-editor-delete i {
+    display: inline-block;
+    line-height: 18px;
+}
+
+.tag-editor .tag-editor-delete i:before {
+    color: #8ba7ba;
+    content: "×";
+    font-size: 16px;
+    font-style: normal;
+}
+
 .tag-editor .tag-editor-delete:hover i:before { color: #d65454; }
-.tag-editor .tag-editor-tag.active+.tag-editor-delete, .tag-editor .tag-editor-tag.active+.tag-editor-delete i { visibility: hidden; cursor: text; }
+
+.tag-editor .tag-editor-tag.active + .tag-editor-delete, .tag-editor .tag-editor-tag.active + .tag-editor-delete i {
+    cursor: text;
+    visibility: hidden;
+}
 
 .tag-editor .tag-editor-tag.active { background: none !important; }
 
 /* jQuery UI autocomplete - code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css */
-.ui-autocomplete { position: absolute; top: 0; left: 0; cursor: default; font-size: 14px; }
+
+.ui-autocomplete {
+    cursor: default;
+    font-size: 14px;
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+
 .ui-front { z-index: 9999; }
-.ui-menu { list-style: none; padding: 1px; margin: 0; display: block; outline: none; }
-.ui-menu .ui-menu-item a { text-decoration: none; display: block; padding: 2px .4em; line-height: 1.4; min-height: 0; /* support: IE7 */ }
-.ui-widget-content { border: 1px solid #bbb; background: #fff; color: #555; }
+
+.ui-menu {
+    display: block;
+    list-style: none;
+    margin: 0;
+    outline: none;
+    padding: 1px;
+}
+
+.ui-menu .ui-menu-item a {
+    display: block;
+    line-height: 1.4;
+    min-height: 0; /* support: IE7 */
+    padding: 2px .4em;
+    text-decoration: none;
+}
+
+.ui-widget-content {
+    background: #fff;
+    border: 1px solid #bbb;
+    color: #555;
+}
+
 .ui-widget-content a { color: #46799b; }
+
 .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { background: #e0eaf1; }
+
 .ui-helper-hidden-accessible { display: none; }

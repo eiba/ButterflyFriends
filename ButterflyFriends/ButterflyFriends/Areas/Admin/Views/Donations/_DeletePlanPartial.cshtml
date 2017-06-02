@@ -1,9 +1,10 @@
-﻿@model DbTables.Child
+﻿@model DbTables.Subscriptions
+
 @{
 
-    var fullname = Model.Fname + " " + Model.Lname;
     var ModalId = Model.Id + "ch";
-    var formId = "deleteFormChild";
+    var formId = "deleteFormPlan";
+    var name = Model.Name;
 }
 <script type="x/template" id="@ModalId">
     <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
@@ -20,9 +21,9 @@
                         <div class="row">
                             <div class="col-md-3"></div>
                             <div class="col-md-3">
-                                @using (Ajax.BeginForm("ChildDelete", "HRManagement", new {id = Model.Id, ViewBag.childrenPage}, new AjaxOptions
+                                @using (Ajax.BeginForm("PlanDelete", "Donations", new {id = Model.Id, ViewBag.planPage}, new AjaxOptions
                                 {
-                                    UpdateTargetId = "updateChildren",
+                                    UpdateTargetId = "updatePlans",
                                     InsertionMode = InsertionMode.Replace,
                                     HttpMethod = "POST"
                                 }, new {@class = "form-horizontal", id = formId}))
@@ -45,7 +46,7 @@
 <div id="deletePrompt">
     <modal :show.sync="showModal">
 
-        <h5 slot="header" style="text-align: center;">Er du sikker på at du vil slette barnet @fullname? <br/><b>Dette kan ikke angres.</b></h5>
+        <h5 slot="header" style="text-align: center;">Er du sikker på at du vil slette planen @name? <br/><b>Dette kan ikke angres.</b></h5>
 
     </modal>
 </div>
@@ -66,46 +67,8 @@
             },
             submit: function() {
 
-                $('<input />')
-                    .attr('type', 'hidden')
-                    .attr('name', "search")
-                    .attr('value', $('#ChildsearchField').val())
-                    .appendTo('#@formId');
-
-                $('<input />')
-                    .attr('type', 'hidden')
-                    .attr('name', "active")
-                    .attr('value', $('#ChildActive input:radio:checked').val())
-                    .appendTo('#@formId');
-
-                $('<input />')
-                    .attr('type', 'hidden')
-                    .attr('name', 'order')
-                    .attr('value', $('#ChildOrderFilter input:radio:checked').val())
-                    .appendTo('#@formId');
-
-                $('<input />')
-                    .attr('type', 'hidden')
-                    .attr('name', 'filter')
-                    .attr('value', $("#ChildSelected option:selected").val())
-                    .appendTo('#@formId');
-
-                $('<input />')
-                    .attr('type', 'hidden')
-                    .attr('name', 'ChildDoB')
-                    .attr('value', $('#ChildDoB').val())
-                    .appendTo('#@formId');
-
-                $('<input />')
-                    .attr('type', 'hidden')
-                    .attr('name', 'ChildSponsor')
-                    .attr('value', $('#ChildSponsor').val())
-                    .appendTo('#@formId');
-
-
                 $("form#@formId").submit();
                 this.show = false;
-                vueChildDetails.showModal = false;
             }
         },
         ready: function() {

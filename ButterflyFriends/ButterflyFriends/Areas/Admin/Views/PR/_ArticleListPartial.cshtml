@@ -21,20 +21,22 @@
         </h3>
         <p>Sist lagret: @lastSave</p>
         @if (article.Published)
-                {
-            <p>Status: <b>Publisert</b></p>
-
+        {
+            <p>
+                Status: <b>Publisert</b>
+            </p>
         }
         else
         {
-            <p>Status: <b>Ikke publisert</b></p>
+            <p>
+                Status: <b>Ikke publisert</b>
+            </p>
         }
         @if (article.FirstPublisheDateTime != null)
-                {
-                    var firstPublish = article.FirstPublisheDateTime.Value.Day + ". " + article.FirstPublisheDateTime.Value.ToString("MMMM") + " " + article.FirstPublisheDateTime.Value.Year;
+        {
+            var firstPublish = article.FirstPublisheDateTime.Value.Day + ". " + article.FirstPublisheDateTime.Value.ToString("MMMM") + " " + article.FirstPublisheDateTime.Value.Year;
 
             <p>Først publisert: @firstPublish</p>
-
         }
         else
         {
@@ -42,12 +44,13 @@
         }
     </div>
 
-            <br />
+    <br/>
 }
-@if (Model.PageCount > 0) { 
+@if (Model.PageCount > 0)
+{
     <div class="row">
         <div class="col col-xs-4">
-            @if (@Model.PageCount != 0)
+            @if (Model.PageCount != 0)
             {
                 <p>Side @Model.PageNumber av @Model.PageCount</p>
             }
@@ -60,7 +63,7 @@
 
             <div id="Pager">
                 <ul class="pagination hidden-xs pull-right">
-                    @Html.PagedListPager(Model, page => Url.Action("ArticleList", "PR", new { page }))
+                    @Html.PagedListPager(Model, page => Url.Action("ArticleList", "PR", new {page}))
                 </ul>
             </div>
 

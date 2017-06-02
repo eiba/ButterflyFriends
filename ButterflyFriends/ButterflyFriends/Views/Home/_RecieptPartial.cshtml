@@ -3,34 +3,38 @@
 @if (Model.Twitter.Enabeled)
 {
     <script>
-window.twttr = (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0],
-    t = window.twttr || {};
-  if (d.getElementById(id)) return t;
-  js = d.createElement(s);
-  js.id = id;
-  js.src = "https://platform.twitter.com/widgets.js";
-  fjs.parentNode.insertBefore(js, fjs);
+        window.twttr = (function(d, s, id) {
+            var js,
+                fjs = d.getElementsByTagName(s)[0],
+                t = window.twttr || {};
+            if (d.getElementById(id)) return t;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://platform.twitter.com/widgets.js";
+            fjs.parentNode.insertBefore(js, fjs);
 
-  t._e = [];
-  t.ready = function(f) {
-    t._e.push(f);
-  };
+            t._e = [];
+            t.ready = function(f) {
+                t._e.push(f);
+            };
 
-  return t;
-}(document, "script", "twitter-wjs"));</script>
+            return t;
+        }(document, "script", "twitter-wjs"));
+    </script>
 }
 @if (Model.Facebook.Enabeled)
 {
     <div id="fb-root"></div>
-        <script>
-(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/nb_NO/sdk.js#xfbml=1&version=v2.9";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+    <script>
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "//connect.facebook.net/nb_NO/sdk.js#xfbml=1&version=v2.9";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
 }
 
 <h1 style="text-align: center;">Takk for ditt bidrag!</h1>
@@ -46,7 +50,7 @@ window.twttr = (function(d, s, id) {
 else
 {
     <h3>Kvitering på ditt abonnement #@Model.SubReciept.Id</h3>
-    <br />
+    <br/>
     <h4>Referansenummer: @Model.SubReciept.referenceId</h4>
     <h4>Du har valgt å donere @Model.SubReciept.Amount kroner i måneden til Butterfly Friends.</h4>
 }
@@ -55,7 +59,7 @@ else
 
 @if (Model.Facebook.Enabeled || Model.Twitter.Enabeled)
 {
-    <hr />
+    <hr/>
 
     <h5>Del på sosiale medier</h5>
 }
@@ -64,7 +68,9 @@ else
 
         @if (Model.Facebook.Enabeled)
         {
-            <div class="fb-share-button" data-href="@ViewBag.Share" data-layout="button" data-size="large" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Del</a></div>
+            <div class="fb-share-button" data-href="@ViewBag.Share" data-layout="button" data-size="large" data-mobile-iframe="true">
+                <a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Del</a>
+            </div>
         }
     </div>
 
@@ -72,13 +78,11 @@ else
 
         @if (Model.Twitter.Enabeled && !string.IsNullOrEmpty(Model.Twitter.UserName))
         {
-
             <a href="https://twitter.com/share" class="twitter-share-button" data-url="@ViewBag.Share" data-text="@ViewBag.ShareText" data-size="large" data-lang="no" data-via="@Model.Twitter.UserName"></a>
         }
         else if (Model.Twitter.Enabeled && string.IsNullOrEmpty(Model.Twitter.UserName))
         {
             <a href="https://twitter.com/share" class="twitter-share-button" data-url="@ViewBag.Share" data-text="@ViewBag.ShareText" data-size="large" data-lang="no"></a>
-
         }
     </div>
 </div>

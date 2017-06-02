@@ -5,54 +5,52 @@
 {
     if (Model.Enabeled)
     {
-        <button class="btn btn-danger" onclick="enableTerms(true)" style="float: right;  margin-right: 20px; margin-bottom: 5px;">Slå av <i class="fa fa-stop" aria-hidden="true"></i></button>
+        <button class="btn btn-danger" onclick="enableTerms(true)" style="float: right; margin-bottom: 5px; margin-right: 20px;">Slå av <i class="fa fa-stop" aria-hidden="true"></i></button>
     }
     else
     {
-        <button class="btn btn-success" onclick="enableTerms(false)" style="float: right; margin-right: 20px; margin-bottom: 5px;">Slå på <i class="fa fa-play" aria-hidden="true"></i></button>
+        <button class="btn btn-success" onclick="enableTerms(false)" style="float: right; margin-bottom: 5px; margin-right: 20px;">Slå på <i class="fa fa-play" aria-hidden="true"></i></button>
     }
 }
 <table class="table">
     <thead>
-        <tr>
-            <th>Velg fil</th>
-            <th>Filnavn</th>
-        </tr>
+    <tr>
+        <th>Velg fil</th>
+        <th>Filnavn</th>
+    </tr>
     </thead>
     <tbody>
-        <tr>
+    <tr>
 
-            <td>
-                <div class="row">
-                    <div class="col-md-2">
-                        <input type="file" id="file" accept=".pdf" />
-                    </div>
-                    <div class="col-md-10" style="padding-left: 40%; padding-right: 5%;">
-                        <div class="row">
-                            <button class="btn btn-primary" onclick="uploadPDF()" style="float: right; margin-left: 2px;">Last opp <span class="glyphicon glyphicon-open"></span></button>
+        <td>
+            <div class="row">
+                <div class="col-md-2">
+                    <input type="file" id="file" accept=".pdf"/>
+                </div>
+                <div class="col-md-10" style="padding-left: 40%; padding-right: 5%;">
+                    <div class="row">
+                        <button class="btn btn-primary" onclick="uploadPDF()" style="float: right; margin-left: 2px;">Last opp <span class="glyphicon glyphicon-open"></span></button>
 
-                            <div class="progress" id="prog" hidden>
-                                <div class="progress-bar progress-bar-striped active" id="bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-                                    0%
-                                </div>
+                        <div class="progress" id="prog" hidden>
+                            <div class="progress-bar progress-bar-striped active" id="bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                0%
                             </div>
                         </div>
                     </div>
-                    </div>
+                </div>
+            </div>
+        </td>
+
+        @if (Model.Terms == null)
+        {
+            <td>Ingen fil funnet</td>
+        }
+        else
+        {
+            <td>
+                <a href="~/File?id=@Model.Terms.FileId" target="_blank">@Model.Terms.FileName</a>
             </td>
-
-            @if (Model.Terms == null)
-            {
-                <td>Ingen fil funnet</td>
-
-            }
-            else
-            {
-                <td>
-                    <a href="~/File?id=@Model.Terms.FileId" target="_blank">@Model.Terms.FileName</a>
-                </td>
-            }
-        </tr>
+        }
+    </tr>
     </tbody>
 </table>
-

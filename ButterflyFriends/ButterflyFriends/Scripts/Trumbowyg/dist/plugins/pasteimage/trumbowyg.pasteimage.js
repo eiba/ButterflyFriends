@@ -8,34 +8,36 @@
  *          Website : alex-d.fr
  */
 
-(function ($) {
-    'use strict';
+(function($) {
+    "use strict";
 
-    $.extend(true, $.trumbowyg, {
-        plugins: {
-            pasteImage: {
-                init: function (trumbowyg) {
-                    trumbowyg.pasteHandlers.push(function (pasteEvent) {
-                        try {
-                            var items = (pasteEvent.originalEvent || pasteEvent).clipboardData.items,
-                                reader;
+    $.extend(true,
+        $.trumbowyg,
+        {
+            plugins: {
+                pasteImage: {
+                    init: function(trumbowyg) {
+                        trumbowyg.pasteHandlers.push(function(pasteEvent) {
+                            try {
+                                var items = (pasteEvent.originalEvent || pasteEvent).clipboardData.items,
+                                    reader;
 
-                            for (var i = items.length -1; i >= 0; i += 1) {
-                                if (items[i].type.match(/^image\//)) {
-                                    reader = new FileReader();
-                                    /* jshint -W083 */
-                                    reader.onloadend = function (event) {
-                                        trumbowyg.execCmd('insertImage', event.target.result, undefined, true);
-                                    };
-                                    /* jshint +W083 */
-                                    reader.readAsDataURL(items[i].getAsFile());
+                                for (var i = items.length - 1; i >= 0; i += 1) {
+                                    if (items[i].type.match(/^image\//)) {
+                                        reader = new FileReader();
+                                        /* jshint -W083 */
+                                        reader.onloadend = function(event) {
+                                            trumbowyg.execCmd("insertImage", event.target.result, undefined, true);
+                                        };
+                                        /* jshint +W083 */
+                                        reader.readAsDataURL(items[i].getAsFile());
+                                    }
                                 }
+                            } catch (c) {
                             }
-                        } catch (c) {
-                        }
-                    });
+                        });
+                    }
                 }
             }
-        }
-    });
+        });
 })(jQuery);

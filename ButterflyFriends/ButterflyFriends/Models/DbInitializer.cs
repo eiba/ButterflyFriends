@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Web;
 using System.Xml;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -14,19 +10,18 @@ using Microsoft.AspNet.Identity.EntityFramework;
 namespace ButterflyFriends.Models
 {
     /// <summary>
-    /// The database initializer. Here we seed the database with test data when we run the project.
-    /// The database is current DropCreateDatabaseIfModelChanges, so it drops and reseeds the database if any of the models/database tables change
+    ///     The database initializer. Here we seed the database with test data when we run the project.
+    ///     The database is current DropCreateDatabaseIfModelChanges, so it drops and reseeds the database if any of the
+    ///     models/database tables change
     /// </summary>
-    public class DbInitializer: DropCreateDatabaseIfModelChanges<ApplicationDbContext>
+    public class DbInitializer : DropCreateDatabaseIfModelChanges<ApplicationDbContext>
     {
-
         /// <summary>
-        /// The seed method for the database, running whenever the database is created.
+        ///     The seed method for the database, running whenever the database is created.
         /// </summary>
         /// <param name="db"> The database in which we will add values</param>
         protected override void Seed(ApplicationDbContext db)
         {
-
             // These two managers handle storage in the given db context for us
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
@@ -35,7 +30,7 @@ namespace ButterflyFriends.Models
             roleManager.Create(new IdentityRole("Admin")); // rights to view admin 
             roleManager.Create(new IdentityRole("Ansatt")); // The employee role
             roleManager.Create(new IdentityRole("Fadder")); //the sponsor role
-            roleManager.Create(new IdentityRole("Eier"));// The owner of the website
+            roleManager.Create(new IdentityRole("Eier")); // The owner of the website
 
             //Adding different test values
             var ownerAdress = new DbTables.Adresses
@@ -58,7 +53,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 0,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Daglig Leder", AccountNumber = 53355335 }
+                Employee = new DbTables.Employees {Position = "Daglig Leder", AccountNumber = 53355335}
             };
             userManager.Create(owner, "Password1.");
             userManager.AddToRole(owner.Id, "Eier");
@@ -227,7 +222,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 1,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Sideadministrator", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Sideadministrator", AccountNumber = 23452345}
             };
             userManager.Create(Admin1, "Password1.");
             userManager.AddToRole(Admin1.Id, "Admin");
@@ -241,7 +236,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees{Position = "Regnskapsfører",AccountNumber = 23452345}
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee1, "Password1.");
             userManager.AddToRole(employee1.Id, "Ansatt");
@@ -255,7 +250,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee2, "Password1.");
             userManager.AddToRole(employee2.Id, "Ansatt");
@@ -269,7 +264,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee3, "Password1.");
             userManager.AddToRole(employee3.Id, "Ansatt");
@@ -283,7 +278,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee4, "Password1.");
             userManager.AddToRole(employee4.Id, "Ansatt");
@@ -297,7 +292,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee5, "Password1.");
             userManager.AddToRole(employee5.Id, "Ansatt");
@@ -311,7 +306,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee6, "Password1.");
             userManager.AddToRole(employee6.Id, "Ansatt");
@@ -325,7 +320,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee7, "Password1.");
             userManager.AddToRole(employee7.Id, "Ansatt");
@@ -339,7 +334,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee8, "Password1.");
             userManager.AddToRole(employee8.Id, "Ansatt");
@@ -353,7 +348,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee9, "Password1.");
             userManager.AddToRole(employee9.Id, "Ansatt");
@@ -367,7 +362,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee10, "Password1.");
             userManager.AddToRole(employee10.Id, "Ansatt");
@@ -381,7 +376,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee11, "Password1.");
             userManager.AddToRole(employee11.Id, "Ansatt");
@@ -395,7 +390,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee12, "Password1.");
             userManager.AddToRole(employee12.Id, "Ansatt");
@@ -409,7 +404,7 @@ namespace ButterflyFriends.Models
                 RoleNr = 2,
                 IsEnabeled = true,
                 Phone = "96347584",
-                Employee = new DbTables.Employees { Position = "Regnskapsfører", AccountNumber = 23452345 }
+                Employee = new DbTables.Employees {Position = "Regnskapsfører", AccountNumber = 23452345}
             };
             userManager.Create(employee13, "Password1.");
             userManager.AddToRole(employee13.Id, "Ansatt");
@@ -420,33 +415,35 @@ namespace ButterflyFriends.Models
                 Fname = "Mohammed",
                 Lname = "Bali",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
+                isActive = true
             });
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Sasha",
                 Lname = "Dababa",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
+                isActive = true
             });
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Moduba",
                 Lname = "Badabi",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
-            }); db.Children.Add(new DbTables.Child
+                isActive = true
+            });
+            db.Children.Add(new DbTables.Child
             {
                 Fname = "Shika",
                 Lname = "Shinshi",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
-            }); db.Children.Add(new DbTables.Child
+                isActive = true
+            });
+            db.Children.Add(new DbTables.Child
             {
                 Fname = "Abdu",
                 Lname = "Bali",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
+                isActive = true
             });
 
             db.Children.Add(new DbTables.Child
@@ -454,49 +451,49 @@ namespace ButterflyFriends.Models
                 Fname = "Ekon",
                 Lname = "Isabis",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
+                isActive = true
             });
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Maha",
                 Lname = "Bahati",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
+                isActive = true
             });
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Kwame",
                 Lname = "Jafari",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
+                isActive = true
             });
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Uma",
                 Lname = "Maha",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
+                isActive = true
             });
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Lulu",
                 Lname = "Kalifa",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
+                isActive = true
             });
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Amare",
                 Lname = "Ode",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
+                isActive = true
             });
             db.Children.Add(new DbTables.Child
             {
                 Fname = "Asha",
                 Lname = "haji",
                 DoB = new DateTime(2005, 6, 19),
-                isActive = true,
+                isActive = true
             });
             //Add memberrequests
             db.MembershipRequests.Add(new DbTables.MembershipRequest
@@ -678,9 +675,10 @@ namespace ButterflyFriends.Models
                 Secret = "sk_test_ZiM1B72G3fozYRKlO4BdCHJO",
                 Enabeled = true
             });
-            var filePathProfile = @"c:\Users\eirik\Documents\Visual Studio stuff\Bachelor\ButterflyFriends\ButterflyFriends\ButterflyFriends\defaultUserBig.png";
-            byte[] profile = File.ReadAllBytes(filePathProfile);
-            var Profile = new DbTables.File()
+            var filePathProfile =
+                @"c:\Users\eirik\Documents\Visual Studio stuff\Bachelor\ButterflyFriends\ButterflyFriends\ButterflyFriends\defaultUserBig.png";
+            var profile = File.ReadAllBytes(filePathProfile);
+            var Profile = new DbTables.File
             {
                 FileName = "defalutUser.png",
                 FileType = DbTables.FileType.Thumbnail,
@@ -692,9 +690,10 @@ namespace ButterflyFriends.Models
             db.Files.Add(Profile);
 
             //add default profile picture for users
-            var filePathThumbNail = @"c:\Users\eirik\Documents\Visual Studio stuff\Bachelor\ButterflyFriends\ButterflyFriends\ButterflyFriends\defautUser.png";
-            byte[] thumbnail = File.ReadAllBytes(filePathThumbNail);
-            var Thumbnail = new DbTables.ThumbNail()
+            var filePathThumbNail =
+                @"c:\Users\eirik\Documents\Visual Studio stuff\Bachelor\ButterflyFriends\ButterflyFriends\ButterflyFriends\defautUser.png";
+            var thumbnail = File.ReadAllBytes(filePathThumbNail);
+            var Thumbnail = new DbTables.ThumbNail
             {
                 ThumbNailName = "defalutUser.png",
                 FileType = DbTables.FileType.Thumbnail,
@@ -708,12 +707,11 @@ namespace ButterflyFriends.Models
             db.SaveChanges();
 
 
-
             //This method is for when you want to make a database diagram, of the database.
             //Uncomment and change DropCreateDatabaseIfModelChanges to DropCreateDatabaseAlways
             //to run this method upon database creation.
-            
-            
+
+
             using (var ctx = new ApplicationDbContext())
             {
                 using (var writer = new XmlTextWriter(@"d:\Documents\Model.edmx", Encoding.Default))

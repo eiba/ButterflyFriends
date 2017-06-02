@@ -6,11 +6,11 @@
     {
         if (Model.Enabeled)
         {
-            <button class="btn btn-danger" onclick="enableStripe(false)" style="float: right;  margin-right: 20px; margin-bottom: 5px;">Slå av <i class="fa fa-stop" aria-hidden="true"></i></button>
+            <button class="btn btn-danger" onclick="enableStripe(false)" style="float: right; margin-bottom: 5px; margin-right: 20px;">Slå av <i class="fa fa-stop" aria-hidden="true"></i></button>
         }
         else
         {
-            <button class="btn btn-success" onclick="enableStripe(true)" style="float: right; margin-right: 20px; margin-bottom: 5px;">Slå på <i class="fa fa-play" aria-hidden="true"></i></button>
+            <button class="btn btn-success" onclick="enableStripe(true)" style="float: right; margin-bottom: 5px; margin-right: 20px;">Slå på <i class="fa fa-play" aria-hidden="true"></i></button>
         }
     }
     <div class="col-md-2">
@@ -22,31 +22,30 @@
 </div>
 <table class="table">
     <thead>
-        <tr>
-            <th>Secret</th>
-            <th>Public</th>
-        </tr>
+    <tr>
+        <th>Secret</th>
+        <th>Public</th>
+    </tr>
     </thead>
     <tbody>
-        <tr>
-            @if (string.IsNullOrWhiteSpace(Model.Secret))
-            {
-                <td>Ingen Secret Key funnet</td>
-            }
-            else
-            {
-                <td>@Model.Secret</td>
-            }
-            @if (string.IsNullOrWhiteSpace(Model.Public))
-            {
-                <td>Ingen Public Key funnet</td>
-
-            }
-            else
-            {
-                <td>@Model.Public</td>
-            }
-        </tr>
+    <tr>
+        @if (string.IsNullOrWhiteSpace(Model.Secret))
+        {
+            <td>Ingen Secret Key funnet</td>
+        }
+        else
+        {
+            <td>@Model.Secret</td>
+        }
+        @if (string.IsNullOrWhiteSpace(Model.Public))
+        {
+            <td>Ingen Public Key funnet</td>
+        }
+        else
+        {
+            <td>@Model.Public</td>
+        }
+    </tr>
     </tbody>
 </table>
 
@@ -87,12 +86,10 @@
         <h5 slot="body">
             @using (Ajax.BeginForm("EditStripe", "Various", new AjaxOptions
             {
-
                 UpdateTargetId = "updateStripe",
                 InsertionMode = InsertionMode.Replace,
-                HttpMethod = "POST",
-
-            }, new { @class = "form-horizontal", role = "form", id = "StripeForm" }))
+                HttpMethod = "POST"
+            }, new {@class = "form-horizontal", role = "form", id = "StripeForm"}))
             {
                 @Html.AntiForgeryToken()
 
@@ -100,28 +97,28 @@
                     @Html.ValidationSummary(true)
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Secret, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.Secret, new {@class = "control-label col-md-2"})
                         <div class="col-md-10">
                             <input name="Secret" value="@Model.Secret" class="form-control" id="model">
                             @Html.ValidationMessageFor(model => model.Secret)
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Public, new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.Public, new {@class = "control-label col-md-2"})
                         <div class="col-md-10">
                             <input name="Public" value="@Model.Public" class="form-control" id="model">
                             @Html.ValidationMessageFor(model => model.Public)
                         </div>
                     </div>
                 </div>
-
             }
         </h5>
     </modal>
 </div>
 <script>
     //stripe
-    Vue.component('modal', {
+    Vue.component('modal',
+    {
         template: '#StripeTemplate',
         props: {
             show: {
@@ -132,24 +129,25 @@
             }
         },
         methods: {
-            close: function () {
+            close: function() {
                 this.show = false;
             },
-            closeButton: function () {
+            closeButton: function() {
                 $("form#StripeForm").submit();
                 this.show = false;
 
             }
         },
-        ready: function () {
-            document.addEventListener("keydown", (e) => {
-                if (this.show && e.keyCode == 27) {
-                    this.close();
-                } else if (this.show && e.keyCode == 13) {
-                    e.preventDefault();
-                    this.closeButton();
-                }
-            });
+        ready: function() {
+            document.addEventListener("keydown",
+                (e) => {
+                    if (this.show && e.keyCode == 27) {
+                        this.close();
+                    } else if (this.show && e.keyCode == 13) {
+                        e.preventDefault();
+                        this.closeButton();
+                    }
+                });
         }
     });
 

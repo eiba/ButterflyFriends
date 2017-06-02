@@ -2,46 +2,47 @@
 
 <h5 id="CarouselError" class="text-danger">@ViewBag.Error</h5>
 <h5 id="CarouselSuccess" class="text-success">@ViewBag.Success</h5>
-@if(Model.CarouselItems != null){
-if (Model.Enabeled) {
-<button class="btn btn-danger" onclick="enableCarousel(false)" style="float: right;">Slå av <i class="fa fa-stop" aria-hidden="true"></i></button>
-}
-else
+@if (Model.CarouselItems != null)
 {
-    <button class="btn btn-success" onclick="enableCarousel(true)" style="float: right;">Slå på <i class="fa fa-play" aria-hidden="true"></i></button>
-
-}
+    if (Model.Enabeled)
+    {
+        <button class="btn btn-danger" onclick="enableCarousel(false)" style="float: right;">Slå av <i class="fa fa-stop" aria-hidden="true"></i></button>
+    }
+    else
+    {
+        <button class="btn btn-success" onclick="enableCarousel(true)" style="float: right;">Slå på <i class="fa fa-play" aria-hidden="true"></i></button>
+    }
 }
 <table class="table">
     <thead>
-        <tr>
-            <th>Velg fil</th>
-            <th>Filnavn</th>
-        </tr>
+    <tr>
+        <th>Velg fil</th>
+        <th>Filnavn</th>
+    </tr>
     </thead>
     <tbody>
-        <tr>
+    <tr>
 
-            <td>
-                <div class="row">
-                    <div class="col-md-2">
-                        <input type="file" id="carouselFile" accept="image/*,video/mp4,video/x-m4v,video/*" multiple/>
-                    </div>
-                    <div class="col-md-10" style="padding-left: 40%; padding-right: 5%;">
-                        <div class="row">
+        <td>
+            <div class="row">
+                <div class="col-md-2">
+                    <input type="file" id="carouselFile" accept="image/*,video/mp4,video/x-m4v,video/*" multiple/>
+                </div>
+                <div class="col-md-10" style="padding-left: 40%; padding-right: 5%;">
+                    <div class="row">
 
-                            <button class="btn btn-primary" onclick="uploadCarousel()" style="float: right; margin-left: 2px;">Last opp <span class="glyphicon glyphicon-open"></span></button>
-                            <div class="progress" id="carouselProg" hidden>
-                                <div class="progress-bar progress-bar-striped active" id="carouselBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                    0%
-                                </div>
+                        <button class="btn btn-primary" onclick="uploadCarousel()" style="float: right; margin-left: 2px;">Last opp <span class="glyphicon glyphicon-open"></span></button>
+                        <div class="progress" id="carouselProg" hidden>
+                            <div class="progress-bar progress-bar-striped active" id="carouselBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                0%
                             </div>
                         </div>
                     </div>
                 </div>
-            </td>
-            <td>
-                <ul>
+            </div>
+        </td>
+        <td>
+            <ul>
                 @if (Model.CarouselItems != null)
                 {
                     foreach (var image in Model.CarouselItems)
@@ -49,7 +50,7 @@ else
                         <il type="circle">
                             <a href="~/File?id=@image.FileId" target="_blank">@image.FileName</a>
                         </il>
-                        <br />
+                        <br/>
                     }
                 }
                 else
@@ -59,9 +60,7 @@ else
                     </li>
                 }
             </ul>
-            </td>
-</tr>
+        </td>
+    </tr>
     </tbody>
 </table>
-
-

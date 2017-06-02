@@ -1,24 +1,26 @@
 ﻿@using Microsoft.AspNet.Identity
 @if (Request.IsAuthenticated)
 {
-    using (Html.BeginForm("LogOff", "Account",new {area=""}, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right"}))
+    using (Html.BeginForm("LogOff", "Account", new {area = ""}, FormMethod.Post, new {id = "logoutForm", @class = "navbar-right"}))
     {
-    @Html.AntiForgeryToken()
+        @Html.AntiForgeryToken()
 
-    <ul class="nav navbar-nav navbar-right">
-        <li>
-                @Html.ActionLink("Logget inn som " + User.Identity.GetUserName(), "Index", "Manage", new { area = "" }, htmlAttributes: new { title = "Manage" })
-            @*<span class="glyphicon glyphicon-user" aria-hidden="true" style="color: white;"></span>*@
-        </li>
-        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off <i class="glyphicon glyphicon-log-out"></i></a></li>
-    </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                @Html.ActionLink("Logget inn som " + User.Identity.GetUserName(), "Index", "Manage", new {area = ""}, new {title = "Manage"})
+                @*<span class="glyphicon glyphicon-user" aria-hidden="true" style="color: white;"></span>*@
+            </li>
+            <li>
+                <a href="javascript:document.getElementById('logoutForm').submit()">Log off <i class="glyphicon glyphicon-log-out"></i></a>
+            </li>
+        </ul>
     }
 }
 else
 {
     <ul class="nav navbar-nav navbar-right">
         <li>
-            <a  href="@Url.Action("Login", "Account", new {area = ""})">
+            <a href="@Url.Action("Login", "Account", new {area = ""})">
                 Logg in
                 <i class="glyphicon glyphicon-log-in"></i>
             </a>

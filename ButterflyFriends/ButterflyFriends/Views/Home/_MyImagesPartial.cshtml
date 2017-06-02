@@ -20,27 +20,27 @@
 
 @foreach (var item in Model.Images)
 {
-    <img src="~/File?id=@item.FileId" class="ModalImg" id="@thumbId" onload="addHandelers(this)" width="260" imgnm="@imgId" />
+    <img src="~/File?id=@item.FileId" class="ModalImg" id="@thumbId" onload="addHandelers(this)" width="260" imgnm="@imgId"/>
 
     <div id="@modalId" class="modal">
         <span class="close" id="@closeId">&times;</span>
 
-            <i class="fa fa-chevron-left fa-5x leftArrow" id="@leftId" aria-hidden="true"></i>
+        <i class="fa fa-chevron-left fa-5x leftArrow" id="@leftId" aria-hidden="true"></i>
 
-            <i class="fa fa-chevron-right fa-5x rightArrow" id="@rightId" aria-hidden="true"></i>
-        
+        <i class="fa fa-chevron-right fa-5x rightArrow" id="@rightId" aria-hidden="true"></i>
+
         <div id="@divId" class="modal-content" style="position: relative;">
-            <img src="~/File?id=@item.FileId" class="" id="@imgId" onclick="event.stopPropagation();" style="position: relative; max-width: 1400px;" />
+            <img src="~/File?id=@item.FileId" class="" id="@imgId" onclick="event.stopPropagation();" style="max-width: 1400px; position: relative;"/>
 
             @foreach (var tagBox in item.Tags)
-                {
-                    var width = @tagBox.width + "px";
-                    var height = @tagBox.height + "px";
-                    var x = @tagBox.x + "px";
-                    var y = @tagBox.y + "px";
-                    var id = "box" + k;
-                <div class="showBox" title="@tagBox.Name" onclick="event.stopPropagation();" style="width: @width; height: @height; left: @x; top: @y; z-index: 9999;">
-                    <input class="tagInput" value="@tagBox.Name" disabled />
+            {
+                var width = tagBox.width + "px";
+                var height = tagBox.height + "px";
+                var x = tagBox.x + "px";
+                var y = tagBox.y + "px";
+                var id = "box" + k;
+                <div class="showBox" title="@tagBox.Name" onclick="event.stopPropagation();" style="height: @height; left: @x; top: @y; width: @width; z-index: 9999;">
+                    <input class="tagInput" value="@tagBox.Name" disabled/>
                 </div>
             }
 
@@ -54,9 +54,8 @@
                 }
                 @if (item.Caption != null)
                 {
-                    <br />
+                    <br/>
                     @item.Caption
-
                 }
             </p>
         </div>
@@ -72,7 +71,6 @@
     rightId = imgId + "r";
     thumbId = imgId + "t";
     captionId = imgId + "cp";
-
 }
 <script>
     ImageCount(@Model.Images.Count);

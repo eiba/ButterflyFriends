@@ -1,244 +1,253 @@
 ﻿@using ButterflyFriends.Areas.Admin.Controllers
-@using ButterflyFriends.Areas.Admin.Models.HRmanagementModels
 @using Microsoft.AspNet.Identity
 @using Microsoft.AspNet.Identity.EntityFramework
 @using PagedList.Mvc
 @model ButterflyFriends.Areas.Admin.Models.HRmanagementModels.EmployeeModel
-    @{
-        var count = 0;
-        HRManagementController HR = new HRManagementController();
-        var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-        ApplicationUser user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
-        var currentUserRoleNr = user.RoleNr;
-    }
-    <div class="row">
+@{
+    var count = 0;
+    var HR = new HRManagementController();
+    var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+    var user = userManager.FindByIdAsync(User.Identity.GetUserId()).Result;
+    var currentUserRoleNr = user.RoleNr;
+}
+<div class="row">
 
-        <div class="col-md-12">
-            <div class="panel panel-default panel-table">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col col-xs-6">
-                            <h3 class="panel-title listHeader"><b>Ansatte</b></h3>
-                        </div>
-                        <div class="col col-xs-6 text-right">
-                            
-    @using (Ajax.BeginForm("showEmployeeCreate", "HRManagement",new { employeePage = ViewBag.employeePage }, new AjaxOptions
-    {
-        UpdateTargetId = "Modal",
-        InsertionMode = InsertionMode.Replace,
-        HttpMethod = "GET"
-
-
-    }, new { @class = "form-horizontal" }))
-    {
-        <button class="btn btn-sm btn-primary btn-create">Lag ny</button>
-    }
-                            
-
-                        </div>
-                        <h5 class="text-success statusText">@ViewBag.Success</h5>
-                        <h5 class="text-danger statusText">@ViewBag.Error</h5>
+    <div class="col-md-12">
+        <div class="panel panel-default panel-table">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col col-xs-6">
+                        <h3 class="panel-title listHeader">
+                            <b>Ansatte</b>
+                        </h3>
                     </div>
-                </div>
-                <div class="panel-body">
-                    <div class="loader"></div>
-                    @*<div class="loader-mask"></div>*@
-                    <table class="table table-striped table-bordered table-list table-hover">
-                        
-                        <thead>
-                        <tr>
-                            <th><em class="fa fa-cog"></em></th>
-                            <th class="hidden-xs">ID</th>
-                            <th>Navn</th>
-                            <th>Email</th>
-                        </tr>
-                        </thead>
+                    <div class="col col-xs-6 text-right">
 
-                        <tbody>
-
-
-                        @foreach (var employee in Model.Employees)
+                        @using (Ajax.BeginForm("showEmployeeCreate", "HRManagement", new {ViewBag.employeePage}, new AjaxOptions
                         {
-
-                            var fullname = employee.Fname + " " + employee.Lname;
-                            var rowClass = "";
-                            if (ViewBag.Success != null && employee.Id == ViewBag.Id)
-                            {
-                                rowClass = "success";
-                            }
-                            else if (ViewBag.Error != null && employee.Id == ViewBag.Id)
-                            {
-                                rowClass = "danger";
-                            }
-                            <tr class="@rowClass">
-
-                                <td align="center">
-                                    <div class="row">
-                                        <div class="col-md-offset-2">
-                                            <div class="col-md-3">
-                                                @using (Ajax.BeginForm("showEmployeeDetails", "HRManagement", new {id = @employee.Id , employeePage = ViewBag.employeePage }, new AjaxOptions
-                                                {
-                                                    UpdateTargetId = "Modal",
-                                                    InsertionMode = InsertionMode.Replace,
-                                                    HttpMethod = "GET",
-
-
-                                                }, new {@class = "form-horizontal"}))
-                                                {
-
-                                                    <button class="btn btn-primary"><em class="fa fa-user-circle-o"></em></button>
-                                                }
-                                            </div>
-                                            <div class="col-md-3">
-                                                @if (currentUserRoleNr < employee.RoleNr || employee.Id == User.Identity.GetUserId()) { 
-                                                using (Ajax.BeginForm("showEmployeeEdit", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage}, new AjaxOptions
-                                                {
-                                                    UpdateTargetId = "Modal",
-                                                    InsertionMode = InsertionMode.Replace,
-                                                    HttpMethod = "GET",
-
-
-                                                }, new {@class = "form-horizontal"}))
-                                                {
-                                                    <button class="btn btn-default"><em class="fa fa-pencil"></em></button>
-                                                }
-                                                }
-                                            </div>
-                                            <div class="col-md-3">
-                                                @if (currentUserRoleNr < employee.RoleNr)
-                                                {
-                                                    if (employee.IsEnabeled)
-                                                     {
-                                                         using (Ajax.BeginForm("employeeDeactivate", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage}, new AjaxOptions
-                                                         {
-                                                             UpdateTargetId = "updateEmployees",
-                                                             InsertionMode = InsertionMode.Replace,
-                                                             HttpMethod = "POST",
-
-
-
-                                                         }, new {@class = "form-horizontal", id = count + "ed"}))
-                                                         {
-                                                             <button class="btn btn-danger" onclick="appendFilter(event, this)"><em class="fa fa-lock"></em></button>
-
-                                                         }
-                                                     }
-                                                     else
-                                                     {
-                                                         using (Ajax.BeginForm("employeeActivate", "HRManagement", new {id = @employee.Id, employeePage = ViewBag.employeePage}, new AjaxOptions
-                                                         {
-                                                             UpdateTargetId = "updateEmployees",
-                                                             InsertionMode = InsertionMode.Replace,
-                                                             HttpMethod = "POST",
-
-
-                                                         }, new {@class = "form-horizontal", id = count + "ea"}))
-                                                         {
-                                                             <button class="btn btn-success" onclick="appendFilter(event, this)"><em class="fa fa-unlock"></em></button>
-                                                         }
-                                                     }
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="hidden-xs">@employee.Id</td>
-                                <td>@fullname</td>
-                                <td>@employee.Email</td>
-                            </tr>
-                            count += 1;
+                            UpdateTargetId = "Modal",
+                            InsertionMode = InsertionMode.Replace,
+                            HttpMethod = "GET"
+                        }, new {@class = "form-horizontal"}))
+                        {
+                            <button class="btn btn-sm btn-primary btn-create">Lag ny</button>
                         }
 
-                        </tbody>
-                    </table>
 
+                    </div>
+                    <h5 class="text-success statusText">@ViewBag.Success</h5>
+                    <h5 class="text-danger statusText">@ViewBag.Error</h5>
                 </div>
-                <div class="panel-footer">
-                    <div class="row">
-                        <div class="col col-xs-4">
-                            @if (@Model.Employees.PageCount != 0)
-                            {
-                                <p>Side @Model.Employees.PageNumber av @Model.Employees.PageCount</p>
-                            }
-                            else
-                            {
-                                <p>Ingen Resultater</p>
-                            }
+            </div>
+            <div class="panel-body">
+                <div class="loader"></div>
+                @*<div class="loader-mask"></div>*@
+                <table class="table table-striped table-bordered table-list table-hover">
+
+                    <thead>
+                    <tr>
+                        <th>
+                            <em class="fa fa-cog"></em>
+                        </th>
+                        <th class="hidden-xs">ID</th>
+                        <th>Navn</th>
+                        <th>Email</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+
+                    @foreach (var employee in Model.Employees)
+                    {
+                        var fullname = employee.Fname + " " + employee.Lname;
+                        var rowClass = "";
+                        if ((ViewBag.Success != null) && (employee.Id == ViewBag.Id))
+                        {
+                            rowClass = "success";
+                        }
+                        else if ((ViewBag.Error != null) && (employee.Id == ViewBag.Id))
+                        {
+                            rowClass = "danger";
+                        }
+                        <tr class="@rowClass">
+
+                            <td align="center">
+                                <div class="row">
+                                    <div class="col-md-offset-2">
+                                        <div class="col-md-3">
+                                            @using (Ajax.BeginForm("showEmployeeDetails", "HRManagement", new {id = employee.Id, ViewBag.employeePage}, new AjaxOptions
+                                            {
+                                                UpdateTargetId = "Modal",
+                                                InsertionMode = InsertionMode.Replace,
+                                                HttpMethod = "GET"
+                                            }, new {@class = "form-horizontal"}))
+                                            {
+                                                <button class="btn btn-primary">
+                                                    <em class="fa fa-user-circle-o"></em>
+                                                </button>
+                                            }
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if ((currentUserRoleNr < employee.RoleNr) || (employee.Id == User.Identity.GetUserId()))
+                                            {
+                                                using (Ajax.BeginForm("showEmployeeEdit", "HRManagement", new {id = employee.Id, ViewBag.employeePage}, new AjaxOptions
+                                                {
+                                                    UpdateTargetId = "Modal",
+                                                    InsertionMode = InsertionMode.Replace,
+                                                    HttpMethod = "GET"
+                                                }, new {@class = "form-horizontal"}))
+                                                {
+                                                    <button class="btn btn-default">
+                                                        <em class="fa fa-pencil"></em>
+                                                    </button>
+                                                }
+                                            }
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if (currentUserRoleNr < employee.RoleNr)
+                                            {
+                                                if (employee.IsEnabeled)
+                                                {
+                                                    using (Ajax.BeginForm("employeeDeactivate", "HRManagement", new {id = employee.Id, ViewBag.employeePage}, new AjaxOptions
+                                                    {
+                                                        UpdateTargetId = "updateEmployees",
+                                                        InsertionMode = InsertionMode.Replace,
+                                                        HttpMethod = "POST"
+                                                    }, new {@class = "form-horizontal", id = count + "ed"}))
+                                                    {
+                                                        <button class="btn btn-danger" onclick="appendFilter(event, this)">
+                                                            <em class="fa fa-lock"></em>
+                                                        </button>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    using (Ajax.BeginForm("employeeActivate", "HRManagement", new {id = employee.Id, ViewBag.employeePage}, new AjaxOptions
+                                                    {
+                                                        UpdateTargetId = "updateEmployees",
+                                                        InsertionMode = InsertionMode.Replace,
+                                                        HttpMethod = "POST"
+                                                    }, new {@class = "form-horizontal", id = count + "ea"}))
+                                                    {
+                                                        <button class="btn btn-success" onclick="appendFilter(event, this)">
+                                                            <em class="fa fa-unlock"></em>
+                                                        </button>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="hidden-xs">@employee.Id</td>
+                            <td>@fullname</td>
+                            <td>@employee.Email</td>
+                        </tr>
+                        count += 1;
+                    }
+
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col col-xs-4">
+                        @if (Model.Employees.PageCount != 0)
+                        {
+                            <p>Side @Model.Employees.PageNumber av @Model.Employees.PageCount</p>
+                        }
+                        else
+                        {
+                            <p>Ingen Resultater</p>
+                        }
+                    </div>
+                    <div class="col col-xs-8">
+
+                        <div id="employeePager">
+                            <ul class="pagination hidden-xs pull-right">
+                                @Html.PagedListPager(Model.Employees, employeePage => Url.Action("EmployeeList", "HRManagement", new {employeePage}))
+                            </ul>
                         </div>
-                        <div class="col col-xs-8">
-                           
-                            <div id="employeePager">
-                                <ul class="pagination hidden-xs pull-right">
-                                    @Html.PagedListPager(Model.Employees, employeePage => Url.Action("EmployeeList", "HRManagement", new { employeePage }))
-                                </ul>
-</div>
-                                
-</div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 <script>
-    function appendFilter(e,b) {
+    function appendFilter(e, b) {
         e.preventDefault();
         var formId = b.parentNode.id;
-        
-        $('<input />').attr('type', 'hidden')
-                .attr('name', "search")
-                .attr('value', $('#EmployeesearchField').val())
-                .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-        .attr('name', "active")
-        .attr('value', $('#employeeActive input:radio:checked').val())
-        .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', "search")
+            .attr('value', $('#EmployeesearchField').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'order')
-       .attr('value', $('#EmployeeOrderFilter input:radio:checked').val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', "active")
+            .attr('value', $('#employeeActive input:radio:checked').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'filter')
-       .attr('value', $("#EmployeeSelected option:selected").val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'order')
+            .attr('value', $('#EmployeeOrderFilter input:radio:checked').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'employeePhone')
-       .attr('value', $('#employeePhone').val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'filter')
+            .attr('value', $("#EmployeeSelected option:selected").val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'EmployeeStreetadress')
-       .attr('value', $('#EmployeeStreetadress').val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'employeePhone')
+            .attr('value', $('#employeePhone').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-                   .attr('name', 'EmployeeZip')
-                   .attr('value', $('#EmployeeZip').val())
-                   .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'EmployeeStreetadress')
+            .attr('value', $('#EmployeeStreetadress').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-                   .attr('name', 'EmployeeCounty')
-                   .attr('value', $('#EmployeeCounty').val())
-                   .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'EmployeeZip')
+            .attr('value', $('#EmployeeZip').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'EmployeeCity')
-       .attr('value', $('#EmployeeCity').val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'EmployeeCounty')
+            .attr('value', $('#EmployeeCounty').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'EmployeePosition')
-       .attr('value', $('#EmployeePosition').val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'EmployeeCity')
+            .attr('value', $('#EmployeeCity').val())
+            .appendTo('#' + formId);
 
-        $('<input />').attr('type', 'hidden')
-       .attr('name', 'employeeAccountNumber')
-       .attr('value', $('#employeeAccountNumber').val())
-       .appendTo('#' + formId);
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'EmployeePosition')
+            .attr('value', $('#EmployeePosition').val())
+            .appendTo('#' + formId);
+
+        $('<input />')
+            .attr('type', 'hidden')
+            .attr('name', 'employeeAccountNumber')
+            .attr('value', $('#employeeAccountNumber').val())
+            .appendTo('#' + formId);
 
         $("form#" + formId).submit();
     }

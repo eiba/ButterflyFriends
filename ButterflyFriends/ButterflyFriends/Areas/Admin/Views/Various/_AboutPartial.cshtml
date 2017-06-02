@@ -1,5 +1,5 @@
 ﻿@model DbTables.Info
-    
+
 <div class="row">
     <h5 id="AboutError" class="text-danger" style="margin-left: 20px">@ViewBag.Error</h5>
     <h5 id="AboutSuccess" class="text-success" style="margin-left: 20px">@ViewBag.Success</h5>
@@ -21,9 +21,8 @@
         @if (Model.Adress == null)
         {
             <td>Ingen adresse lagt til</td>
-
         }
-        else if (string.IsNullOrEmpty(Model.Adress.StreetAdress) && string.IsNullOrEmpty(Model.Adress.City) && string.IsNullOrEmpty(Model.Adress.County) && Model.Adress.PostCode == null)
+        else if (string.IsNullOrEmpty(Model.Adress.StreetAdress) && string.IsNullOrEmpty(Model.Adress.City) && string.IsNullOrEmpty(Model.Adress.County) && (Model.Adress.PostCode == null))
         {
             <td>Ingen adresse lagt til</td>
         }
@@ -36,11 +35,11 @@
                         <dt>Gateadresse:</dt>
 
                         <dd>@Model.Adress.StreetAdress</dd>
-            }
+                    }
 
                     @if (Model.Adress.PostCode != null)
                     {
-                    <dt>Postkode:</dt>
+                        <dt>Postkode:</dt>
 
                         <dd>@Model.Adress.PostCode</dd>
                     }
@@ -50,7 +49,7 @@
                         <dt>Kommune:</dt>
                         <dd>@Model.Adress.City</dd>
                     }
-                    
+
                     @if (!string.IsNullOrEmpty(Model.Adress.County))
                     {
                         <dt>Fylke:</dt>
@@ -72,7 +71,6 @@
                     {
                         <dt>Tlf:</dt>
                         <dd>@Model.Phone</dd>
-
                     }
 
                     @if (Model.Email != null)
@@ -90,36 +88,35 @@
 </table>
 @if (!string.IsNullOrEmpty(Model.About))
 {
-    <hr style="border: 1px solid gray" />
+    <hr style="border: 1px solid gray"/>
     <h4 style="text-align: center">Om oss</h4>
     <p style="text-align: center">Tekst som vises på "om oss" siden</p>
-    <br />
+    <br/>
     <div class="AboutText">
         <p>@Model.About</p>
     </div>
 }
 @if (!string.IsNullOrEmpty(Model.DonateText))
 {
-    <hr style="border: 1px solid gray" />
+    <hr style="border: 1px solid gray"/>
     <h4 style="text-align: center">Om donasjoner</h4>
     <p style="text-align: center">Tekst som vises på ved siden av donasjonsfunksjonen</p>
     <br/>
     <div class="AboutText">
         <p>@Model.DonateText</p>
     </div>
-
 }
 @if (!string.IsNullOrEmpty(Model.MembershipText))
 {
-    <hr style="border: 1px solid gray" />
+    <hr style="border: 1px solid gray"/>
     <h4 style="text-align: center">Om medlemskap</h4>
     <p style="text-align: center">Tekst som vises ved siden av medlemskapsfunksjonen</p>
-    <br />
+    <br/>
     <div class="AboutText">
         <p>@Model.MembershipText</p>
     </div>
 }
-<br />
+<br/>
 <script type="x/template" id="AboutTemplate">
     <div class="modal-mask" v-on:click="close" v-show="show" transition="modal">
         <div class="modal-wrapper">
@@ -156,31 +153,29 @@
         <h5 slot="body">
             @using (Ajax.BeginForm("EditAbout", "Various", new AjaxOptions
             {
-
                 UpdateTargetId = "AboutUpdate",
                 InsertionMode = InsertionMode.Replace,
-                HttpMethod = "POST",
-
-            }, new { @class = "form-horizontal", role = "form", id = "AboutForm" }))
+                HttpMethod = "POST"
+            }, new {@class = "form-horizontal", role = "form", id = "AboutForm"}))
             {
                 @Html.AntiForgeryToken()
 
                 <div class="form-horizontal">
-                    
+
                     <h4 style="text-align: center">Kontakt</h4>
                     <hr style="border: 1px solid gray"/>
-                    <br />
+                    <br/>
                     <div class="row">
                         <div class="col-md-3"></div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-2" })
+                                @Html.LabelFor(model => model.Email, new {@class = "control-label col-md-2"})
                                 <div class="col-md-10">
                                     <input name="Email" value="@Model.Email" class="form-control" id="">
                                 </div>
                             </div>
                             <div class="form-group">
-                                @Html.LabelFor(model => model.Phone, new { @class = "control-label col-md-2" })
+                                @Html.LabelFor(model => model.Phone, new {@class = "control-label col-md-2"})
                                 <div class="col-md-10">
                                     <input name="Phone" value="@Model.Phone" class="form-control" id="">
                                 </div>
@@ -190,7 +185,7 @@
                     </div>
                     <br/>
                     <h4 style="text-align: center;">Adresse</h4>
-                    <hr style="border: 1px solid gray" />
+                    <hr style="border: 1px solid gray"/>
                     <br/>
                     <div class="row">
                         <div class="col-md-3"></div>
@@ -199,25 +194,25 @@
                             @if (Model.Adress != null)
                             {
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.Adress.StreetAdress, new { @class = "control-label col-md-2" })
+                                    @Html.LabelFor(model => model.Adress.StreetAdress, new {@class = "control-label col-md-2"})
                                     <div class="col-md-10">
                                         <input name="Adress.StreetAdress" value="@Model.Adress.StreetAdress" class="form-control" id="">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.Adress.PostCode, new { @class = "control-label col-md-2" })
+                                    @Html.LabelFor(model => model.Adress.PostCode, new {@class = "control-label col-md-2"})
                                     <div class="col-md-10">
                                         <input name="Adress.PostCode" value="@Model.Adress.PostCode" type="number" class="form-control" id="">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.Adress.City, new { @class = "control-label col-md-2" })
+                                    @Html.LabelFor(model => model.Adress.City, new {@class = "control-label col-md-2"})
                                     <div class="col-md-10">
                                         <input name="Adress.City" value="@Model.Adress.City" class="form-control" id="">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.Adress.County, new { @class = "control-label col-md-2" })
+                                    @Html.LabelFor(model => model.Adress.County, new {@class = "control-label col-md-2"})
                                     <div class="col-md-10">
                                         <input name="Adress.County" value="@Model.Adress.County" class="form-control" id="">
                                     </div>
@@ -226,25 +221,25 @@
                             else
                             {
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.Adress.StreetAdress, new { @class = "control-label col-md-2" })
+                                    @Html.LabelFor(model => model.Adress.StreetAdress, new {@class = "control-label col-md-2"})
                                     <div class="col-md-10">
                                         <input name="Adress.StreetAdress" value="" class="form-control" id="">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.Adress.PostCode, new { @class = "control-label col-md-2" })
+                                    @Html.LabelFor(model => model.Adress.PostCode, new {@class = "control-label col-md-2"})
                                     <div class="col-md-10">
                                         <input name="Adress.PostCode" value="" type="number" class="form-control" id="">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.Adress.City, new { @class = "control-label col-md-2" })
+                                    @Html.LabelFor(model => model.Adress.City, new {@class = "control-label col-md-2"})
                                     <div class="col-md-10">
                                         <input name="Adress.City" value="" class="form-control" id="">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.Adress.County, new { @class = "control-label col-md-2" })
+                                    @Html.LabelFor(model => model.Adress.County, new {@class = "control-label col-md-2"})
                                     <div class="col-md-10">
                                         <input name="Adress.County" value="" class="form-control" id="">
                                     </div>
@@ -253,28 +248,27 @@
                         </div>
                         <div class="col-md-3"></div>
                     </div>
-                    <br />
+                    <br/>
                     <h4 style="text-align: center;">Om oss</h4>
                     <p style="text-align: center;">Dette er tekst som vises på "om oss siden"</p>
-                    <hr style="border: 1px solid gray" />
-                    <br />
-                    <textarea class="form-control" Name="About" style="max-width: 100%; height: 200px">@Model.About</textarea>
-                    
-                    <br />
+                    <hr style="border: 1px solid gray"/>
+                    <br/>
+                    <textarea class="form-control" Name="About" style="height: 200px; max-width: 100%;">@Model.About</textarea>
+
+                    <br/>
                     <h4 style="text-align: center;">Om donasjoner</h4>
                     <p style="text-align: center;">Dette er tekst som vises ved siden av donasjonene</p>
-                    <hr style="border: 1px solid gray" />
-                    <br />
-                    <textarea class="form-control" Name="DonateText" style="max-width: 100%; height: 200px">@Model.DonateText</textarea>
-                    
-                    <br />
+                    <hr style="border: 1px solid gray"/>
+                    <br/>
+                    <textarea class="form-control" Name="DonateText" style="height: 200px; max-width: 100%;">@Model.DonateText</textarea>
+
+                    <br/>
                     <h4 style="text-align: center;">Om medlemskap</h4>
                     <p style="text-align: center;">Dette er tekst som vises ved siden av "bli medlem" funksjonaliteten</p>
-                    <hr style="border: 1px solid gray" />
-                    <br />
-                    <textarea class="form-control" Name="MembershipText" style="max-width: 100%; height: 200px">@Model.MembershipText</textarea>
+                    <hr style="border: 1px solid gray"/>
+                    <br/>
+                    <textarea class="form-control" Name="MembershipText" style="height: 200px; max-width: 100%;">@Model.MembershipText</textarea>
                 </div>
-
             }
         </h5>
     </modal>
@@ -282,7 +276,8 @@
 
 <script>
     //about
-    Vue.component('modal', {
+    Vue.component('modal',
+    {
         template: '#AboutTemplate',
         props: {
             show: {
@@ -293,21 +288,22 @@
             }
         },
         methods: {
-            close: function () {
+            close: function() {
                 this.show = false;
             },
-            closeButton: function () {
+            closeButton: function() {
                 $("form#AboutForm").submit();
                 this.show = false;
 
             }
         },
-        ready: function () {
-            document.addEventListener("keydown", (e) => {
-                if (this.show && e.keyCode == 27) {
-                    this.close();
-                }
-            });
+        ready: function() {
+            document.addEventListener("keydown",
+                (e) => {
+                    if (this.show && e.keyCode == 27) {
+                        this.close();
+                    }
+                });
         }
     });
 

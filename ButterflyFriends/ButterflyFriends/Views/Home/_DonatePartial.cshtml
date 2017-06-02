@@ -2,38 +2,226 @@
 @model ButterflyFriends.Models.Donations
 
 <h1 style="text-align: center;">Støtt oss</h1>
-<hr style="border: 1px solid grey" />
+<hr style="border: 1px solid grey"/>
 <h4 style="text-align: center;">Alle donasjoner hjelper å redde liv!</h4>
 @if (!string.IsNullOrEmpty(Model.DonationText))
-            {
-                <br />
+{
+    <br/>
     <p>@Model.DonationText</p>
 }
-<hr style="border: 1px solid grey" />
+<hr style="border: 1px solid grey"/>
 <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#DonateOnce">Donér en gang</a></li>
-    <li><a data-toggle="tab" href="#DonateSubscription">Donér månedlig</a></li>
+    <li class="active">
+        <a data-toggle="tab" href="#DonateOnce">Donér en gang</a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#DonateSubscription">Donér månedlig</a>
+    </li>
 </ul>
 
 <div class="tab-content">
-    <div id="DonateOnce" class="tab-pane fade in active">
+<div id="DonateOnce" class="tab-pane fade in active">
 
-        <ul class="nav nav-tabs tabOnce" style="white-space: normal; visibility: hidden">
-            <li class="active"><a data-toggle="tab" href="#DonateOnceAmount"></a></li>
-            <li><a data-toggle="tab" href="#DonateOnceContact"></a></li>
-            <li><a data-toggle="tab" href="#DonateOncePayment"></a></li>
+    <ul class="nav nav-tabs tabOnce" style="visibility: hidden; white-space: normal;">
+        <li class="active">
+            <a data-toggle="tab" href="#DonateOnceAmount"></a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#DonateOnceContact"></a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#DonateOncePayment"></a>
+        </li>
 
-        </ul>
+    </ul>
 
-        <div class="tab-content" >
-            <div id="DonateOnceAmount" class="tab-pane fade in active">
-                @*Donate onece amount*@
-                <h3 style="text-align: center;">Hvor mye ønsker du å donere?</h3>
-                <h5 class="text-danger" style="text-align: center;" id="OnceAmountError"></h5>
+    <div class="tab-content">
+        <div id="DonateOnceAmount" class="tab-pane fade in active">
+            @*Donate onece amount*@
+            <h3 style="text-align: center;">Hvor mye ønsker du å donere?</h3>
+            <h5 class="text-danger" style="text-align: center;" id="OnceAmountError"></h5>
+            <div class="row">
+                <div class="col-lg-offset-3 col-md-7">
+                    @*<h5 for="fname">Hvor mye vil du bidra med? </h5><br /><br />*@
+                    <input type="number" class="Amount form-control" placeholder="Menge i kr" id="AmountOnce"><label style="font-size: 35px;"> kr</label>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-4">
+                    <p>Steg 1 av 3</p>
+                </div>
+                <div class="col-md-8">
+                    <a class="btn btn-primary btnNext" id="OnceAmountNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                </div>
+
+            </div>
+
+        </div>
+        @*------*@
+
+
+        <div id="DonateOnceContact" class="tab-pane fade">
+            @*Donate one contact*@
+            <h3 style="text-align: center;">Kontaktinformasjon</h3>
+            <p style="text-align: center;">Det er opp til deg hvor mye informasjon du vil gi</p>
+            <br/>
+            <h5 class="text-danger" id="OnceContactError" style="white-space: pre-wrap"></h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <label><input type="checkbox" onclick="checkAnonymous()" id="OnceAnonymous"> Jeg ønsker å være anononym.</label>
+                </div>
+                <div class="col-md-6">
+                    @if (User.Identity.GetUserId() != null)
+                    {
+                        <label><input type="checkbox" onclick="checkUser()" id="OnceUser">Link donasjonen til min bruker.</label>
+                    }
+                </div>
+            </div>
+            <br/>
+            <label class="control-label" for="OnceDescription">Donasjonsmelding:</label>
+            <textarea class="form-control" id="OnceDescription" style="max-width: 100%; min-width: 100%;"></textarea>
+
+            <br/>
+            <div id="onceContact">
+                <hr/>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label DonateContactLabel" for="OnceEmail">E-post: </label><br/>
+                        <label class="control-label DonateContactLabel" for="OnceName">Navn: </label>
+                        <br/>
+                        <label class="control-label DonateContactLabel" for="OncePhone">Telefon: </label>
+                        <br/>
+                        <label class="control-label DonateContactLabel" for="OnceStreet">Gateadresse: </label>
+                        <br/>
+                        <label class="control-label DonateContactLabel" for="OncePostCode">Postkode: </label>
+                        <br/>
+                        <label class="control-label DonateContactLabel" for="OnceCity">Kommune: </label>
+                        <br/>
+                        <label class="control-label DonateContactLabel" for="OnceBirthNumber">Fødselsnummer: </label>
+
+                    </div>
+                    <div class="col-md-8">
+                        <input class="form-control DonateContact" id="OnceEmail" type="email" placeholder="navn@example.com"/>
+                        <input class="form-control DonateContact" id="OnceName" type="text" placeholder="Fornavn Etternavn"/>
+                        <input class="form-control DonateContact" id="OncePhone" type="text" placeholder="" maxlength="12"/>
+                        <input class="form-control DonateContact" id="OnceStreet" type="text" placeholder=""/>
+                        <input class="form-control DonateContact" id="OncePostCode" type="text" placeholder="" maxlength="4"/>
+                        <input class="form-control DonateContact" id="OnceCity" type="text" placeholder=""/>
+                        <input class="form-control DonateContact" id="OnceBirthNumber" type="text" placeholder="" title="Ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500." maxlength="11"/>
+
+                    </div>
+
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-4">
+                    <p>Steg 2 av 3</p>
+                </div>
+                <div class="col-md-8">
+
+                    <div class="btn-group" style="float: right; line-height: 0px;">
+                        <a class="btn btn-primary btnPrevious" onclick="PrevTab()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
+                        <a class="btn btn-primary btnNext" id="OnceContactNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+
+            </div>
+            @*------*@
+
+
+        </div>
+        <div id="DonateOncePayment" class="tab-pane fade">
+            <h3 style="text-align: center;">Betalingsinformasjon</h3>
+            <h5 class="text-danger" id="OncePaymentError" style="white-space: pre-wrap"></h5>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label" for="OnceCardNmber">Kortnummer (VISA / Mastercard)</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
+                                    <input class="form-control" id="OnceCardNmber" type="text" placeholder="0000 0000 0000 0000" maxlength="19"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label class="control-label" for="OnceExpiration">Utløper (MM/ÅÅ)</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                    <input class="form-control" id="OnceExpiration" type="text" placeholder="00/00" maxlength="5"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label class="control-label" for="OnceCvc">CVC</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-check"></i></span>
+                                    <input class="form-control" id="OnceCvc" type="text" placeholder="000" maxlength="3"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <em>Din betalingsinformasjon blir ikke sendt til oss, og behandles utelukkende av <a href="https://stripe.com/" target="_blank">Stripe</a>.</em>
+                    <button class="btn btn-success btn-block" onclick="OnceDonate()">Donér penger</button>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-4">
+                    <p>Steg 3 av 3</p>
+                </div>
+                <div class="col-md-8">
+                    <a class="btn btn-primary btnPrevious" onclick="PrevTab()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<div id="DonateSubscription" class="tab-pane fade">
+    <ul class="nav nav-tabs tabSub" style="visibility: hidden; white-space: normal;">
+        <li class="active">
+            <a data-toggle="tab" href="#DonateSubAmount"></a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#DonateSubContact"></a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#DonateSubPayment"></a>
+        </li>
+
+    </ul>
+
+    <div class="tab-content">
+        <div id="DonateSubAmount" class="tab-pane fade in active">
+            @if (Model.Subscriptions.Any())
+            {
+                @*Donate sub amount*@
+                <h3 style="text-align: center;">Hvor mye ønsker du å donere hver måned?</h3>
+                <h5 class="text-danger" style="text-align: center;" id="SubAmountError"></h5>
                 <div class="row">
                     <div class="col-lg-offset-3 col-md-7">
-                        @*<h5 for="fname">Hvor mye vil du bidra med? </h5><br /><br />*@
-                        <input type="number" class="Amount form-control" placeholder="Menge i kr" id="AmountOnce"><label style="font-size: 35px;"> kr</label>
+                        <div class="SubSelect">
+                            @foreach (var sub in Model.Subscriptions)
+                            {
+                                <div class="SubSelect-info" onclick="subAmount(@sub.Id)">
+                                    <input type="radio" name="radio" value="@sub.Id" id="@sub.Id"/>
+                                    <label class="SubLabel" for="@sub.Id">@sub.Amount kroner</label>
+                                </div>
+                            }
+
+                        </div>
+
                     </div>
                 </div>
                 <hr/>
@@ -42,322 +230,150 @@
                         <p>Steg 1 av 3</p>
                     </div>
                     <div class="col-md-8">
-                        <a class="btn btn-primary btnNext" id="OnceAmountNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+
+                        <a class="btn btn-primary btnNext" id="SubAmountNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+
                     </div>
 
+                </div>
+            }
+            else
+            {
+                <br/>
+                <p style="text-align: center;">Ingen donasjonsplaner konfigurert for øyeblikket.</p>
+            }
+        </div>
+        @*------*@
+
+
+        <div id="DonateSubContact" class="tab-pane fade">
+            @*Donate sub contact*@
+            <h3 style="text-align: center;">Kontaktinformasjon</h3>
+            <p style="text-align: center;">Det er opp til deg hvor mye informasjon du vil gi</p>
+            <br/>
+            <h5 class="text-danger" id="SubContactError" style="white-space: pre-wrap"></h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <label><input type="checkbox" onclick="checkSubAnonymous()" id="SubAnonymous"> Jeg ønsker å være anononym.</label>
+                </div>
+                <div class="col-md-6">
+                    @if (User.Identity.GetUserId() != null)
+                    {
+                        <label><input type="checkbox" onclick="checkSubUser()" id="SubUser">Link donasjonen til min bruker.</label>
+                    }
+                </div>
+            </div>
+            <br/>
+            <label class="control-label" for="SubDescription">Donasjonsmelding:</label>
+            <textarea class="form-control" id="SubDescription" style="max-width: 100%; min-width: 100%;"></textarea>
+
+            <br/>
+            <div id="SubContact">
+                <hr/>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label DonateContactLabel" for="SubEmail">E-post: </label><br/>
+                        <label class="control-label DonateContactLabel" for="SubName">Navn: </label>
+                        <br/>
+                        <label class="control-label DonateContactLabel" for="SubPhone">Telefon: </label>
+                        <br/>
+                        <label class="control-label DonateContactLabel" for="SubStreet">Gateadresse: </label>
+                        <br/>
+                        <label class="control-label DonateContactLabel" for="SubPostCode">Postkode: </label>
+                        <br/>
+                        <label class="control-label DonateContactLabel" for="SubCity">Kommune: </label>
+                        <br/>
+                        <label class="control-label DonateContactLabel" for="SubBirthNumber">Fødselsnummer: </label>
+
+                    </div>
+                    <div class="col-md-8">
+                        <input class="form-control DonateContact" id="SubEmail" type="email" placeholder="navn@example.com"/>
+                        <input class="form-control DonateContact" id="SubName" type="text" placeholder="Fornavn Etternavn"/>
+                        <input class="form-control DonateContact" id="SubPhone" type="text" placeholder="" maxlength="12"/>
+                        <input class="form-control DonateContact" id="SubStreet" type="text" placeholder=""/>
+                        <input class="form-control DonateContact" id="SubPostCode" type="text" placeholder="" maxlength="4"/>
+                        <input class="form-control DonateContact" id="SubCity" type="text" placeholder=""/>
+                        <input class="form-control DonateContact" id="SubBirthNumber" type="text" placeholder="" title="Ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500." maxlength="11"/>
+
+                    </div>
+
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-4">
+                    <p>Steg 2 av 3</p>
+                </div>
+                <div class="col-md-8">
+
+                    <div class="btn-group" style="float: right; line-height: 0px;">
+                        <a class="btn btn-primary btnPrevious" onclick="PrevTabSub()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
+                        <a class="btn btn-primary btnNext" id="SubContactNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                    </div>
                 </div>
 
             </div>
             @*------*@
 
 
-            <div id="DonateOnceContact" class="tab-pane fade">
-                @*Donate one contact*@
-                <h3 style="text-align: center;">Kontaktinformasjon</h3>
-                <p style="text-align: center;">Det er opp til deg hvor mye informasjon du vil gi</p>
-                <br/>
-                <h5 class="text-danger" id="OnceContactError" style="white-space:pre-wrap"></h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label><input type="checkbox" onclick="checkAnonymous()" id="OnceAnonymous"> Jeg ønsker å være anononym.</label>
-                    </div>
-                    <div class="col-md-6">
-                        @if (User.Identity.GetUserId() != null)
-                        {
-                            <label><input type="checkbox" onclick="checkUser()" id="OnceUser">Link donasjonen til min bruker.</label>
-                        }
-                    </div>
-                </div>
-                <br/>
-                <label class="control-label" for="OnceDescription">Donasjonsmelding:</label>
-                <textarea class="form-control" id ="OnceDescription" style="min-width: 100%; max-width: 100%;"></textarea>
-
-                <br/>
-                <div id="onceContact">
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label class="control-label DonateContactLabel" for="OnceEmail">E-post: </label><br/>
-                            <label class="control-label DonateContactLabel" for="OnceName">Navn: </label>
-                            <br/>
-                            <label class="control-label DonateContactLabel" for="OncePhone">Telefon: </label>
-                            <br/>
-                            <label class="control-label DonateContactLabel" for="OnceStreet">Gateadresse: </label>
-                            <br/>
-                            <label class="control-label DonateContactLabel" for="OncePostCode">Postkode: </label>
-                            <br/>
-                            <label class="control-label DonateContactLabel" for="OnceCity">Kommune: </label>
-                            <br/>
-                            <label class="control-label DonateContactLabel" for="OnceBirthNumber">Fødselsnummer: </label>
-
-                        </div>
-                        <div class="col-md-8">
-                            <input class="form-control DonateContact" id="OnceEmail" type="email" placeholder="navn@example.com"/>
-                            <input class="form-control DonateContact" id="OnceName" type="text" placeholder="Fornavn Etternavn"/>
-                            <input class="form-control DonateContact" id="OncePhone" type="text" placeholder="" maxlength="12"/>
-                            <input class="form-control DonateContact" id="OnceStreet" type="text" placeholder=""/>
-                            <input class="form-control DonateContact" id="OncePostCode" type="text" placeholder="" maxlength="4"/>
-                            <input class="form-control DonateContact" id="OnceCity" type="text" placeholder=""/>
-                            <input class="form-control DonateContact" id="OnceBirthNumber" type="text" placeholder="" title="Ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500." maxlength="11"/>
-
-                        </div>
-
-                    </div>
-                </div>
-                <hr/>
-                <div class="row">
-                    <div class="col-md-4">
-                        <p>Steg 2 av 3</p>
-                    </div>
-                    <div class="col-md-8">
-
-                        <div class="btn-group" style="line-height: 0px; float: right;">
-                            <a class="btn btn-primary btnPrevious" onclick="PrevTab()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
-                            <a class="btn btn-primary btnNext" id="OnceContactNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-
-                    </div>
-                @*------*@
-
-
-            </div>
-            <div id="DonateOncePayment" class="tab-pane fade">
-                <h3 style="text-align: center;">Betalingsinformasjon</h3>
-                <h5 class="text-danger" id="OncePaymentError" style="white-space:pre-wrap"></h5>
-                 <br/>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label" for="OnceCardNmber">Kortnummer (VISA / Mastercard)</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
-                                        <input class="form-control" id="OnceCardNmber" type="text" placeholder="0000 0000 0000 0000" maxlength="19" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-7">
-                                <div class="form-group">
-                                    <label class="control-label" for="OnceExpiration">Utløper (MM/ÅÅ)</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                        <input class="form-control" id="OnceExpiration" type="text" placeholder="00/00" maxlength="5" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <label class="control-label" for="OnceCvc">CVC</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-check"></i></span>
-                                        <input class="form-control" id="OnceCvc" type="text" placeholder="000" maxlength="3" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr />
-                        <em>Din betalingsinformasjon blir ikke sendt til oss, og behandles utelukkende av <a href="https://stripe.com/" target="_blank">Stripe</a>.</em>
-                        <button class="btn btn-success btn-block" onclick="OnceDonate()">Donér penger</button>
-                    </div>
-                </div>
-                <hr />
-                <div class="row">
-                    <div class="col-md-4">
-                        <p>Steg 3 av 3</p>
-                    </div>
-                    <div class="col-md-8">
-                        <a class="btn btn-primary btnPrevious" onclick="PrevTab()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
-                    </div>
-
-                </div>
-            </div>
-
         </div>
-
-    </div>
-    <div id="DonateSubscription" class="tab-pane fade">
-        <ul class="nav nav-tabs tabSub" style="white-space: normal; visibility: hidden">
-            <li class="active"><a data-toggle="tab" href="#DonateSubAmount"></a></li>
-            <li><a data-toggle="tab" href="#DonateSubContact"></a></li>
-            <li><a data-toggle="tab" href="#DonateSubPayment"></a></li>
-
-        </ul>
-
-        <div class="tab-content">
-            <div id="DonateSubAmount" class="tab-pane fade in active">
-                @if (Model.Subscriptions.Any())
-                {
-                @*Donate sub amount*@
-                    <h3 style="text-align: center;">Hvor mye ønsker du å donere hver måned?</h3>
-                    <h5 class="text-danger" style="text-align: center;" id="SubAmountError"></h5>
+        <div id="DonateSubPayment" class="tab-pane fade">
+            <h3 style="text-align: center;">Betalingsinformasjon</h3>
+            <h5 class="text-danger" id="SubPaymentError" style="white-space: pre-wrap"></h5>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
                     <div class="row">
-                        <div class="col-lg-offset-3 col-md-7">
-                            <div class="SubSelect">
-                                @foreach (var sub in Model.Subscriptions)
-                                {
-                                    <div class="SubSelect-info" onclick="subAmount(@sub.Id)">
-                                        <input type="radio" name="radio" value="@sub.Id" id="@sub.Id" />
-                                        <label class="SubLabel" for="@sub.Id">@sub.Amount kroner</label>
-                                    </div>
-                                }
-
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label" for="SubCardNmber">Kortnummer (VISA / Mastercard)</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
+                                    <input class="form-control" id="SubCardNmber" type="text" placeholder="0000 0000 0000 0000" maxlength="19"/>
+                                </div>
                             </div>
+                        </div>
 
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label class="control-label" for="SubExpiration">Utløper (MM/ÅÅ)</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                    <input class="form-control" id="SubExpiration" type="text" placeholder="00/00" maxlength="5"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label class="control-label" for="SubCvc">CVC</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-check"></i></span>
+                                    <input class="form-control" id="SubCvc" type="text" placeholder="000" maxlength="3"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <hr/>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <p>Steg 1 av 3</p>
-                        </div>
-                        <div class="col-md-8">
-
-                            <a class="btn btn-primary btnNext" id="SubAmountNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
-
-                        </div>
-
-                    </div>
-                }
-                else
-                {
-                    <br/>
-                    <p style="text-align: center;">Ingen donasjonsplaner konfigurert for øyeblikket.</p>
-                }
-            </div>
-            @*------*@
-
-
-            <div id="DonateSubContact" class="tab-pane fade">
-                @*Donate sub contact*@
-                <h3 style="text-align: center;">Kontaktinformasjon</h3>
-                <p style="text-align: center;">Det er opp til deg hvor mye informasjon du vil gi</p>
-                <br />
-                <h5 class="text-danger" id="SubContactError" style="white-space:pre-wrap"></h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label><input type="checkbox" onclick="checkSubAnonymous()" id="SubAnonymous"> Jeg ønsker å være anononym.</label>
-                    </div>
-                    <div class="col-md-6">
-                        @if (User.Identity.GetUserId() != null)
-                        {
-                            <label><input type="checkbox" onclick="checkSubUser()" id="SubUser">Link donasjonen til min bruker.</label>
-                        }
-                    </div>
-                </div>
-                <br />
-                <label class="control-label" for="SubDescription">Donasjonsmelding:</label>
-                <textarea class="form-control" id="SubDescription" style="min-width: 100%; max-width: 100%;"></textarea>
-
-                <br />
-                <div id="SubContact">
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label class="control-label DonateContactLabel" for="SubEmail">E-post: </label><br />
-                            <label class="control-label DonateContactLabel" for="SubName">Navn: </label>
-                            <br />
-                            <label class="control-label DonateContactLabel" for="SubPhone">Telefon: </label>
-                            <br />
-                            <label class="control-label DonateContactLabel" for="SubStreet">Gateadresse: </label>
-                            <br />
-                            <label class="control-label DonateContactLabel" for="SubPostCode">Postkode: </label>
-                            <br />
-                            <label class="control-label DonateContactLabel" for="SubCity">Kommune: </label>
-                            <br />
-                            <label class="control-label DonateContactLabel" for="SubBirthNumber">Fødselsnummer: </label>
-
-                        </div>
-                        <div class="col-md-8">
-                            <input class="form-control DonateContact" id="SubEmail" type="email" placeholder="navn@example.com" />
-                            <input class="form-control DonateContact" id="SubName" type="text" placeholder="Fornavn Etternavn" />
-                            <input class="form-control DonateContact" id="SubPhone" type="text" placeholder="" maxlength="12" />
-                            <input class="form-control DonateContact" id="SubStreet" type="text" placeholder="" />
-                            <input class="form-control DonateContact" id="SubPostCode" type="text" placeholder="" maxlength="4" />
-                            <input class="form-control DonateContact" id="SubCity" type="text" placeholder="" />
-                            <input class="form-control DonateContact" id="SubBirthNumber" type="text" placeholder="" title="Ved å oppgi personnummer (11 siffer) får du skattefradrag på bidrag over kr 500." maxlength="11" />
-
-                        </div>
-
-                    </div>
-                </div>
-                <hr />
-                <div class="row">
-                    <div class="col-md-4">
-                        <p>Steg 2 av 3</p>
-                    </div>
-                    <div class="col-md-8">
-
-                        <div class="btn-group" style="line-height: 0px; float: right;">
-                            <a class="btn btn-primary btnPrevious" onclick="PrevTabSub()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
-                            <a class="btn btn-primary btnNext" id="SubContactNext">Neste <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-
-                </div>
-                @*------*@
-
-
-            </div>
-            <div id="DonateSubPayment" class="tab-pane fade">
-                <h3 style="text-align: center;">Betalingsinformasjon</h3>
-                <h5 class="text-danger" id="SubPaymentError" style="white-space:pre-wrap"></h5>
-                <br />
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label" for="SubCardNmber">Kortnummer (VISA / Mastercard)</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
-                                        <input class="form-control" id="SubCardNmber" type="text" placeholder="0000 0000 0000 0000" maxlength="19" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-7">
-                                <div class="form-group">
-                                    <label class="control-label" for="SubExpiration">Utløper (MM/ÅÅ)</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                        <input class="form-control" id="SubExpiration" type="text" placeholder="00/00" maxlength="5" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <label class="control-label" for="SubCvc">CVC</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-check"></i></span>
-                                        <input class="form-control" id="SubCvc" type="text" placeholder="000" maxlength="3" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr />
-                        <em>Din betalingsinformasjon blir ikke sendt til oss, og behandles utelukkende av <a href="https://stripe.com/" target="_blank">Stripe</a>.</em>
-                        <button class="btn btn-success btn-block" onclick="SubDonate()">Donér månedlig</button>
-                    </div>
-                </div>
-                <hr />
-                <div class="row">
-                    <div class="col-md-4">
-                        <p>Steg 3 av 3</p>
-                    </div>
-                    <div class="col-md-8">
-
-                        <a class="btn btn-primary btnPrevious" onclick="PrevTabSub()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
-
-                    </div>
-
+                    <em>Din betalingsinformasjon blir ikke sendt til oss, og behandles utelukkende av <a href="https://stripe.com/" target="_blank">Stripe</a>.</em>
+                    <button class="btn btn-success btn-block" onclick="SubDonate()">Donér månedlig</button>
                 </div>
             </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-4">
+                    <p>Steg 3 av 3</p>
+                </div>
+                <div class="col-md-8">
 
+                    <a class="btn btn-primary btnPrevious" onclick="PrevTabSub()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Forrige</a>
+
+                </div>
+
+            </div>
         </div>
+
     </div>
+</div>
 
 </div>
 
@@ -399,10 +415,10 @@
     var subToken = "";
     var subDescription = "";
 
-    $(function () {
+    $(function() {
         $("#OnceBirthNumber").tooltip();
     });
-    $(function () {
+    $(function() {
         $("SubBirthNumber").tooltip();
     });
 
@@ -413,11 +429,12 @@
             $('#onceContact').css('display', "none");
             $("#OnceUser").prop("checked", false);
 
-        }else {
+        } else {
             $('#onceContact').css('display', "");
 
         }
     }
+
     function checkSubAnonymous() {
 
         if ($('#SubAnonymous').is(":checked")) {
@@ -441,6 +458,7 @@
 
         }
     }
+
     function checkSubUser() {
         if ($('#SubUser').is(":checked")) {
             $('#SubContact').css('display', "none");
@@ -452,136 +470,157 @@
         }
     }
 
-    $("#OnceAmountNext").click(function () {
-        if (parseInt($("#AmountOnce").val()) > 0) {
-            amount = parseInt($("#AmountOnce").val());
-            $('.tabOnce > .active').next('li').find('a').trigger('click');
-            $("#OnceAmountError").text("");
+    $("#OnceAmountNext")
+        .click(function() {
+            if (parseInt($("#AmountOnce").val()) > 0) {
+                amount = parseInt($("#AmountOnce").val());
+                $('.tabOnce > .active').next('li').find('a').trigger('click');
+                $("#OnceAmountError").text("");
 
-        } else {
-            $("#OnceAmountError").text("Ugyldig donasjonsmengde");
-        }
-    });
-
-    $("#OnceContactNext").click(function () {   //get contact info and validate answers
-        if ($('#OnceAnonymous').is(":checked")) {
-            anon = true;
-            user = false;
-            description = $("#OnceDescription").val();
-            $('.tabOnce > .active').next('li').find('a').trigger('click');
-            $("#OnceContactError").text("");
-
-        } else if ($('#OnceUser').is(":checked")) {
-            anon = false;
-            user = true;
-            description = $("#OnceDescription").val();
-            $('.tabOnce > .active').next('li').find('a').trigger('click');
-            $("#OnceContactError").text("");
-        }
-        else if ($("#OnceEmail").val() !== "" || $("#OnceCity").val() !== "" || $("#OnceName").val() !== "" || $("#OncePhone").val() !== "" || $("#OnceStreet").val() !== "" || $("#OncePostCode").val() !== "" || $("#OnceBirthNumber").val() !== "") {
-            var error = "";
-            var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/;   //check for valid email
-            if ($("#OnceEmail").val() !== "" && !regTest.test($("#OnceEmail").val())) {
-                error += "Ugyldig email \n";
-
+            } else {
+                $("#OnceAmountError").text("Ugyldig donasjonsmengde");
             }
-            if ($("#OnceBirthNumber").val() !== "" && (isNaN($("#OnceBirthNumber").val()) || $("#OnceBirthNumber").val().length < 11)) {
-                error += "Ugyldig fødselsnummer \n";
+        });
 
-            }
-            if ($("#OncePostCode").val() !== "" && (isNaN($("#OncePostCode").val()) || $("#OncePostCode").val().length < 4)) {
-                error += "Ugyldig postnummber \n";
-
-            }
-            if (error !== "") {
-                $("#OnceContactError").text(error);
-                return;
-            }
-            else {
-                anon = false;
-                email = $("#OnceEmail").val();
-                city = $("#OnceCity").val();
-                name = $("#OnceName").val();
-                phone = $("#OncePhone").val();
-                streetadress = $("#OnceStreet").val();
-                postcode = $("#OncePostCode").val();
-                birthnumber = $("#OnceBirthNumber").val();
-
+    $("#OnceContactNext")
+        .click(function() { //get contact info and validate answers
+            if ($('#OnceAnonymous').is(":checked")) {
+                anon = true;
+                user = false;
+                description = $("#OnceDescription").val();
                 $('.tabOnce > .active').next('li').find('a').trigger('click');
                 $("#OnceContactError").text("");
+
+            } else if ($('#OnceUser').is(":checked")) {
+                anon = false;
+                user = true;
+                description = $("#OnceDescription").val();
+                $('.tabOnce > .active').next('li').find('a').trigger('click');
+                $("#OnceContactError").text("");
+            } else if ($("#OnceEmail").val() !== "" ||
+                $("#OnceCity").val() !== "" ||
+                $("#OnceName").val() !== "" ||
+                $("#OncePhone").val() !== "" ||
+                $("#OnceStreet").val() !== "" ||
+                $("#OncePostCode").val() !== "" ||
+                $("#OnceBirthNumber").val() !== "") {
+                var error = "";
+                var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/; //check for valid email
+                if ($("#OnceEmail").val() !== "" && !regTest.test($("#OnceEmail").val())) {
+                    error += "Ugyldig email \n";
+
+                }
+                if ($("#OnceBirthNumber").val() !== "" &&
+                    (isNaN($("#OnceBirthNumber").val()) || $("#OnceBirthNumber").val().length < 11)) {
+                    error += "Ugyldig fødselsnummer \n";
+
+                }
+                if ($("#OncePostCode").val() !== "" &&
+                    (isNaN($("#OncePostCode").val()) || $("#OncePostCode").val().length < 4)) {
+                    error += "Ugyldig postnummber \n";
+
+                }
+                if (error !== "") {
+                    $("#OnceContactError").text(error);
+                    return;
+                } else {
+                    anon = false;
+                    email = $("#OnceEmail").val();
+                    city = $("#OnceCity").val();
+                    name = $("#OnceName").val();
+                    phone = $("#OncePhone").val();
+                    streetadress = $("#OnceStreet").val();
+                    postcode = $("#OncePostCode").val();
+                    birthnumber = $("#OnceBirthNumber").val();
+
+                    $('.tabOnce > .active').next('li').find('a').trigger('click');
+                    $("#OnceContactError").text("");
+                }
+            } else {
+                $("#OnceContactError")
+                    .text("Du må skrive inn kontaktinformasjon, velge å være anonym eller bruke nettsidebrukeren");
             }
-        }
-        else {
-            $("#OnceContactError").text("Du må skrive inn kontaktinformasjon, velge å være anonym eller bruke nettsidebrukeren");
-        }
-    });
+        });
 
-    $("#SubContactNext").click(function() {
-        if ($('#SubAnonymous').is(":checked")) {
-            subAnon = true;
-            subUser = false;
-            subDescription = $("#SubDescription").val();
-            $('.tabSub > .active').next('li').find('a').trigger('click');
-            $("#SubContactError").text("");
-
-        }else if ($('#SubUser').is(":checked")) {
-            subAnon = false;
-            subUser = true;
-            description = $("#SubDescription").val();
-            $('.tabSub > .active').next('li').find('a').trigger('click');
-            $("#SubContactError").text("");
-        } else if ($("#SubEmail").val() !== "" || $("#SubCity").val() !== "" || $("#SubName").val() !== "" || $("#SubPhone").val() !== "" || $("#SubStreet").val() !== "" || $("#SubPostCode").val() !== "" || $("#SubBirthNumber").val() !== "") {
-            var error = "";
-            var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/;
-            if ($("#SubEmail").val() !== "" && !regTest.test($("#SubEmail").val())) {
-                error += "Ugyldig email \n";
-
-            }
-            if ($("#SubBirthNumber").val() !== "" && (isNaN($("#SubBirthNumber").val()) || $("#SubBirthNumber").val().length < 11)) {
-                error += "Ugyldig fødselsnummer \n";
-
-            }
-            if ($("#SubPostCode").val() !== "" && (isNaN($("#SubPostCode").val()) || $("#SubPostCode").val().length < 4)) {
-                error += "Ugyldig postnummber \n";
-
-            }
-            if (error !== "") {
-                $("#SubContactError").text(error);
-                return;
-            }
-            else {
-                subAnon = false;
-                subEmail = $("#SubEmail").val();
-                subCity = $("#SubCity").val();
-                subName = $("#SubName").val();
-                subPhone = $("#SubPhone").val();
-                subStreetadress = $("#SubStreet").val();
-                subPostcode = $("#SubPostCode").val();
-                subBirthnumber = $("#SubBirthNumber").val();
-
+    $("#SubContactNext")
+        .click(function() {
+            if ($('#SubAnonymous').is(":checked")) {
+                subAnon = true;
+                subUser = false;
+                subDescription = $("#SubDescription").val();
                 $('.tabSub > .active').next('li').find('a').trigger('click');
                 $("#SubContactError").text("");
+
+            } else if ($('#SubUser').is(":checked")) {
+                subAnon = false;
+                subUser = true;
+                description = $("#SubDescription").val();
+                $('.tabSub > .active').next('li').find('a').trigger('click');
+                $("#SubContactError").text("");
+            } else if ($("#SubEmail").val() !== "" ||
+                $("#SubCity").val() !== "" ||
+                $("#SubName").val() !== "" ||
+                $("#SubPhone").val() !== "" ||
+                $("#SubStreet").val() !== "" ||
+                $("#SubPostCode").val() !== "" ||
+                $("#SubBirthNumber").val() !== "") {
+                var error = "";
+                var regTest = /[^\s@@]+@@[^\s@@]+\.[^\s@@]+/;
+                if ($("#SubEmail").val() !== "" && !regTest.test($("#SubEmail").val())) {
+                    error += "Ugyldig email \n";
+
+                }
+                if ($("#SubBirthNumber").val() !== "" &&
+                    (isNaN($("#SubBirthNumber").val()) || $("#SubBirthNumber").val().length < 11)) {
+                    error += "Ugyldig fødselsnummer \n";
+
+                }
+                if ($("#SubPostCode").val() !== "" &&
+                        (isNaN($("#SubPostCode").val()) || $("#SubPostCode").val().length < 4)
+                ) {
+                    error += "Ugyldig postnummber \n";
+
+                }
+                if (error !== "") {
+                    $("#SubContactError").text(error);
+                    return;
+                } else {
+                    subAnon = false;
+                    subEmail = $("#SubEmail").val();
+                    subCity = $("#SubCity").val();
+                    subName = $("#SubName").val();
+                    subPhone = $("#SubPhone").val();
+                    subStreetadress = $("#SubStreet").val();
+                    subPostcode = $("#SubPostCode").val();
+                    subBirthnumber = $("#SubBirthNumber").val();
+
+                    $('.tabSub > .active').next('li').find('a').trigger('click');
+                    $("#SubContactError").text("");
+                }
+            } else {
+                $("#SubContactError")
+                    .text("Du må skrive inn kontaktinformasjon, velge å være anonym eller bruke nettsidebrukeren");
             }
-        }
-        else {
-            $("#SubContactError").text("Du må skrive inn kontaktinformasjon, velge å være anonym eller bruke nettsidebrukeren");
-        }
 
-    });
-    $("#SubAmountNext").click(function() {
-        if (subId !== 0) {
-            $('.tabSub > .active').next('li').find('a').trigger('click');
-        } else {
-            $("#SubAmountError").text("Du må velge en plan");
-        }
+        });
+    $("#SubAmountNext")
+        .click(function() {
+            if (subId !== 0) {
+                $('.tabSub > .active').next('li').find('a').trigger('click');
+            } else {
+                $("#SubAmountError").text("Du må velge en plan");
+            }
 
-    });
+        });
+
     function subAmount(id) {
         subId = id;
     }
+
     function PrevTab() {
         $('.tabOnce > .active').prev('li').find('a').trigger('click');
     }
+
     function PrevTabSub() {
         $('.tabSub > .active').prev('li').find('a').trigger('click');
     }
@@ -589,11 +628,10 @@
     function OnceDonate() {
         var error = "";
         if (!(Stripe.card.validateCardNumber($("#OnceCardNmber").val()))) {
-            
+
             error += "Ugyldig kortnummer \n";
         }
-        if (!(Stripe.card.validateCVC($("#OnceCvc").val())))
-        {
+        if (!(Stripe.card.validateCVC($("#OnceCvc").val()))) {
             error += "Ugyldig CVC \n";
         }
         var expParts = $("#OnceExpiration").val().split('/');
@@ -637,31 +675,31 @@
                 paymentInfo['address_zip'] = postcode;
 
             }
-            $(".loader").show();    //show loader as we're working
-            Stripe.card.createToken(paymentInfo, function (status, response) {
-                if (response.error) {
-                    $("#OncePaymentError").text(response.error.message);
-                    $(".loader").hide();    //failed hide error
-                    return;
-                } else {
-                    $("#OncePaymentError").text("");
-                    token = response.id;
-                    processPayment();
-                }
+            $(".loader").show(); //show loader as we're working
+            Stripe.card.createToken(paymentInfo,
+                function(status, response) {
+                    if (response.error) {
+                        $("#OncePaymentError").text(response.error.message);
+                        $(".loader").hide(); //failed hide error
+                        return;
+                    } else {
+                        $("#OncePaymentError").text("");
+                        token = response.id;
+                        processPayment();
+                    }
 
-            });
+                });
         }
 
     }
 
     function SubDonate() {
         var error = "";
-        if (!(Stripe.card.validateCardNumber($("#SubCardNmber").val()))) {  //handle card validation 
-            
+        if (!(Stripe.card.validateCardNumber($("#SubCardNmber").val()))) { //handle card validation 
+
             error += "Ugyldig kortnummer \n";
         }
-        if (!(Stripe.card.validateCVC($("#SubCvc").val())))
-        {
+        if (!(Stripe.card.validateCVC($("#SubCvc").val()))) {
             error += "Ugyldig CVC \n";
         }
         var expParts = $("#SubExpiration").val().split('/');
@@ -705,19 +743,20 @@
                 paymentInfo['address_zip'] = subPostcode;
 
             }
-            $(".loader").show();    //show loader as we're working
-            Stripe.card.createToken(paymentInfo, function (status, response) {  //get token from stripe
-                if (response.error) {
-                    $("#SubPaymentError").text(response.error.message);
-                    $(".loader").hide();    //failed hide error
-                    return;
-                } else {
-                    $("#SubPaymentError").text("");
-                    token = response.id;
-                    processSubPayment();
-                }
+            $(".loader").show(); //show loader as we're working
+            Stripe.card.createToken(paymentInfo,
+                function(status, response) { //get token from stripe
+                    if (response.error) {
+                        $("#SubPaymentError").text(response.error.message);
+                        $(".loader").hide(); //failed hide error
+                        return;
+                    } else {
+                        $("#SubPaymentError").text("");
+                        token = response.id;
+                        processSubPayment();
+                    }
 
-            });
+                });
         }
 
     }
@@ -746,21 +785,19 @@
             type: "POST",
             contentType: false, // Not to set any content header
             processData: false, // Not to process data
-            data: formData
-        ,
-            success: function (result) {
+            data: formData,
+            success: function(result) {
                 if (result.Success == "false" && result.striperesponse == "true") {
                     $("#OncePaymentError").text(JSON.parse(result.Error).error.message);
-                    
-                }
-                else if (result.Success == "false" && result.striperesponse == "false") {
+
+                } else if (result.Success == "false" && result.striperesponse == "false") {
                     $("#OncePaymentError").text(result.Error);
-                }else {
+                } else {
                     $("#Donations").html(result);
                 }
 
             },
-            error: function (err) {
+            error: function(err) {
                 console.log("error " + err.Error);
             }
         });
@@ -786,21 +823,19 @@
             type: "POST",
             contentType: false, // Not to set any content header
             processData: false, // Not to process data
-            data: formData
-        ,
-            success: function (result) {
+            data: formData,
+            success: function(result) {
                 if (result.Success == "false" && result.striperesponse == "true") {
                     $("#SubPaymentError").text(JSON.parse(result.Error).error.message);
-                    
-                }
-                else if (result.Success == "false" && result.striperesponse == "false") {
+
+                } else if (result.Success == "false" && result.striperesponse == "false") {
                     $("#SubPaymentError").text(result.Error);
-                }else {
+                } else {
                     $("#Donations").html(result);
                 }
 
             },
-            error: function (err) {
+            error: function(err) {
                 console.log("error " + err.Error);
             }
         });

@@ -1,7 +1,9 @@
-﻿using Microsoft.Owin;
+﻿using ButterflyFriends;
+using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(ButterflyFriends.Startup))]
+[assembly: OwinStartup(typeof(Startup))]
+
 namespace ButterflyFriends
 {
     public partial class Startup

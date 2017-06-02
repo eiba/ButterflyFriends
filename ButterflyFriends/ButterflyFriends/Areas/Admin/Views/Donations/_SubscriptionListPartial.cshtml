@@ -1,9 +1,11 @@
-﻿@model  IList<ButterflyFriends.Areas.Admin.Models.Subscription>
-    
+﻿@model IList<ButterflyFriends.Areas.Admin.Models.Subscription>
+
+<h5 class="statusText">@ViewBag.Message</h5>
+<h5 class="text-danger statusText">@ViewBag.Error</h5>
 @if (!Model.Any())
 {
     <br/>
-    <p>Ingen abonnementer å hente ennp</p>
+    <p>Søk med Stripe kunde id for å hente abonnementer</p>
     return;
 }
 <div class="row">
@@ -13,42 +15,41 @@
             <div class="panel-heading">
                 <div class="row">
                     <div class="col col-xs-12">
-                        <h3 class="panel-title listHeader" style="text-align: center;"><b>Abonnementer</b></h3>
+                        <h3 class="panel-title listHeader" style="text-align: center;">
+                            <b>Abonnementer</b>
+                        </h3>
                     </div>
-                    <h5 class="text-success statusText">@ViewBag.Success</h5>
-                    <h5 class="text-danger statusText">@ViewBag.Error</h5>
                 </div>
             </div>
             <div class="panel-body">
                 <table class="table table-striped table-bordered table-list table-hover">
 
                     <thead>
-                        <tr>
-                            <th class="hidden-xs">Abonnements ID</th>
-                            <th>Kunde ID</th>
-                            <th>Plan ID</th>
-                            <th>Plan navn</th>
-                            <th>Plan mengde</th>
+                    <tr>
+                        <th class="hidden-xs">Abonnements ID</th>
+                        <th>Kunde ID</th>
+                        <th>Plan ID</th>
+                        <th>Plan navn</th>
+                        <th>Plan mengde</th>
 
-                        </tr>
+                    </tr>
                     </thead>
 
                     <tbody>
 
 
-                        @foreach (var sub in Model)
-                        {
+                    @foreach (var sub in Model)
+                    {
+                        <tr>
 
-                            <tr>
+                            <td>@sub.SubId</td>
+                            <td>@sub.CustomerId</td>
+                            <td>@sub.PlanId</td>
+                            <td>@sub.PlanName</td>
+                            <td>@sub.Amount kr</td>
 
-                                <td>@sub.SubId</td>
-                                <td>@sub.CustomerId</td>
-                                <td>@sub.PlanId</td>
-                                <td>@sub.PlanName</td>
-                                <td>@sub.Amount kr</td>
-
-                            </tr>
-                        }
+                        </tr>
+                    }
 
                     </tbody>
                 </table>
@@ -56,7 +57,7 @@
             </div>
             <div class="panel-footer">
                 <div class="row">
-                @*
+                    @*
     <div class="col col-xs-4">
         @if (@Model.PageCount != 0)
         {
@@ -82,4 +83,3 @@
         </div>
     </div>
 </div>
-

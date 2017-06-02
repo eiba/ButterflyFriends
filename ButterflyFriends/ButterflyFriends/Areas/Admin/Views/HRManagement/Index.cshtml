@@ -1,6 +1,5 @@
 ﻿@model ButterflyFriends.Areas.Admin.Models.HRManagamentModel
 @{
-
 }
 <div id="Modal"></div>
 <div id="DeleteModal"></div>
@@ -8,324 +7,354 @@
 <h3 style="text-align: center;">Brukeradministrasjon</h3>
 
 <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#Employees" class="Employees"><b>Ansatte</b></a></li>
-    <li><a data-toggle="tab" href="#Sponsors" class="Sponsors"><b>Faddere</b></a></li>
-    <li><a data-toggle="tab" href="#Children" class="Children"><b>Fadderbarn</b></a></li>
+    <li class="active">
+        <a data-toggle="tab" href="#Employees" class="Employees">
+            <b>Ansatte</b>
+        </a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#Sponsors" class="Sponsors">
+            <b>Faddere</b>
+        </a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#Children" class="Children">
+            <b>Fadderbarn</b>
+        </a>
+    </li>
 </ul>
 
 <div class="tab-content">
-    <div id="Employees" class="tab-pane fade in active">
-        <div class="searchFilter">
-            <div class="input-group Search">
-                <input type="text" id="EmployeesearchField" class="form-control max_width" placeholder="Søk etter navn eller email..." />
-                <div class="input-group-btn">
-                    <div class="btn-group" role="group">
-                        <div class="dropdown dropdown-lg" id="#dropDown">
-                            <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-                            <div class="dropdown-menu dropdown-menu-right" role="menu">
+<div id="Employees" class="tab-pane fade in active">
+    <div class="searchFilter">
+        <div class="input-group Search">
+            <input type="text" id="EmployeesearchField" class="form-control max_width" placeholder="Søk etter navn eller email..."/>
+            <div class="input-group-btn">
+                <div class="btn-group" role="group">
+                    <div class="dropdown dropdown-lg" id="#dropDown">
+                        <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <span class="caret"></span></button>
+                        <div class="dropdown-menu dropdown-menu-right" role="menu">
 
-                                <form class="form-horizontal" role="form">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label>Sorter etter</label>
-                                                <select class="form-control max_width" id="EmployeeSelected">
-                                                    <option id="EmployeeDefault" value="0" selected>Etternavn</option>
-                                                    <option value="1">Fornavn</option>
-                                                    <option value="2">Email</option>
-                                                </select>
+                            <form class="form-horizontal" role="form">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label>Sorter etter</label>
+                                            <select class="form-control max_width" id="EmployeeSelected">
+                                                <option id="EmployeeDefault" value="0" selected>Etternavn</option>
+                                                <option value="1">Fornavn</option>
+                                                <option value="2">Email</option>
+                                            </select>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4" style="padding-top: 2%">
-                                            <div id="EmployeeOrderFilter">
-                                                <label class="radio-inline"><input type="radio" name="opt" value="ascending" checked>Stigende</label>
-                                                <br />
-                                                <label class="radio-inline"><input type="radio" id="EmployeeOrderDefault" name="opt" value="descending">Synkende</label>
-                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Telefonummer</label>
-                                        <input id="employeePhone" class="form-control max_width" type="text" />
+                                    <div class="col-md-4" style="padding-top: 2%">
+                                        <div id="EmployeeOrderFilter">
+                                            <label class="radio-inline"><input type="radio" name="opt" value="ascending" checked>Stigende</label>
+                                            <br/>
+                                            <label class="radio-inline"><input type="radio" id="EmployeeOrderDefault" name="opt" value="descending">Synkende</label>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Gateadresse</label>
-                                        <input id="EmployeeStreetadress" class="form-control max_width" type="text" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Postkode</label>
-                                        <input id="EmployeeZip" class="form-control max_width" type="number" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Kommune</label>
-                                        <input id="EmployeeCity" class="form-control max_width" type="text" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Fylke</label>
-                                        <input id="EmployeeCounty" class="form-control max_width" type="text" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Posisjon</label>
-                                        <input id="EmployeePosition" class="form-control max_width" type="text" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Kontonummer</label>
-                                        <input id="employeeAccountNumber" class="form-control max_width" type="number" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>
-                                            Aktiv
-                                            <div id="employeeActive">
-                                                <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
-                                                <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
-                                                <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="EmployeeDefaultRadio" checked>Uvesentlig</label>
-                                            </div>
-                                        </label>
-                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Telefonummer</label>
+                                    <input id="employeePhone" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Gateadresse</label>
+                                    <input id="EmployeeStreetadress" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Postkode</label>
+                                    <input id="EmployeeZip" class="form-control max_width" type="number"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kommune</label>
+                                    <input id="EmployeeCity" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fylke</label>
+                                    <input id="EmployeeCounty" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Posisjon</label>
+                                    <input id="EmployeePosition" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kontonummer</label>
+                                    <input id="employeeAccountNumber" class="form-control max_width" type="number"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Aktiv
+                                        <div id="employeeActive">
+                                            <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
+                                            <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
+                                            <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="EmployeeDefaultRadio" checked>Uvesentlig</label>
+                                        </div>
+                                    </label>
+                                </div>
 
-                                </form>
-                                <button id="employeeReset" class="btn btn-primary" style="float: right">Reset</button>
-                            </div>
+                            </form>
+                            <button id="employeeReset" class="btn btn-primary" style="float: right">Reset</button>
                         </div>
-                        <button type="button" onclick="filterEmployees()" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                     </div>
+                    <button type="button" onclick="filterEmployees()" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                 </div>
             </div>
+        </div>
 
-        </div>
-        <div id="updateEmployees">
-            @Html.Partial("ListPartials/_EmployeePartial", Model.EmployeeModel, new ViewDataDictionary {{"", ""}})
-        </div>
     </div>
-    <div id="Sponsors" class="tab-pane fade">
-        <div class="searchFilter">
-            <div class="input-group Search">
-                <input type="text" id="SponsorsearchField" class="form-control max_width" placeholder="Søk etter navn eller email..." />
-                <div class="input-group-btn">
-                    <div class="btn-group" role="group">
-                        <div class="dropdown dropdown-lg" id="#dropDown">
-                            <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-                            <div class="dropdown-menu dropdown-menu-right" role="menu">
+    <div id="updateEmployees">
+        @Html.Partial("ListPartials/_EmployeePartial", Model.EmployeeModel, new ViewDataDictionary {{"", ""}})
+    </div>
+</div>
+<div id="Sponsors" class="tab-pane fade">
+    <div class="searchFilter">
+        <div class="input-group Search">
+            <input type="text" id="SponsorsearchField" class="form-control max_width" placeholder="Søk etter navn eller email..."/>
+            <div class="input-group-btn">
+                <div class="btn-group" role="group">
+                    <div class="dropdown dropdown-lg" id="#dropDown">
+                        <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <span class="caret"></span></button>
+                        <div class="dropdown-menu dropdown-menu-right" role="menu">
 
-                                <form class="form-horizontal" role="form">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label>Sorter etter</label>
-                                                <select class="form-control max_width" id="SponsorSelected">
-                                                    <option id="SponsorDefault" value="0" selected>Etternavn</option>
-                                                    <option value="1">Fornavn</option>
-                                                    <option value="2">Email</option>
-                                                </select>
+                            <form class="form-horizontal" role="form">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label>Sorter etter</label>
+                                            <select class="form-control max_width" id="SponsorSelected">
+                                                <option id="SponsorDefault" value="0" selected>Etternavn</option>
+                                                <option value="1">Fornavn</option>
+                                                <option value="2">Email</option>
+                                            </select>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4" style="padding-top: 2%">
-                                            <div id="SponsorOrderFilter">
-                                                <label class="radio-inline"><input type="radio" name="opt" value="ascending" checked>Stigende</label>
-                                                <br />
-                                                <label class="radio-inline"><input type="radio" id="SponsorOrderDefault" name="opt" value="descending">Synkende</label>
-                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Telefonummer</label>
-                                        <input id="SponsorPhone" class="form-control max_width" type="text" />
+                                    <div class="col-md-4" style="padding-top: 2%">
+                                        <div id="SponsorOrderFilter">
+                                            <label class="radio-inline"><input type="radio" name="opt" value="ascending" checked>Stigende</label>
+                                            <br/>
+                                            <label class="radio-inline"><input type="radio" id="SponsorOrderDefault" name="opt" value="descending">Synkende</label>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Gateadresse</label>
-                                        <input id="SponsorStreetadress" class="form-control max_width" type="text" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Postkode</label>
-                                        <input id="SponsorZip" class="form-control max_width" type="number" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Kommune</label>
-                                        <input id="SponsorCity" class="form-control max_width" type="text" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Fylke</label>
-                                        <input id="SponsorCounty" class="form-control max_width" type="text" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>
-                                            Aktiv
-                                            <div id="SponsorActive">
-                                                <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
-                                                <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
-                                                <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="SponsorDefaultRadio" checked>Uvesentlig</label>
-                                            </div>
-                                        </label>
-                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Telefonummer</label>
+                                    <input id="SponsorPhone" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Gateadresse</label>
+                                    <input id="SponsorStreetadress" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Postkode</label>
+                                    <input id="SponsorZip" class="form-control max_width" type="number"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kommune</label>
+                                    <input id="SponsorCity" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fylke</label>
+                                    <input id="SponsorCounty" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Aktiv
+                                        <div id="SponsorActive">
+                                            <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
+                                            <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
+                                            <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="SponsorDefaultRadio" checked>Uvesentlig</label>
+                                        </div>
+                                    </label>
+                                </div>
 
-                                </form>
-                                <button id="SponsorReset" class="btn btn-primary" style="float: right">Reset</button>
-                            </div>
+                            </form>
+                            <button id="SponsorReset" class="btn btn-primary" style="float: right">Reset</button>
                         </div>
-                        <button type="button" onclick="filterSponsors()" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                     </div>
+                    <button type="button" onclick="filterSponsors()" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                 </div>
             </div>
+        </div>
 
-        </div>
-        <div id="updateSponsors">
-            @Html.Partial("ListPartials/_SponsorPartial", Model.SponsorModel)
-        </div>
     </div>
-    <div id="Children" class="tab-pane fade">
-        <div class="searchFilter">
-            <div class="input-group Search">
-                <input type="text" id="ChildsearchField" class="form-control max_width" placeholder="Søk etter navn..." />
-                <div class="input-group-btn">
-                    <div class="btn-group" role="group">
-                        <div class="dropdown dropdown-lg" id="#dropDown">
-                            <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-                            <div class="dropdown-menu dropdown-menu-right" role="menu">
+    <div id="updateSponsors">
+        @Html.Partial("ListPartials/_SponsorPartial", Model.SponsorModel)
+    </div>
+</div>
+<div id="Children" class="tab-pane fade">
+    <div class="searchFilter">
+        <div class="input-group Search">
+            <input type="text" id="ChildsearchField" class="form-control max_width" placeholder="Søk etter navn..."/>
+            <div class="input-group-btn">
+                <div class="btn-group" role="group">
+                    <div class="dropdown dropdown-lg" id="#dropDown">
+                        <button type="button" id="#dropDown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <span class="caret"></span></button>
+                        <div class="dropdown-menu dropdown-menu-right" role="menu">
 
-                                <form class="form-horizontal" role="form">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label>Sorter etter</label>
-                                                <select class="form-control max_width" id="ChildSelected">
-                                                    <option id="ChildDefault" value="0" selected>Etternavn</option>
-                                                    <option value="1">Fornavn</option>
-                                                </select>
+                            <form class="form-horizontal" role="form">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label>Sorter etter</label>
+                                            <select class="form-control max_width" id="ChildSelected">
+                                                <option id="ChildDefault" value="0" selected>Etternavn</option>
+                                                <option value="1">Fornavn</option>
+                                            </select>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4" style="padding-top: 2%">
-                                            <div id="ChildOrderFilter">
-                                                <label class="radio-inline"><input type="radio" name="opt" value="ascending" checked>Stigende</label>
-                                                <br />
-                                                <label class="radio-inline"><input type="radio" id="ChildOrderDefault" name="opt" value="descending">Synkende</label>
-                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Fødselsdato</label>
-                                        <input id="ChildDoB" class="form-control max_width" type="text" />
+                                    <div class="col-md-4" style="padding-top: 2%">
+                                        <div id="ChildOrderFilter">
+                                            <label class="radio-inline"><input type="radio" name="opt" value="ascending" checked>Stigende</label>
+                                            <br/>
+                                            <label class="radio-inline"><input type="radio" id="ChildOrderDefault" name="opt" value="descending">Synkende</label>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Fadder</label>
-                                        <input id="ChildSponsor" class="form-control max_width" type="text" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label>
-                                            Aktiv
-                                            <div id="ChildActive">
-                                                <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
-                                                <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
-                                                <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="ChildDefaultRadio" checked>Uvesentlig</label>
-                                            </div>
-                                        </label>
-                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fødselsdato</label>
+                                    <input id="ChildDoB" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fadder</label>
+                                    <input id="ChildSponsor" class="form-control max_width" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Aktiv
+                                        <div id="ChildActive">
+                                            <label class="radio-inline"><input type="radio" name="optn" value="yes">Ja</label>
+                                            <label class="radio-inline"><input type="radio" name="optn" value="no">Nei</label>
+                                            <label class="radio-inline"><input type="radio" name="optn" value="irrelevant" id="ChildDefaultRadio" checked>Uvesentlig</label>
+                                        </div>
+                                    </label>
+                                </div>
 
-                                </form>
-                                <button id="ChildReset" class="btn btn-primary" style="float: right">Reset</button>
-                            </div>
+                            </form>
+                            <button id="ChildReset" class="btn btn-primary" style="float: right">Reset</button>
                         </div>
-                        <button type="button" onclick="filterChildren()" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                     </div>
+                    <button type="button" onclick="filterChildren()" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                 </div>
             </div>
+        </div>
 
-        </div>
-        <div id="updateChildren">
-            @Html.Partial("ListPartials/_ChildrenPartial", Model.ChildrenModel)
-        </div>
     </div>
+    <div id="updateChildren">
+        @Html.Partial("ListPartials/_ChildrenPartial", Model.ChildrenModel)
+    </div>
+</div>
 </div>
 
 <script>
-    $(document).ready(function () {
-        $(".loader").hide();
-        $(document).ajaxStart(function () {
-            $(".loader").show();
-        }).ajaxStop(function () {
+    $(document)
+        .ready(function() {
             $(".loader").hide();
-        });
-        
-        $(document).on("click", "#employeePager a[href]", function () {
-            var formData = new FormData();
-            formData.append('search', $('#EmployeesearchField').val());
-            formData.append('active', $('#employeeActive input:radio:checked').val());
-            formData.append('order', $('#EmployeeOrderFilter input:radio:checked').val());
-            formData.append('filter', $("#EmployeeSelected option:selected").val());
-            formData.append('employeePhone', $('#employeePhone').val());
-            formData.append('EmployeeStreetadress', $('#EmployeeStreetadress').val());
-            formData.append('EmployeeZip', $('#EmployeeZip').val());
-            formData.append('EmployeeCity', $('#EmployeeCity').val());
-            formData.append('EmployeeCounty', $('#EmployeeCounty').val());
-            formData.append('EmployeePosition', $('#EmployeePosition').val());
-            formData.append('employeeAccountNumber', $('#employeeAccountNumber').val());
-            $.ajax({
-                url: $(this).attr("href"),
-                type: 'POST',
-                async: true,
-                contentType: false,
-                processData: false,
-                data: formData,
-                cache: false,
-                success: function (result) {
-                    $('#updateEmployees').html(result);
-                }
-            });
-            return false;
-        });
+            $(document)
+                .ajaxStart(function() {
+                    $(".loader").show();
+                })
+                .ajaxStop(function() {
+                    $(".loader").hide();
+                });
 
-        $(document).on("click", "#childrenPager a[href]", function () {
-            var formData = new FormData();
-            formData.append('search', $('#ChildsearchField').val());
-            formData.append('active', $('#ChildActive input:radio:checked').val());
-            formData.append('order', $('#ChildOrderFilter input:radio:checked').val());
-            formData.append('filter', $("#ChildSelected option:selected").val());
-            formData.append('ChildDoB', $('#ChildDoB').val());
-            formData.append('ChildSponsor', $('#ChildSponsor').val());
-            $.ajax({
-                url: $(this).attr("href"),
-                type: 'POST',
-                async: true,
-                contentType: false,
-                processData: false,
-                data: formData,
-                cache: false,
-                success: function (result) {
-                    $('#updateChildren').html(result);
-                }
-            });
-            return false;
-        });
+            $(document)
+                .on("click",
+                    "#employeePager a[href]",
+                    function() {
+                        var formData = new FormData();
+                        formData.append('search', $('#EmployeesearchField').val());
+                        formData.append('active', $('#employeeActive input:radio:checked').val());
+                        formData.append('order', $('#EmployeeOrderFilter input:radio:checked').val());
+                        formData.append('filter', $("#EmployeeSelected option:selected").val());
+                        formData.append('employeePhone', $('#employeePhone').val());
+                        formData.append('EmployeeStreetadress', $('#EmployeeStreetadress').val());
+                        formData.append('EmployeeZip', $('#EmployeeZip').val());
+                        formData.append('EmployeeCity', $('#EmployeeCity').val());
+                        formData.append('EmployeeCounty', $('#EmployeeCounty').val());
+                        formData.append('EmployeePosition', $('#EmployeePosition').val());
+                        formData.append('employeeAccountNumber', $('#employeeAccountNumber').val());
+                        $.ajax({
+                            url: $(this).attr("href"),
+                            type: 'POST',
+                            async: true,
+                            contentType: false,
+                            processData: false,
+                            data: formData,
+                            cache: false,
+                            success: function(result) {
+                                $('#updateEmployees').html(result);
+                            }
+                        });
+                        return false;
+                    });
 
-        $(document).on("click", "#sponsorPager a[href]", function () {
-            var formData = new FormData();
-            formData.append('search', $('#SponsorsearchField').val());
-            formData.append('active', $('#SponsorActive input:radio:checked').val());
-            formData.append('order', $('#SponsorOrderFilter input:radio:checked').val());
-            formData.append('filter', $("#SponsorSelected option:selected").val());
-            formData.append('SponsorPhone', $('#SponsorPhone').val());
-            formData.append('SponsorStreetadress', $('#SponsorStreetadress').val());
-            formData.append('SponsorZip', $('#SponsorZip').val());
-            formData.append('SponsorCity', $('#SponsorCity').val());
-            formData.append('SponsorCounty', $('#SponsorCounty').val());
+            $(document)
+                .on("click",
+                    "#childrenPager a[href]",
+                    function() {
+                        var formData = new FormData();
+                        formData.append('search', $('#ChildsearchField').val());
+                        formData.append('active', $('#ChildActive input:radio:checked').val());
+                        formData.append('order', $('#ChildOrderFilter input:radio:checked').val());
+                        formData.append('filter', $("#ChildSelected option:selected").val());
+                        formData.append('ChildDoB', $('#ChildDoB').val());
+                        formData.append('ChildSponsor', $('#ChildSponsor').val());
+                        $.ajax({
+                            url: $(this).attr("href"),
+                            type: 'POST',
+                            async: true,
+                            contentType: false,
+                            processData: false,
+                            data: formData,
+                            cache: false,
+                            success: function(result) {
+                                $('#updateChildren').html(result);
+                            }
+                        });
+                        return false;
+                    });
 
-            $.ajax({
-                url: $(this).attr("href"),
-                type: 'POST',
-                async: true,
-                contentType: false,
-                processData: false,
-                data: formData,
-                cache: false,
-                success: function (result) {
-                    $('#updateSponsors').html(result);
-                }
-            });
-            return false;
+            $(document)
+                .on("click",
+                    "#sponsorPager a[href]",
+                    function() {
+                        var formData = new FormData();
+                        formData.append('search', $('#SponsorsearchField').val());
+                        formData.append('active', $('#SponsorActive input:radio:checked').val());
+                        formData.append('order', $('#SponsorOrderFilter input:radio:checked').val());
+                        formData.append('filter', $("#SponsorSelected option:selected").val());
+                        formData.append('SponsorPhone', $('#SponsorPhone').val());
+                        formData.append('SponsorStreetadress', $('#SponsorStreetadress').val());
+                        formData.append('SponsorZip', $('#SponsorZip').val());
+                        formData.append('SponsorCity', $('#SponsorCity').val());
+                        formData.append('SponsorCounty', $('#SponsorCounty').val());
+
+                        $.ajax({
+                            url: $(this).attr("href"),
+                            type: 'POST',
+                            async: true,
+                            contentType: false,
+                            processData: false,
+                            data: formData,
+                            cache: false,
+                            success: function(result) {
+                                $('#updateSponsors').html(result);
+                            }
+                        });
+                        return false;
+                    });
         });
-    });
 
     //employees
     function filterEmployees() {
@@ -350,34 +379,38 @@
             contentType: false,
             processData: false,
             data: formData,
-            success: function (result) {
+            success: function(result) {
                 $('#updateEmployees').html(result);
             }
         });
     }
 
-    $("#employeeReset").on('click', function () {
-        event.stopPropagation();
-        $('#EmployeesearchField').val('');
+    $("#employeeReset")
+        .on('click',
+            function() {
+                event.stopPropagation();
+                $('#EmployeesearchField').val('');
 
-        $('#employeePhone').val('');
-        $('#EmployeeStreetadress').val('');
-        $('#EmployeeZip').val('');
-        $('#EmployeeCity').val('');
-        $('#EmployeeCounty').val('');
-        $('#EmployeePosition').val('');
-        $('#employeeAccountNumber').val('');
-        document.getElementById("EmployeeDefault").selected = "true";
-        $("#EmployeeOrderDefault").prop("checked", true);
-        $("#EmployeeDefaultRadio").prop("checked", true);
-    });
+                $('#employeePhone').val('');
+                $('#EmployeeStreetadress').val('');
+                $('#EmployeeZip').val('');
+                $('#EmployeeCity').val('');
+                $('#EmployeeCounty').val('');
+                $('#EmployeePosition').val('');
+                $('#employeeAccountNumber').val('');
+                document.getElementById("EmployeeDefault").selected = "true";
+                $("#EmployeeOrderDefault").prop("checked", true);
+                $("#EmployeeDefaultRadio").prop("checked", true);
+            });
 
-    $("#EmployeesearchField").on('keydown', function () {
-        if (event.keyCode == 13) {
-            filterEmployees();
-            return false;
-        }
-    });
+    $("#EmployeesearchField")
+        .on('keydown',
+            function() {
+                if (event.keyCode == 13) {
+                    filterEmployees();
+                    return false;
+                }
+            });
 
     //sponsors
     function filterSponsors() {
@@ -400,40 +433,45 @@
             contentType: false,
             processData: false,
             data: formData,
-            success: function (result) {
+            success: function(result) {
                 $('#updateSponsors').html(result);
             }
         });
     }
 
-    $("#SponsorReset").on('click', function () {
-        event.stopPropagation();
-        $('#SponsorsearchField').val('');
+    $("#SponsorReset")
+        .on('click',
+            function() {
+                event.stopPropagation();
+                $('#SponsorsearchField').val('');
 
-        $('#SponsorPhone').val('');
-        $('#SponsorStreetadress').val('');
-        $('#SponsorZip').val('');
-        $('#SponsorCity').val('');
-        $('#SponsorCounty').val('');
-        $('#SponsorPosition').val('');
-        $('#SponsorAccountNumber').val('');
-        document.getElementById("SponsorDefault").selected = "true";
-        $("#SponsorOrderDefault").prop("checked", true);
-        $("#SponsorDefaultRadio").prop("checked", true);
-    });
+                $('#SponsorPhone').val('');
+                $('#SponsorStreetadress').val('');
+                $('#SponsorZip').val('');
+                $('#SponsorCity').val('');
+                $('#SponsorCounty').val('');
+                $('#SponsorPosition').val('');
+                $('#SponsorAccountNumber').val('');
+                document.getElementById("SponsorDefault").selected = "true";
+                $("#SponsorOrderDefault").prop("checked", true);
+                $("#SponsorDefaultRadio").prop("checked", true);
+            });
 
-    $("#SponsorsearchField").on('keydown', function () {
-        if (event.keyCode == 13) {
-            filterSponsors();
-            return false;
-        }
-    });
+    $("#SponsorsearchField")
+        .on('keydown',
+            function() {
+                if (event.keyCode == 13) {
+                    filterSponsors();
+                    return false;
+                }
+            });
 
     //child 
-    $(function () {
-        $("#ChildDoB").datepicker({
-            dateFormat: "dd.mm.yy"
-        });
+    $(function() {
+        $("#ChildDoB")
+            .datepicker({
+                dateFormat: "dd.mm.yy"
+            });
     });
 
     function filterChildren() {
@@ -454,28 +492,32 @@
             contentType: false,
             processData: false,
             data: formData,
-            success: function (result) {
+            success: function(result) {
                 $('#updateChildren').html(result);
             }
         });
     }
 
-    $("#ChildReset").on('click', function () {
-        event.stopPropagation();
-        $('#ChildsearchField').val('');
+    $("#ChildReset")
+        .on('click',
+            function() {
+                event.stopPropagation();
+                $('#ChildsearchField').val('');
 
-        $('#ChildDoB').val('');
-        $('#ChildSponsor').val('');
+                $('#ChildDoB').val('');
+                $('#ChildSponsor').val('');
 
-        document.getElementById("ChildDefault").selected = "true";
-        $("#ChildOrderDefault").prop("checked", true);
-        $("#ChildDefaultRadio").prop("checked", true);
-    });
+                document.getElementById("ChildDefault").selected = "true";
+                $("#ChildOrderDefault").prop("checked", true);
+                $("#ChildDefaultRadio").prop("checked", true);
+            });
 
-    $("#ChildsearchField").on('keydown', function () {
-        if (event.keyCode == 13) {
-            filterChildren();
-            return false;
-        }
-    });
+    $("#ChildsearchField")
+        .on('keydown',
+            function() {
+                if (event.keyCode == 13) {
+                    filterChildren();
+                    return false;
+                }
+            });
 </script>
